@@ -735,12 +735,12 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 8,
-    title: 'Linux Networking & Firewalls',
+    title: 'Linux Networking',
     status: 'playable',
     topicKey: 'topic8',
-    icon: '🛡️',
+    icon: '🌐',
     subtopics: [
-      '8.1 Configuring Network Interfaces & Firewalls (Interfaces, Static/DHCP, iptables, firewalld, UFW)',
+      '8.1 Configuring Network Interfaces (Interfaces, Static vs DHCP, Gateway & DNS)',
       '8.2 Managing IP Addresses and Interfaces (ip, ifconfig, ethtool, hostname)',
       '8.3 Managing Network Connections (NetworkManager, nmcli & nmtui)',
       '8.4 Testing Network Connectivity (ping, nslookup, dig, host & arp)',
@@ -748,9 +748,9 @@ export const all11LinuxTopicsRoadmap = [
       '8.6 Inspecting Socket Statistics (ss -tulnp, ss -s & Socket States)',
       '8.7 Tracing Network Routes (traceroute, tracepath, mtr & ip route)'
     ],
-    laymanSummary: 'Configuring IP addresses, managing network interfaces, setting up firewalls (iptables/firewalld/UFW), testing connectivity, monitoring traffic, inspecting sockets, and tracing routes.',
-    houseAnalogy: 'House doors (enp0s3/wlan0/lo), mailbox numbers (IP/DHCP), the Security Guard’s top-to-bottom rulebook (iptables/firewalld/UFW), door knocker (ping), phonebook (dig/nslookup), security monitor (netstat/ss), and delivery tracker (traceroute).',
-    kenyanAnalogy: 'Compound gates & Plot numbers (Static IP vs Reception Visitor Badge DHCP), the Estate Askari’s clipboard (iptables), flashing a friend ("Uko hapo?" ping), G4S van (TCP) vs Boda-Boda (UDP), KPLC smart scanner (ss), and tracking every matatu stage along the highway (traceroute).'
+    laymanSummary: 'Configuring IP addresses, managing network interfaces, testing connectivity, monitoring traffic, inspecting sockets, and tracing routes.',
+    houseAnalogy: 'House doors (enp0s3/wlan0/lo), mailbox numbers (IP/DHCP), door knocker (ping), phonebook (dig/nslookup), security monitor (netstat/ss), and delivery tracker (traceroute).',
+    kenyanAnalogy: 'Compound gates & Plot numbers (Static IP vs Reception Visitor Badge DHCP), flashing a friend ("Uko hapo?" ping), G4S van (TCP) vs Boda-Boda (UDP), KPLC smart scanner (ss), and tracking every matatu stage along the highway (traceroute).'
   },
   {
     id: 9,
@@ -769,6 +769,22 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 10,
+    title: 'Linux Firewall',
+    status: 'playable',
+    topicKey: 'topic10',
+    icon: '🛡️',
+    subtopics: [
+      '10.1 Linux Firewall (The Security Gatekeeper & Packet Filtering)',
+      '10.2 Setting up firewalls (iptables, firewalld & UFW)',
+      '10.3 Basic iptables commands (Tables, Chains, Options & Targets)',
+      '10.4 Managing firewall configuration (Rule Order, Persistence & Zones)'
+    ],
+    laymanSummary: 'Protecting your Linux system with dedicated gatekeepers: packet filtering, comparing the 3 security managers, mastering iptables tables & chains, and solving rule order & permanent saving.',
+    houseAnalogy: 'The Security Gatekeeper checking visitor ID cards (Source/Dest/Port), hiring the right security manager (iptables/firewalld/UFW), the Guard’s 5 binders and 3 checkpoints (INPUT/OUTPUT/FORWARD), and copying rules into the waterproof notebook so they don’t wash away when it rains.',
+    kenyanAnalogy: 'The Gated Estate Askari & Barrier at the Nyumba Kumi gate, choosing between the G4S sergeant vs smart tablet vs estate caretaker, the Askari’s Occurrence Book (OB) and verdict stamps (ACCEPT/DROP/REJECT), and putting emergency exceptions at Line 1 of the clipboard before broad night curfews.'
+  },
+  {
+    id: 11,
     title: 'Shell & Bash Scripting',
     status: 'upcoming',
     icon: '📜',
@@ -783,7 +799,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'Leaving a clear morning duty roster on the kitchen table (chopping sukuma, boiling tea, locking the gate) with labeled spice tins (variables) so everything runs like clockwork!'
   },
   {
-    id: 11,
+    id: 12,
     title: 'System Administration & Boot Process',
     status: 'upcoming',
     icon: '🎛️',
@@ -797,7 +813,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'Being the Plot Caretaker—checking the roof water tank level (df -h), watching the KPLC meter load (top), and turning on the compound lights at dawn.'
   },
   {
-    id: 12,
+    id: 13,
     title: 'Advanced Linux & Cloud/DevOps',
     status: 'upcoming',
     icon: '🐳',
@@ -811,7 +827,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'A fitted shipping-container duka that can be lifted by lorry to any town and opened immediately (Docker), and a traditional hotel with many waiters (Apache) vs a fast supermarket express checkout (Nginx).'
   },
   {
-    id: 13,
+    id: 14,
     title: 'Linux in Cloud & DevOps',
     status: 'upcoming',
     icon: '☁️',

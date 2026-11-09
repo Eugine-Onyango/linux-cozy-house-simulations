@@ -35,16 +35,17 @@ import { linuxTopic6Subtopics } from './linuxTopic6Data';
 import { linuxTopic7Subtopics } from './linuxTopic7Data';
 import { linuxTopic8Subtopics } from './linuxTopic8Data';
 import { linuxTopic9Subtopics } from './linuxTopic9Data';
+import { linuxTopic10Subtopics } from './linuxTopic10Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
-  // Top-level view: 'topic1' ... 'topic9' | 'roadmap'
-  // Default to 'topic9' so the user immediately sees Topic 9: Networking Services!
-  const [mainTab, setMainTab] = useState('topic9');
+  // Top-level view: 'topic1' ... 'topic10' | 'roadmap'
+  // Default to 'topic10' so the user immediately sees Topic 10: Linux Firewall!
+  const [mainTab, setMainTab] = useState('topic10');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, and Topic 8
+  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, Topic 8, Topic 9, and Topic 10
   const [activeTopic1SubId, setActiveTopic1SubId] = useState('distributions');
   const [activeTopic2SubId, setActiveTopic2SubId] = useState('file-system');
   const [activeTopic4SubId, setActiveTopic4SubId] = useState('file-management');
@@ -53,6 +54,7 @@ export default function LinuxCozyHouseHub() {
   const [activeTopic7SubId, setActiveTopic7SubId] = useState('user-management-overview');
   const [activeTopic8SubId, setActiveTopic8SubId] = useState('configuring-network-interfaces');
   const [activeTopic9SubId, setActiveTopic9SubId] = useState('dhcp-service');
+  const [activeTopic10SubId, setActiveTopic10SubId] = useState('linux-firewall-overview');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -273,7 +275,24 @@ export default function LinuxCozyHouseHub() {
   const [t9FtpConnected, setT9FtpConnected] = useState(false);
   const [t9FtpSecureView, setT9FtpSecureView] = useState('ftp'); // 'ftp' | 'sftp'
 
-  // Determine current active subtopics list and current subtopic object for Topic 1, 2, 4, 5, 6, 7 & 8
+  // ==========================================================================
+  // TOPIC 10 TOYBOX STATES (LINUX FIREWALL - 4 SUBTOPICS)
+  // ==========================================================================
+  // 10.1 Linux Firewall: Packet Inspector Simulator
+  const [t10PacketType, setT10PacketType] = useState('ssh_allowed'); // 'ssh_allowed' | 'web_allowed' | 'hacker_blocked' | 'established' | 'custom'
+  // 10.2 Setting Up Firewalls: 3-Manager Control Station
+  const [t10SelectedManager, setT10SelectedManager] = useState('ufw'); // 'ufw' | 'firewalld' | 'iptables'
+  const [t10ManagerStatus, setT10ManagerStatus] = useState(true);
+  // 10.3 Basic iptables Commands: Interactive Rule Builder
+  const [t10Table, setT10Table] = useState('filter'); // 'filter' | 'nat' | 'mangle'
+  const [t10Chain, setT10Chain] = useState('INPUT'); // 'INPUT' | 'OUTPUT' | 'FORWARD'
+  const [t10Target, setT10Target] = useState('ACCEPT'); // 'ACCEPT' | 'DROP' | 'REJECT' | 'LOG'
+  const [t10Port, setT10Port] = useState('22');
+  const [t10Protocol, setT10Protocol] = useState('tcp');
+  // 10.4 Managing Firewall Configuration: Rule Order & Permanent Save Lab
+  const [t10RuleOrderMode, setT10RuleOrderMode] = useState('fixed'); // 'bug' | 'fixed' | 'save' | 'zones'
+
+  // Determine current active subtopics list and current subtopic object for Topic 1..10
   const currentSubtopicsList =
     mainTab === 'topic1'
       ? linuxTopic1Subtopics
@@ -289,7 +308,9 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic7Subtopics
       : mainTab === 'topic8'
       ? linuxTopic8Subtopics
-      : linuxTopic9Subtopics;
+      : mainTab === 'topic9'
+      ? linuxTopic9Subtopics
+      : linuxTopic10Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -305,7 +326,9 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic7SubId
       : mainTab === 'topic8'
       ? activeTopic8SubId
-      : activeTopic9SubId;
+      : mainTab === 'topic9'
+      ? activeTopic9SubId
+      : activeTopic10SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
@@ -314,7 +337,8 @@ export default function LinuxCozyHouseHub() {
     else if (mainTab === 'topic6') setActiveTopic6SubId(id);
     else if (mainTab === 'topic7') setActiveTopic7SubId(id);
     else if (mainTab === 'topic8') setActiveTopic8SubId(id);
-    else setActiveTopic9SubId(id);
+    else if (mainTab === 'topic9') setActiveTopic9SubId(id);
+    else setActiveTopic10SubId(id);
   };
 
   const currentSubtopic =
@@ -353,6 +377,7 @@ export default function LinuxCozyHouseHub() {
     activeTopic7SubId,
     activeTopic8SubId,
     activeTopic9SubId,
+    activeTopic10SubId,
     selectedCmdNum,
     mainTab
   ]);
@@ -663,7 +688,7 @@ export default function LinuxCozyHouseHub() {
                   : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-950 border-cyan-300'
               }`}
             >
-              <span>🛡️</span>
+              <span>🌐</span>
               <span>Topic 8 (7)</span>
             </button>
 
@@ -679,7 +704,22 @@ export default function LinuxCozyHouseHub() {
               }`}
             >
               <span>🛎️</span>
-              <span>Topic 9: Services (3)</span>
+              <span>Topic 9 (3)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
+                setMainTab('topic10');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+                mainTab === 'topic10'
+                  ? 'bg-red-600 text-white border-red-700 shadow-sm scale-105'
+                  : 'bg-red-50 hover:bg-red-100 text-red-950 border-red-300'
+              }`}
+            >
+              <span>🛡️</span>
+              <span>Topic 10: Firewall (4)</span>
             </button>
 
             <button
@@ -740,9 +780,11 @@ export default function LinuxCozyHouseHub() {
                       : mainTab === 'topic7'
                       ? 'Topic 7 • User and Group Management (12 Subtopics)'
                       : mainTab === 'topic8'
-                      ? 'Topic 8 • Linux Networking & Firewalls (7 Subtopics)'
+                      ? 'Topic 8 • Linux Networking (7 Subtopics)'
                       : mainTab === 'topic9'
                       ? 'Topic 9 • Networking Services (3 Subtopics)'
+                      : mainTab === 'topic10'
+                      ? 'Topic 10 • Linux Firewall (4 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -767,9 +809,11 @@ export default function LinuxCozyHouseHub() {
                   : mainTab === 'topic7'
                   ? 'Topic 7: User & Group Management 👨‍👩‍👧‍👦🏗️🛎️🔐🪪🏷️🔑'
                   : mainTab === 'topic8'
-                  ? 'Topic 8: Linux Networking & Firewalls 🚪🪪🧑‍💼✊📹⚡🗺️'
+                  ? 'Topic 8: Linux Networking 🌐🪪🧑‍💼✊📹⚡🗺️'
                   : mainTab === 'topic9'
                   ? 'Topic 9: Networking Services 🪪📖🚚'
+                  : mainTab === 'topic10'
+                  ? 'Topic 10: Linux Firewall & Security Gatekeepers 🛡️⚙️📕📝'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -789,10 +833,12 @@ export default function LinuxCozyHouseHub() {
                   : mainTab === 'topic7'
                   ? 'Master all 12 subtopics of User and Group Management! Meet the House Guestbook (/etc/passwd) & Locked Password Safe (/etc/shadow), build rooms with useradd & friendly adduser, remove users with userdel, manage passwords with passwd, scan IDs with id/who/w/last/awk, organize team badges with groupadd/usermod -aG/groupdel/groups/getent, and safely borrow the Golden Master Key with sudo & visudo!'
                   : mainTab === 'topic8'
-                  ? 'From configuring IP addresses and managing network interfaces to setting up firewalls (iptables, firewalld & UFW), testing connectivity (ping, nslookup, dig, arp), monitoring live traffic (netstat, tcpdump, iftop), inspecting high-speed sockets (ss), and tracing network routes (traceroute, tracepath, mtr, ip route)!'
+                  ? 'From configuring IP addresses and managing network interfaces to testing connectivity (ping, nslookup, dig, arp), monitoring live traffic (netstat, tcpdump, iftop), inspecting high-speed sockets (ss), and tracing network routes (traceroute, tracepath, mtr, ip route)!'
                   : mainTab === 'topic9'
                   ? 'Meet the three helpers every network depends on: the Gatekeeper who hands out addresses automatically (DHCP), the Librarian who turns names into numbers (DNS), and the Delivery Truck that carries files between computers (FTP)—plus why the sealed SFTP van beats the open FTP pickup!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 9 are fully interactive right now!'}
+                  : mainTab === 'topic10'
+                  ? 'Master the complete Linux Firewall security system! Explore packet filtering, compare the 3 managers (iptables, firewalld, UFW), learn the essential iptables commands (Tables, Chains, Options & Targets), and conquer rule order and permanent saving!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 10 are fully interactive right now!'}
               </p>
             </div>
 
@@ -914,7 +960,7 @@ export default function LinuxCozyHouseHub() {
                     : 'bg-white text-slate-800 border-slate-300 hover:bg-cyan-50'
                 }`}
               >
-                <span>🛡️ 8. Network</span>
+                <span>🌐 8. Net</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">7</span>
               </button>
 
@@ -923,14 +969,29 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic9');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic9'
                     ? 'bg-sky-700 text-white border-sky-800 shadow-sm'
                     : 'bg-white text-slate-800 border-slate-300 hover:bg-sky-50'
                 }`}
               >
-                <span>🛎️ 9. Services (DHCP/DNS/FTP)</span>
+                <span>🛎️ 9. Svc</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">3</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic10');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic10'
+                    ? 'bg-red-600 text-white border-red-700 shadow-sm'
+                    : 'bg-white text-slate-800 border-slate-300 hover:bg-red-50'
+                }`}
+              >
+                <span>🛡️ 10. Firewall (iptables/firewalld/UFW)</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">4</span>
               </button>
             </div>
           </div>
@@ -1408,7 +1469,8 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic6' ||
           mainTab === 'topic7' ||
           mainTab === 'topic8' ||
-          mainTab === 'topic9') && (
+          mainTab === 'topic9' ||
+          mainTab === 'topic10') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-white rounded-3xl p-4 sm:p-5 border-4 border-amber-200 shadow-sm space-y-3">
@@ -1430,8 +1492,10 @@ export default function LinuxCozyHouseHub() {
                       : mainTab === 'topic7'
                       ? 'Topic 7: User and Group Management (12 Subtopics)'
                       : mainTab === 'topic8'
-                      ? 'Topic 8: Linux Networking & Firewalls (7 Subtopics)'
-                      : 'Topic 9: Networking Services (3 Subtopics)'}
+                      ? 'Topic 8: Linux Networking (7 Subtopics)'
+                      : mainTab === 'topic9'
+                      ? 'Topic 9: Networking Services (3 Subtopics)'
+                      : 'Topic 10: Linux Firewall (4 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -1483,6 +1547,8 @@ export default function LinuxCozyHouseHub() {
                 className={`grid grid-cols-1 sm:grid-cols-2 ${
                   currentSubtopicsList.length === 3
                     ? 'lg:grid-cols-3'
+                    : currentSubtopicsList.length === 4
+                    ? 'lg:grid-cols-4'
                     : currentSubtopicsList.length === 6
                     ? 'lg:grid-cols-3 xl:grid-cols-6'
                     : currentSubtopicsList.length === 7
@@ -7592,6 +7658,499 @@ $ lftp -u sam ftps://files.cozyhouse.ke             # FTPS = FTP wrapped in TLS`
               );
             })()}
 
+            {/* =================================================================
+                TOYBOX 10.1: LINUX FIREWALL — PACKET INSPECTOR SIMULATOR
+                ================================================================= */}
+            {activeSubtopicId === 'linux-firewall-overview' && (() => {
+              const packetScenarios = {
+                ssh_allowed: {
+                  title: '🔑 Alice (Remote Worker) SSH to Port 22',
+                  src: '192.168.1.5',
+                  dst: 'Your Server (Port 22)',
+                  proto: 'TCP',
+                  state: 'NEW',
+                  verdict: '✅ ACCEPT',
+                  badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+                  story: '“Alice’s laptop knocks on the SSH door (Port 22). The guard checks the guest list: Alice is an authorized remote worker. Barrier lifts!”'
+                },
+                web_allowed: {
+                  title: '🌐 Web Visitor (Customer) to Port 80',
+                  src: '41.89.20.10',
+                  dst: 'Your Server (Port 80)',
+                  proto: 'TCP',
+                  state: 'NEW',
+                  verdict: '✅ ACCEPT',
+                  badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+                  story: '“A customer arrives at the front shop entrance (Port 80 HTTP). The store is open for business. Welcome in!”'
+                },
+                hacker_blocked: {
+                  title: '🚨 Intruder (Mr. X) Scanning Port 4444',
+                  src: '192.168.52.1',
+                  dst: 'Your Server (Port 4444)',
+                  proto: 'TCP',
+                  state: 'NEW',
+                  verdict: '❌ DROP (Black Hole)',
+                  badgeColor: 'bg-rose-100 text-rose-900 border-rose-300',
+                  story: '“A suspicious stranger tries to wiggle a closed window. Rule says DROP: the guard ignores them completely. Mr. X gets zero response and connection times out!”'
+                },
+                established: {
+                  title: '🧠 Stateful Return Packet from Google',
+                  src: '142.251.42.78',
+                  dst: 'Your Server (High Port 54321)',
+                  proto: 'TCP',
+                  state: 'ESTABLISHED / RELATED',
+                  verdict: '✅ ACCEPT (Stateful)',
+                  badgeColor: 'bg-sky-100 text-sky-900 border-sky-300',
+                  story: '“Google delivers web images you requested 2 seconds ago. Because the firewall remembers you initiated this connection, it waves the response through automatically!”'
+                }
+              };
+
+              const currentScenario = packetScenarios[t10PacketType];
+
+              return (
+                <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-red-400 shadow-md space-y-5">
+                  <div className="border-b-2 border-red-100 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-red-900 bg-red-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 10.1
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The Gate Packet Inspector — Test Visitors at the Barrier!
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Tap different incoming visitor packets to watch how the firewall checks Source IP, Destination Port, Protocol, and Connection State!
+                    </p>
+                  </div>
+
+                  {/* Scenario selection buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                    {Object.entries(packetScenarios).map(([key, item]) => (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT10PacketType(key);
+                        }}
+                        className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                          t10PacketType === key
+                            ? 'bg-red-600 text-white border-red-800 shadow-sm'
+                            : 'bg-red-50 hover:bg-red-100 text-slate-900 border-red-200'
+                        }`}
+                      >
+                        <div className="font-black text-xs sm:text-sm">{item.title}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Packet details card */}
+                  <div className="bg-red-50/70 rounded-2xl p-4 border-2 border-red-200 space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-red-200 pb-2">
+                      <span className="text-xs font-black uppercase tracking-wider text-red-950">
+                        Packet Inspection Tag:
+                      </span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-black border ${currentScenario.badgeColor}`}>
+                        Verdict: {currentScenario.verdict}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                      <div className="bg-white p-2.5 rounded-xl border border-red-200">
+                        <div className="text-[10px] font-black uppercase text-slate-500">Source IP</div>
+                        <div className="font-mono font-bold text-slate-900">{currentScenario.src}</div>
+                      </div>
+                      <div className="bg-white p-2.5 rounded-xl border border-red-200">
+                        <div className="text-[10px] font-black uppercase text-slate-500">Destination Door</div>
+                        <div className="font-mono font-bold text-slate-900">{currentScenario.dst}</div>
+                      </div>
+                      <div className="bg-white p-2.5 rounded-xl border border-red-200">
+                        <div className="text-[10px] font-black uppercase text-slate-500">Vehicle (Protocol)</div>
+                        <div className="font-mono font-bold text-slate-900">{currentScenario.proto}</div>
+                      </div>
+                      <div className="bg-white p-2.5 rounded-xl border border-red-200">
+                        <div className="text-[10px] font-black uppercase text-slate-500">Connection State</div>
+                        <div className="font-mono font-bold text-slate-900">{currentScenario.state}</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-xl p-3 border border-red-200 text-xs sm:text-sm font-bold text-slate-800">
+                      💂‍♂️ Gatekeeper Decision: {currentScenario.story}
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`# 🛡️ Stateful Inspection Rule in Linux:
+$ sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+$ sudo iptables -A INPUT -p tcp --dport 22 -s 192.168.1.5 -j ACCEPT
+$ sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+$ sudo iptables -A INPUT -s 192.168.52.1 -j DROP
+$ sudo iptables -P INPUT DROP   # 🔒 Default Deny: everything else is blocked!`}
+                    </pre>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 10.2: SETTING UP FIREWALLS (3 MANAGERS)
+                ================================================================= */}
+            {activeSubtopicId === 'setting-up-firewalls' && (() => {
+              const managers = {
+                ufw: {
+                  name: 'UFW (Uncomplicated Firewall)',
+                  badge: 'Beginner & Ubuntu/Debian Favorite',
+                  install: 'sudo apt install ufw',
+                  enable: 'sudo ufw enable',
+                  status: 'sudo ufw status verbose',
+                  sampleRule: 'sudo ufw allow 22/tcp',
+                  pros: 'Super simple, human commands, enabled in 5 seconds',
+                  cons: 'Less granular for complex multi-homed enterprise routing'
+                },
+                firewalld: {
+                  name: 'firewalld (Dynamic Zone Manager)',
+                  badge: 'Modern & RHEL / CentOS / Fedora Default',
+                  install: 'sudo dnf install firewalld',
+                  enable: 'sudo systemctl enable --now firewalld',
+                  status: 'sudo firewall-cmd --state && sudo firewall-cmd --get-active-zones',
+                  sampleRule: 'sudo firewall-cmd --zone=public --add-service=http --permanent && sudo firewall-cmd --reload',
+                  pros: 'Zone-based, updates live (--reload) without dropping active connections',
+                  cons: 'More command flags to learn than UFW'
+                },
+                iptables: {
+                  name: 'iptables (Classic Veteran Tool)',
+                  badge: 'Full Granular Kernel Control',
+                  install: 'sudo apt install iptables iptables-persistent  (or dnf install iptables)',
+                  enable: 'sudo systemctl enable --now netfilter-persistent',
+                  status: 'sudo iptables -L -v -n',
+                  sampleRule: 'sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT',
+                  pros: 'Absolute control over every table, chain, and packet byte',
+                  cons: 'Requires precise rule ordering and explicit permanent saving'
+                }
+              };
+
+              const currentMgr = managers[t10SelectedManager];
+
+              return (
+                <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-md space-y-5">
+                  <div className="border-b-2 border-amber-100 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 10.2
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The 3-Manager Control Station — Setup & Service Toggle
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Switch between UFW, firewalld, and iptables to see how each security manager is installed, enabled at boot, and controlled!
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {Object.entries(managers).map(([key, item]) => (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT10SelectedManager(key);
+                        }}
+                        className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                          t10SelectedManager === key
+                            ? 'bg-amber-500 text-white border-amber-700 shadow-sm'
+                            : 'bg-amber-50 hover:bg-amber-100 text-slate-900 border-amber-200'
+                        }`}
+                      >
+                        <div className="font-black text-xs sm:text-sm">{item.name}</div>
+                        <div className="text-[11px] mt-1 opacity-90">{item.badge}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="bg-amber-50/70 rounded-2xl p-4 border-2 border-amber-200 space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="font-black text-sm text-amber-950">
+                        {currentMgr.name} — Control Dashboard
+                      </div>
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT10ManagerStatus((prev) => !prev);
+                        }}
+                        className={`px-3 py-1 rounded-full text-xs font-black transition-all ${
+                          t10ManagerStatus
+                            ? 'bg-emerald-600 text-white shadow-sm'
+                            : 'bg-rose-600 text-white shadow-sm'
+                        }`}
+                      >
+                        {t10ManagerStatus ? '🟢 Active & Guarding' : '🔴 Stopped (Inactive)'}
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="bg-white p-2.5 rounded-xl border border-amber-200">
+                        <span className="font-black text-amber-950">🌟 Pros: </span>
+                        <span className="font-semibold text-slate-700">{currentMgr.pros}</span>
+                      </div>
+                      <div className="bg-white p-2.5 rounded-xl border border-amber-200">
+                        <span className="font-black text-amber-950">⚠️ Consideration: </span>
+                        <span className="font-semibold text-slate-700">{currentMgr.cons}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`# 1. Install ${currentMgr.name}:
+$ ${currentMgr.install}
+
+# 2. Enable & Start at Boot:
+$ ${currentMgr.enable}
+
+# 3. Check Live Status:
+$ ${currentMgr.status}
+Status: ${t10ManagerStatus ? 'active (running) 🟢' : 'inactive (dead) 🔴'}
+
+# 4. Add a sample rule:
+$ ${currentMgr.sampleRule}`}
+                    </pre>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 10.3: BASIC IPTABLES COMMANDS (RULE BUILDER)
+                ================================================================= */}
+            {activeSubtopicId === 'basic-iptables-commands' && (() => {
+              const builtCommand = `sudo iptables -t ${t10Table} -A ${t10Chain} -p ${t10Protocol} --dport ${t10Port} -j ${t10Target}`;
+
+              return (
+                <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-md space-y-5">
+                  <div className="border-b-2 border-emerald-100 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-900 bg-emerald-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 10.3
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The iptables Rule Builder & Terminal Sandbox
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Assemble an iptables command piece by piece by choosing your Table, Chain, Protocol, Port, and Target stamp!
+                    </p>
+                  </div>
+
+                  {/* Interactive selectors */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {/* Table */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-black text-slate-700">1. Table (-t)</label>
+                      <select
+                        value={t10Table}
+                        onChange={(e) => {
+                          sounds.playPop();
+                          setT10Table(e.target.value);
+                        }}
+                        className="w-full p-2.5 rounded-xl border-2 border-emerald-300 font-mono text-xs font-bold bg-emerald-50/50"
+                      >
+                        <option value="filter">filter (Guest List)</option>
+                        <option value="nat">nat (Mailroom Redirect)</option>
+                        <option value="mangle">mangle (Delivery Priority)</option>
+                      </select>
+                    </div>
+
+                    {/* Chain */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-black text-slate-700">2. Chain</label>
+                      <select
+                        value={t10Chain}
+                        onChange={(e) => {
+                          sounds.playPop();
+                          setT10Chain(e.target.value);
+                        }}
+                        className="w-full p-2.5 rounded-xl border-2 border-emerald-300 font-mono text-xs font-bold bg-emerald-50/50"
+                      >
+                        <option value="INPUT">INPUT (Front Door)</option>
+                        <option value="OUTPUT">OUTPUT (Back Door)</option>
+                        <option value="FORWARD">FORWARD (Transit Hall)</option>
+                      </select>
+                    </div>
+
+                    {/* Port */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-black text-slate-700">3. Port Door</label>
+                      <select
+                        value={t10Port}
+                        onChange={(e) => {
+                          sounds.playPop();
+                          setT10Port(e.target.value);
+                        }}
+                        className="w-full p-2.5 rounded-xl border-2 border-emerald-300 font-mono text-xs font-bold bg-emerald-50/50"
+                      >
+                        <option value="22">Port 22 (SSH)</option>
+                        <option value="80">Port 80 (HTTP Web)</option>
+                        <option value="443">Port 443 (HTTPS Secure)</option>
+                        <option value="53">Port 53 (DNS)</option>
+                        <option value="3306">Port 3306 (MySQL DB)</option>
+                      </select>
+                    </div>
+
+                    {/* Target */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-black text-slate-700">4. Target (-j)</label>
+                      <select
+                        value={t10Target}
+                        onChange={(e) => {
+                          sounds.playPop();
+                          setT10Target(e.target.value);
+                        }}
+                        className="w-full p-2.5 rounded-xl border-2 border-emerald-300 font-mono text-xs font-bold bg-emerald-50/50"
+                      >
+                        <option value="ACCEPT">ACCEPT (Welcome in)</option>
+                        <option value="DROP">DROP (Silently ignore)</option>
+                        <option value="REJECT">REJECT (Turn away)</option>
+                        <option value="LOG">LOG (Record in OB book)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Assembled command card */}
+                  <div className="bg-emerald-50/80 rounded-2xl p-4 border-2 border-emerald-300 space-y-2">
+                    <div className="text-xs font-black text-emerald-950 uppercase">Assembled iptables Command:</div>
+                    <div className="font-mono font-black text-sm text-emerald-900 bg-white p-3 rounded-xl border border-emerald-200">
+                      $ {builtCommand}
+                    </div>
+                  </div>
+
+                  {/* Output viewer */}
+                  <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ sudo iptables -L ${t10Chain} -v -n --line-numbers
+Chain ${t10Chain} (policy DROP 140 packets, 8400 bytes)
+num   pkts bytes target     prot opt in     out     source               destination
+1       45  2800 ${t10Target.padEnd(10)} ${t10Protocol}  --  *      *       0.0.0.0/0            0.0.0.0/0           tcp dpt:${t10Port}
+
+# Handy rulebook commands:
+$ sudo iptables -L -v -n        # 📖 Read entire rulebook
+$ sudo iptables -D ${t10Chain} 1          # ❌ Delete rule #1
+$ sudo iptables -F              # 🧹 Flush all rules clean
+$ sudo iptables -P INPUT DROP   # 🔒 Set default policy to DROP`}
+                    </pre>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 10.4: MANAGING FIREWALL CONFIGURATION (RULE ORDER & PERSISTENCE)
+                ================================================================= */}
+            {activeSubtopicId === 'managing-firewall-configuration' && (() => {
+              return (
+                <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-purple-400 shadow-md space-y-5">
+                  <div className="border-b-2 border-purple-100 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-purple-900 bg-purple-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 10.4
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      Rule Order Problem, Permanent Saving & firewalld Zones
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Explore the famous Top-to-Bottom rule ordering trap, test how to insert exceptions at Line 1, save rules permanently, and manage firewalld zones!
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    {[
+                      { id: 'bug', label: '❌ Rule Order Bug', sub: 'General DROP above ACCEPT' },
+                      { id: 'fixed', label: '✅ Fixed Order (-I 1)', sub: 'Specific exception at Line 1' },
+                      { id: 'save', label: '💾 Permanent Save', sub: 'iptables-persistent & rules.v4' },
+                      { id: 'zones', label: '🗺️ firewalld Zones', sub: '--permanent & --reload' }
+                    ].map((mode) => (
+                      <button
+                        key={mode.id}
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT10RuleOrderMode(mode.id);
+                        }}
+                        className={`p-3 rounded-2xl border-2 text-left transition-all ${
+                          t10RuleOrderMode === mode.id
+                            ? 'bg-purple-600 text-white border-purple-800 shadow-sm'
+                            : 'bg-purple-50 hover:bg-purple-100 text-slate-900 border-purple-200'
+                        }`}
+                      >
+                        <div className="font-mono font-black text-xs">{mode.label}</div>
+                        <div className="text-[11px] mt-1 opacity-90">{mode.sub}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                    {t10RuleOrderMode === 'bug' && (
+                      <pre className="whitespace-pre-wrap leading-relaxed text-rose-300">
+{`# ❌ THE TOP-TO-BOTTOM TRAP:
+$ sudo iptables -A INPUT -s 192.168.1.3 -j DROP
+$ sudo iptables -A INPUT -s 192.168.1.3 -p tcp --dport 22 -j ACCEPT
+
+Guard's Rulebook:
+  Line 1: DROP   all  -- 192.168.1.3   anywhere   <-- First match WINS! Mr. X is blocked here!
+  Line 2: ACCEPT tcp  -- 192.168.1.3   anywhere tcp dpt:22 <-- NEVER CHECKED!
+
+Outcome: Mr. X tries to SSH to port 22 -> ❌ Connection timed out!`}
+                      </pre>
+                    )}
+
+                    {t10RuleOrderMode === 'fixed' && (
+                      <pre className="whitespace-pre-wrap leading-relaxed text-emerald-300">
+{`# ✅ THE FIX: Insert (-I) specific exceptions at Line 1 ABOVE general blocks:
+$ sudo iptables -I INPUT 1 -s 192.168.1.3 -p tcp --dport 22 -j ACCEPT
+$ sudo iptables -A INPUT -s 192.168.1.3 -j DROP
+
+Guard's Rulebook:
+  Line 1: ACCEPT tcp  -- 192.168.1.3   anywhere tcp dpt:22 <-- Checked FIRST! ✅ SSH allowed!
+  Line 2: DROP   all  -- 192.168.1.3   anywhere            <-- Blocks all other doors from Mr. X!
+
+Outcome: Mr. X connects to SSH successfully, but cannot touch any other port!`}
+                      </pre>
+                    )}
+
+                    {t10RuleOrderMode === 'save' && (
+                      <pre className="whitespace-pre-wrap leading-relaxed text-sky-300">
+{`# 💾 SAVING RULES PERMANENTLY (The Waterproof Notebook):
+# In memory, iptables rules vanish when power restarts!
+
+# Debian / Ubuntu:
+$ sudo apt install iptables-persistent
+$ sudo iptables-save | sudo tee /etc/iptables/rules.v4
+$ sudo ip6tables-save | sudo tee /etc/iptables/rules.v6
+# To restore later:
+$ sudo iptables-restore < /etc/iptables/rules.v4
+
+# RHEL / CentOS:
+$ sudo dnf install iptables-services
+$ sudo systemctl enable iptables
+$ sudo service iptables save   # Writes to /etc/sysconfig/iptables`}
+                      </pre>
+                    )}
+
+                    {t10RuleOrderMode === 'zones' && (
+                      <pre className="whitespace-pre-wrap leading-relaxed text-amber-300">
+{`# 🗺️ MANAGING firewalld ZONES & PERMANENCE:
+$ sudo firewall-cmd --get-active-zones
+public
+  interfaces: enp0s3
+
+# Add rule permanently:
+$ sudo firewall-cmd --zone=public --add-service=http --permanent
+$ sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
+
+# Reload live WITHOUT dropping active SSH connections:
+$ sudo firewall-cmd --reload
+success ✅
+
+# Verify zone settings:
+$ sudo firewall-cmd --zone=public --list-all`}
+                      </pre>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER */}
             <div className="bg-amber-100/80 rounded-3xl p-5 border-4 border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -7712,7 +8271,7 @@ $ lftp -u sam ftps://files.cozyhouse.ke             # FTPS = FTP wrapped in TLS`
                         }}
                         className="px-4 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
                       >
-                        <span>Go to Topic 8: Linux Networking & Firewalls</span>
+                        <span>Go to Topic 8: Linux Networking</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     );
@@ -7728,6 +8287,21 @@ $ lftp -u sam ftps://files.cozyhouse.ke             # FTPS = FTP wrapped in TLS`
                         className="px-4 py-2.5 rounded-2xl bg-sky-700 hover:bg-sky-800 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
                       >
                         <span>Go to Topic 9: Networking Services</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    );
+                  }
+                  if (mainTab === 'topic9') {
+                    return (
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setMainTab('topic10');
+                          setActiveTopic10SubId('linux-firewall-overview');
+                        }}
+                        className="px-4 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>Go to Topic 10: Linux Firewall</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     );
