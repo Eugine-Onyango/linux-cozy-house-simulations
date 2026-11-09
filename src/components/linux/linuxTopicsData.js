@@ -735,20 +735,40 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 8,
-    title: 'Networking & Firewalls in Linux',
-    status: 'upcoming',
+    title: 'Linux Networking & Firewalls',
+    status: 'playable',
+    topicKey: 'topic8',
     icon: '🛡️',
     subtopics: [
-      'Troubleshooting Tools (ping, traceroute, nslookup, dig, netstat, ifconfig, ip)',
-      'Configuring Network Interfaces (nmcli & nmtui)',
-      'Linux Firewalls (iptables Tables/Chains, firewalld Zones & UFW)'
+      '8.1 Configuring Network Interfaces & Firewalls (Interfaces, Static/DHCP, iptables, firewalld, UFW)',
+      '8.2 Managing IP Addresses and Interfaces (ip, ifconfig, ethtool, hostname)',
+      '8.3 Managing Network Connections (NetworkManager, nmcli & nmtui)',
+      '8.4 Testing Network Connectivity (ping, nslookup, dig, host & arp)',
+      '8.5 Monitoring Network Connections (netstat -tulnp, tcpdump & iftop)',
+      '8.6 Inspecting Socket Statistics (ss -tulnp, ss -s & Socket States)',
+      '8.7 Tracing Network Routes (traceroute, tracepath, mtr & ip route)'
     ],
-    laymanSummary: 'Connecting your house to the neighborhood, testing if pipes are flowing, and putting a smart guard at the gate to block intruders.',
-    houseAnalogy: 'Knocking on a neighbor’s door (ping), tracing every street corner (traceroute), phonebook lookup (DNS/dig), and the Security Gate rulebook (iptables/UFW).',
-    kenyanAnalogy: 'Flashing a friend’s phone to see if they are online (ping), tracking each matatu stage along Waiyaki Way (traceroute), and the Watchman/Askari at the estate barrier checking visitor plates (iptables).'
+    laymanSummary: 'Configuring IP addresses, managing network interfaces, setting up firewalls (iptables/firewalld/UFW), testing connectivity, monitoring traffic, inspecting sockets, and tracing routes.',
+    houseAnalogy: 'House doors (enp0s3/wlan0/lo), mailbox numbers (IP/DHCP), the Security Guard’s top-to-bottom rulebook (iptables/firewalld/UFW), door knocker (ping), phonebook (dig/nslookup), security monitor (netstat/ss), and delivery tracker (traceroute).',
+    kenyanAnalogy: 'Compound gates & Plot numbers (Static IP vs Reception Visitor Badge DHCP), the Estate Askari’s clipboard (iptables), flashing a friend ("Uko hapo?" ping), G4S van (TCP) vs Boda-Boda (UDP), KPLC smart scanner (ss), and tracking every matatu stage along the highway (traceroute).'
   },
   {
     id: 9,
+    title: 'Networking Services',
+    status: 'playable',
+    topicKey: 'topic9',
+    icon: '🛎️',
+    subtopics: [
+      '9.1 Dynamic Host Configuration Protocol (DHCP – DORA, Leases, Reservations, APIPA)',
+      '9.2 Domain Name System (DNS – /etc/hosts, Resolver, Root → TLD → Authoritative, Records, TTL)',
+      '9.3 File Transfer Protocol (FTP – Ports 21/20, Active vs Passive, get/put, vsftpd, SFTP)'
+    ],
+    laymanSummary: 'The three helper services every network relies on: automatic addresses (DHCP), name-to-number lookups (DNS), and moving files between computers (FTP).',
+    houseAnalogy: 'The Gatekeeper handing out temporary house keys (DHCP), the Librarian with the giant phonebook (DNS), and the Delivery Truck carrying boxes between houses (FTP).',
+    kenyanAnalogy: 'The office reception handing out visitor badges (DHCP), your phone contacts list & well-connected friend (DNS), and the Matatu Sacco parcel office sending mzigo upcountry (FTP vs sealed G4S van SFTP).'
+  },
+  {
+    id: 10,
     title: 'Shell & Bash Scripting',
     status: 'upcoming',
     icon: '📜',
@@ -763,7 +783,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'Leaving a clear morning duty roster on the kitchen table (chopping sukuma, boiling tea, locking the gate) with labeled spice tins (variables) so everything runs like clockwork!'
   },
   {
-    id: 10,
+    id: 11,
     title: 'System Administration & Boot Process',
     status: 'upcoming',
     icon: '🎛️',
@@ -777,14 +797,13 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'Being the Plot Caretaker—checking the roof water tank level (df -h), watching the KPLC meter load (top), and turning on the compound lights at dawn.'
   },
   {
-    id: 11,
+    id: 12,
     title: 'Advanced Linux & Cloud/DevOps',
     status: 'upcoming',
     icon: '🐳',
     subtopics: [
       'Loadable Kernel Modules (LKMs - Plug-in Foundation Tools)',
       'Docker Containers (Self-Contained Portable Rooms)',
-      'Community Helpers (DHCP Gatekeeper, DNS Phonebook, FTP Truck)',
       'Web Servers: Apache (Many Waiters) vs. Nginx (Fast Queue Counter)'
     ],
     laymanSummary: 'Packing apps into portable rooms that run anywhere (Docker) and running fast web shops for thousands of visitors (Nginx vs Apache).',
@@ -792,7 +811,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'A fitted shipping-container duka that can be lifted by lorry to any town and opened immediately (Docker), and a traditional hotel with many waiters (Apache) vs a fast supermarket express checkout (Nginx).'
   },
   {
-    id: 11,
+    id: 13,
     title: 'Linux in Cloud & DevOps',
     status: 'upcoming',
     icon: '☁️',

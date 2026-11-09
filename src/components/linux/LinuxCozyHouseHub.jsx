@@ -33,22 +33,26 @@ import { linuxTopic4Subtopics } from './linuxTopic4Data';
 import { linuxTopic5Subtopics } from './linuxTopic5Data';
 import { linuxTopic6Subtopics } from './linuxTopic6Data';
 import { linuxTopic7Subtopics } from './linuxTopic7Data';
+import { linuxTopic8Subtopics } from './linuxTopic8Data';
+import { linuxTopic9Subtopics } from './linuxTopic9Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
-  // Top-level view: 'topic1' | 'topic2' | 'topic3' | 'topic4' | 'topic5' | 'topic6' | 'topic7' | 'roadmap'
-  // Default to 'topic7' so the user immediately sees Topic 7: User and Group Management!
-  const [mainTab, setMainTab] = useState('topic7');
+  // Top-level view: 'topic1' ... 'topic9' | 'roadmap'
+  // Default to 'topic9' so the user immediately sees Topic 9: Networking Services!
+  const [mainTab, setMainTab] = useState('topic9');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, and Topic 7
+  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, and Topic 8
   const [activeTopic1SubId, setActiveTopic1SubId] = useState('distributions');
   const [activeTopic2SubId, setActiveTopic2SubId] = useState('file-system');
   const [activeTopic4SubId, setActiveTopic4SubId] = useState('file-management');
   const [activeTopic5SubId, setActiveTopic5SubId] = useState('tar-archiving');
   const [activeTopic6SubId, setActiveTopic6SubId] = useState('package-managers-and-systemctl');
   const [activeTopic7SubId, setActiveTopic7SubId] = useState('user-management-overview');
+  const [activeTopic8SubId, setActiveTopic8SubId] = useState('configuring-network-interfaces');
+  const [activeTopic9SubId, setActiveTopic9SubId] = useState('dhcp-service');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -235,7 +239,41 @@ export default function LinuxCozyHouseHub() {
   // 7.12 Managing Administrative Access (sudo Golden Key & visudo)
   const [t7SudoKeyOption, setT7SudoKeyOption] = useState('run'); // 'run' | 'list' | 'extend' | 'return' | 'visudo' | 'su_vs_sudo'
 
-  // Determine current active subtopics list and current subtopic object for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6 & Topic 7
+  // ==========================================================================
+  // TOPIC 8 TOYBOX STATES (LINUX NETWORKING & FIREWALLS - 7 SUBTOPICS)
+  // ==========================================================================
+  // 8.1 Configuring Network Interfaces & Firewalls
+  const [t8AddressMethod, setT8AddressMethod] = useState('static'); // 'static' | 'dhcp'
+  const [t8FirewallTool, setT8FirewallTool] = useState('iptables_fixed'); // 'iptables_wrong' | 'iptables_fixed' | 'firewalld' | 'ufw'
+  // 8.2 Managing IP Addresses and Interfaces (ip, ifconfig, ethtool, hostname)
+  const [t8IpToolAction, setT8IpToolAction] = useState('ip_a'); // 'ip_a' | 'ip_link_up' | 'ip_addr_add' | 'ifconfig' | 'ethtool' | 'hostname'
+  const [t8GateUp, setT8GateUp] = useState(true);
+  // 8.3 Managing Network Connections (nmcli & nmtui)
+  const [t8NmStep, setT8NmStep] = useState('step1_devices'); // 'step1_devices' | 'step2_ip_gw_dns' | 'step3_method' | 'step4_restart_verify' | 'nmtui_form'
+  // 8.4 Testing Network Connectivity (ping, nslookup, dig, host, arp)
+  const [t8TestTool, setT8TestTool] = useState('ping'); // 'ping' | 'nslookup' | 'dig' | 'host' | 'arp'
+  // 8.5 Monitoring Network Connections (netstat, tcpdump, iftop)
+  const [t8MonitorTool, setT8MonitorTool] = useState('netstat_tulnp'); // 'netstat_tulnp' | 'netstat_states' | 'tcpdump' | 'iftop'
+  // 8.6 Inspecting Socket Statistics (ss)
+  const [t8SsOption, setT8SsOption] = useState('ss_tulnp'); // 'ss_tulnp' | 'ss_summary' | 'ss_estab' | 'ss_port22' | 'ss_vs_netstat'
+  // 8.7 Tracing Network Routes (traceroute, tracepath, mtr, ip route)
+  const [t8RouteTool, setT8RouteTool] = useState('traceroute_ok'); // 'ip_route' | 'traceroute_ok' | 'traceroute_block' | 'tracepath' | 'mtr'
+
+  // ==========================================================================
+  // TOPIC 9 TOYBOX STATES (NETWORKING SERVICES - 3 SUBTOPICS)
+  // ==========================================================================
+  // 9.1 DHCP: DORA step-through (0 = not started, 1..4 = D,O,R,A) + Linux tool view
+  const [t9DoraStep, setT9DoraStep] = useState(0);
+  const [t9DhcpView, setT9DhcpView] = useState('client'); // 'client' | 'server' | 'leases' | 'apipa'
+  // 9.2 DNS: lookup journey step (0..6) + record type
+  const [t9DnsStep, setT9DnsStep] = useState(0);
+  const [t9DnsRecord, setT9DnsRecord] = useState('A'); // 'A' | 'AAAA' | 'CNAME' | 'MX' | 'NS' | 'PTR' | 'TXT'
+  // 9.3 FTP: session log + security view
+  const [t9FtpLog, setT9FtpLog] = useState(['# Tap "open" to phone the warehouse office on Port 21!']);
+  const [t9FtpConnected, setT9FtpConnected] = useState(false);
+  const [t9FtpSecureView, setT9FtpSecureView] = useState('ftp'); // 'ftp' | 'sftp'
+
+  // Determine current active subtopics list and current subtopic object for Topic 1, 2, 4, 5, 6, 7 & 8
   const currentSubtopicsList =
     mainTab === 'topic1'
       ? linuxTopic1Subtopics
@@ -247,7 +285,11 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic5Subtopics
       : mainTab === 'topic6'
       ? linuxTopic6Subtopics
-      : linuxTopic7Subtopics;
+      : mainTab === 'topic7'
+      ? linuxTopic7Subtopics
+      : mainTab === 'topic8'
+      ? linuxTopic8Subtopics
+      : linuxTopic9Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -259,14 +301,20 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic5SubId
       : mainTab === 'topic6'
       ? activeTopic6SubId
-      : activeTopic7SubId;
+      : mainTab === 'topic7'
+      ? activeTopic7SubId
+      : mainTab === 'topic8'
+      ? activeTopic8SubId
+      : activeTopic9SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
     else if (mainTab === 'topic4') setActiveTopic4SubId(id);
     else if (mainTab === 'topic5') setActiveTopic5SubId(id);
     else if (mainTab === 'topic6') setActiveTopic6SubId(id);
-    else setActiveTopic7SubId(id);
+    else if (mainTab === 'topic7') setActiveTopic7SubId(id);
+    else if (mainTab === 'topic8') setActiveTopic8SubId(id);
+    else setActiveTopic9SubId(id);
   };
 
   const currentSubtopic =
@@ -303,6 +351,8 @@ export default function LinuxCozyHouseHub() {
     activeTopic5SubId,
     activeTopic6SubId,
     activeTopic7SubId,
+    activeTopic8SubId,
+    activeTopic9SubId,
     selectedCmdNum,
     mainTab
   ]);
@@ -599,7 +649,37 @@ export default function LinuxCozyHouseHub() {
               }`}
             >
               <span>👨‍👩‍👧‍👦</span>
-              <span>Topic 7: Users & Groups (12)</span>
+              <span>Topic 7 (12)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
+                setMainTab('topic8');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+                mainTab === 'topic8'
+                  ? 'bg-cyan-600 text-white border-cyan-700 shadow-sm scale-105'
+                  : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-950 border-cyan-300'
+              }`}
+            >
+              <span>🛡️</span>
+              <span>Topic 8 (7)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
+                setMainTab('topic9');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+                mainTab === 'topic9'
+                  ? 'bg-sky-700 text-white border-sky-800 shadow-sm scale-105'
+                  : 'bg-sky-50 hover:bg-sky-100 text-sky-950 border-sky-300'
+              }`}
+            >
+              <span>🛎️</span>
+              <span>Topic 9: Services (3)</span>
             </button>
 
             <button
@@ -659,6 +739,10 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 6 • Package Management & systemctl (5 Subtopics)'
                       : mainTab === 'topic7'
                       ? 'Topic 7 • User and Group Management (12 Subtopics)'
+                      : mainTab === 'topic8'
+                      ? 'Topic 8 • Linux Networking & Firewalls (7 Subtopics)'
+                      : mainTab === 'topic9'
+                      ? 'Topic 9 • Networking Services (3 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -682,6 +766,10 @@ export default function LinuxCozyHouseHub() {
                   ? 'Topic 6: Package Management & systemctl 🛒🏪🚚🚀🧰'
                   : mainTab === 'topic7'
                   ? 'Topic 7: User & Group Management 👨‍👩‍👧‍👦🏗️🛎️🔐🪪🏷️🔑'
+                  : mainTab === 'topic8'
+                  ? 'Topic 8: Linux Networking & Firewalls 🚪🪪🧑‍💼✊📹⚡🗺️'
+                  : mainTab === 'topic9'
+                  ? 'Topic 9: Networking Services 🪪📖🚚'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -700,7 +788,11 @@ export default function LinuxCozyHouseHub() {
                   ? 'Learn how software is installed, updated, and removed across Linux distributions! Explore Package Managers & the systemctl remote control, the Ubuntu Supermarket (apt-get), the .deb Delivery Van (dpkg), the modern Fedora Hardware Store (dnf), and the classic CentOS/RHEL Hardware Store (yum)!'
                   : mainTab === 'topic7'
                   ? 'Master all 12 subtopics of User and Group Management! Meet the House Guestbook (/etc/passwd) & Locked Password Safe (/etc/shadow), build rooms with useradd & friendly adduser, remove users with userdel, manage passwords with passwd, scan IDs with id/who/w/last/awk, organize team badges with groupadd/usermod -aG/groupdel/groups/getent, and safely borrow the Golden Master Key with sudo & visudo!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 7 are fully interactive right now!'}
+                  : mainTab === 'topic8'
+                  ? 'From configuring IP addresses and managing network interfaces to setting up firewalls (iptables, firewalld & UFW), testing connectivity (ping, nslookup, dig, arp), monitoring live traffic (netstat, tcpdump, iftop), inspecting high-speed sockets (ss), and tracing network routes (traceroute, tracepath, mtr, ip route)!'
+                  : mainTab === 'topic9'
+                  ? 'Meet the three helpers every network depends on: the Gatekeeper who hands out addresses automatically (DHCP), the Librarian who turns names into numbers (DNS), and the Delivery Truck that carries files between computers (FTP)—plus why the sealed SFTP van beats the open FTP pickup!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 9 are fully interactive right now!'}
               </p>
             </div>
 
@@ -801,14 +893,44 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic7');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic7'
                     ? 'bg-orange-600 text-white border-orange-700 shadow-sm'
                     : 'bg-white text-slate-800 border-slate-300 hover:bg-orange-50'
                 }`}
               >
-                <span>👨‍👩‍👧‍👦 7. Users & Groups</span>
+                <span>👨‍👩‍👧‍👦 7. Users</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">12</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic8');
+                }}
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic8'
+                    ? 'bg-cyan-600 text-white border-cyan-700 shadow-sm'
+                    : 'bg-white text-slate-800 border-slate-300 hover:bg-cyan-50'
+                }`}
+              >
+                <span>🛡️ 8. Network</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">7</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic9');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic9'
+                    ? 'bg-sky-700 text-white border-sky-800 shadow-sm'
+                    : 'bg-white text-slate-800 border-slate-300 hover:bg-sky-50'
+                }`}
+              >
+                <span>🛎️ 9. Services (DHCP/DNS/FTP)</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">3</span>
               </button>
             </div>
           </div>
@@ -1277,14 +1399,16 @@ export default function LinuxCozyHouseHub() {
         )}
 
         {/* =====================================================================
-           VIEW C: TOPIC 1, TOPIC 2, TOPIC 4, TOPIC 5, TOPIC 6, OR TOPIC 7 PLAYGROUND
+           VIEW C: TOPIC 1, TOPIC 2, TOPIC 4, TOPIC 5, TOPIC 6, TOPIC 7, OR TOPIC 8 PLAYGROUND
            ===================================================================== */}
         {(mainTab === 'topic1' ||
           mainTab === 'topic2' ||
           mainTab === 'topic4' ||
           mainTab === 'topic5' ||
           mainTab === 'topic6' ||
-          mainTab === 'topic7') && (
+          mainTab === 'topic7' ||
+          mainTab === 'topic8' ||
+          mainTab === 'topic9') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-white rounded-3xl p-4 sm:p-5 border-4 border-amber-200 shadow-sm space-y-3">
@@ -1303,7 +1427,11 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 5: Archiving and Compressing (6 Subtopics)'
                       : mainTab === 'topic6'
                       ? 'Topic 6: Package Management (5 Subtopics)'
-                      : 'Topic 7: User and Group Management (12 Subtopics)'}
+                      : mainTab === 'topic7'
+                      ? 'Topic 7: User and Group Management (12 Subtopics)'
+                      : mainTab === 'topic8'
+                      ? 'Topic 8: Linux Networking & Firewalls (7 Subtopics)'
+                      : 'Topic 9: Networking Services (3 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -1357,6 +1485,8 @@ export default function LinuxCozyHouseHub() {
                     ? 'lg:grid-cols-3'
                     : currentSubtopicsList.length === 6
                     ? 'lg:grid-cols-3 xl:grid-cols-6'
+                    : currentSubtopicsList.length === 7
+                    ? 'lg:grid-cols-4 xl:grid-cols-7'
                     : 'lg:grid-cols-5'
                 } gap-2.5`}
               >
@@ -6081,6 +6211,1387 @@ gardeners:x:1004:alice
               </div>
             )}
 
+            {/* =================================================================
+                TOYBOX 8.1: CONFIGURING NETWORK INTERFACES & FIREWALLS
+                ================================================================= */}
+            {activeSubtopicId === 'configuring-network-interfaces' && (
+              <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-md space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-cyan-100 pb-4">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-cyan-900 bg-cyan-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 8.1
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      House Entrances, Static vs. DHCP Address & The Firewall Rule Order Lab (`iptables`, `firewalld`, `ufw`)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Compare Static IP vs. DHCP Welcome Desk, then test the Security Guard’s Top-to-Bottom Rulebook (`iptables -I` vs `-A`), `firewalld` Zones, and `ufw`!
+                    </p>
+                  </div>
+                </div>
+
+                {/* Part A: Static vs DHCP Toggle */}
+                <div className="bg-cyan-50/70 rounded-2xl p-4 border-2 border-cyan-200 space-y-3">
+                  <div className="text-xs font-black uppercase tracking-wider text-cyan-950">
+                    1️⃣ Pick Your House Address System (Door `enp0s3` + `wlan0` + `lo`):
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT8AddressMethod('static');
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                        t8AddressMethod === 'static'
+                          ? 'bg-cyan-600 text-white border-cyan-800 shadow-sm'
+                          : 'bg-white hover:bg-cyan-100 text-slate-900 border-cyan-200'
+                      }`}
+                    >
+                      <div className="font-black text-xs sm:text-sm">
+                        🪧 Static IP (`ipv4.method manual` — Permanent Plot #)
+                      </div>
+                      <div className="text-xs mt-1 opacity-90">
+                        Fixed address (192.168.1.5/24) + Main Gate (192.168.1.1) + DNS Phonebook (8.8.8.8). Best for servers & shops!
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT8AddressMethod('dhcp');
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                        t8AddressMethod === 'dhcp'
+                          ? 'bg-cyan-600 text-white border-cyan-800 shadow-sm'
+                          : 'bg-white hover:bg-cyan-100 text-slate-900 border-cyan-200'
+                      }`}
+                    >
+                      <div className="font-black text-xs sm:text-sm">
+                        🪪 DHCP (`ipv4.method auto` — Welcome Desk Visitor Badge)
+                      </div>
+                      <div className="text-xs mt-1 opacity-90">
+                        Automatic temporary badge via DORA (Discover → Offer → Request → Acknowledge). Best for laptops & guests!
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Part B: Firewall Manager & Rule Order Lab */}
+                <div className="space-y-2.5">
+                  <div className="text-xs font-black uppercase tracking-wider text-slate-700">
+                    2️⃣ Pick a Firewall Guard & Test the Famous Top-to-Bottom Rule Order Problem:
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                    {[
+                      {
+                        id: 'iptables_wrong',
+                        title: '❌ iptables (Wrong Order)',
+                        sub: 'DROP rule above ACCEPT SSH rule'
+                      },
+                      {
+                        id: 'iptables_fixed',
+                        title: '✅ iptables -I (Fixed Order!)',
+                        sub: 'Insert SSH exception at Line #1'
+                      },
+                      {
+                        id: 'firewalld',
+                        title: '🗺️ firewalld (Zones Tablet)',
+                        sub: 'Public / Home / DMZ Zones + --reload'
+                      },
+                      {
+                        id: 'ufw',
+                        title: '📱 UFW (Friendly App)',
+                        sub: 'ufw allow ssh / ufw enable'
+                      }
+                    ].map((fw) => (
+                      <button
+                        key={fw.id}
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT8FirewallTool(fw.id);
+                        }}
+                        className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                          t8FirewallTool === fw.id
+                            ? 'bg-slate-900 text-amber-300 border-slate-950 shadow-sm'
+                            : 'bg-slate-50 hover:bg-slate-100 text-slate-900 border-slate-200'
+                        }`}
+                      >
+                        <div className="font-mono font-black text-xs">{fw.title}</div>
+                        <div className="text-xs mt-1 opacity-90">{fw.sub}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                  <pre className="whitespace-pre-wrap leading-relaxed">
+                    {t8AddressMethod === 'static'
+                      ? `# 🏠 House Doors & Static IP Setup:\n• Front Wired Door (enp0s3): 192.168.1.5/24 (Permanent Plot #) | Gateway: 192.168.1.1 | DNS: 8.8.8.8\n• Back Wi-Fi Door (wlan0):   192.168.1.7/24 (Wireless Drone Door)\n• Secret Hallway (lo):       127.0.0.1/8    (Internal Family Loopback)\n--------------------------------------------------------------------------------\n`
+                      : `# 🪪 House Doors & DHCP Welcome Desk (DORA Handshake):\n1. DISCOVER: "Hodi! Any DHCP Server here?" → 2. OFFER: "Take 192.168.1.105!"\n3. REQUEST:  "I'll take 192.168.1.105!"    → 4. ACK:   "Signed for 24 hours!"\n--------------------------------------------------------------------------------\n`}
+                    {t8FirewallTool === 'iptables_wrong' &&
+                      `# ❌ THE TOP-TO-BOTTOM RULE ORDER MISTAKE:\n$ sudo iptables -A INPUT -s 192.168.1.3 -j DROP\n$ sudo iptables -A INPUT -s 192.168.1.3 -p tcp --dport 22 -j ACCEPT\n\nGuard's Rulebook (INPUT Chain):\n  Line 1: DROP   all  -- 192.168.1.3  anywhere   <-- Guard checks Line 1 FIRST and blocks Mr. X!\n  Line 2: ACCEPT tcp  -- 192.168.1.3  anywhere tcp dpt:ssh  <-- NEVER REACHED!\n\nResult when Mr. X tries 'ssh sam@192.168.1.5': ❌ Connection Timed Out!`}
+                    {t8FirewallTool === 'iptables_fixed' &&
+                      `# ✅ THE FIX: Insert (-I) the specific SSH exception at Line #1 ABOVE the general DROP!\n$ sudo iptables -I INPUT 1 -s 192.168.1.3 -p tcp --dport 22 -j ACCEPT\n$ sudo iptables -A INPUT -s 192.168.1.3 -j DROP\n$ sudo sh -c "iptables-save > /etc/iptables/rules.v4"   # Save in waterproof notebook!\n\nGuard's Rulebook (INPUT Chain):\n  Line 1: ACCEPT tcp  -- 192.168.1.3  anywhere tcp dpt:ssh  <-- Checked FIRST! ✅ SSH Allowed!\n  Line 2: DROP   all  -- 192.168.1.3  anywhere              <-- Blocks all other ports from Mr. X!`}
+                    {t8FirewallTool === 'firewalld' &&
+                      `# 🗺️ MODERN SECURITY MANAGER (firewalld Zones):\n$ sudo systemctl start firewalld && sudo systemctl enable firewalld\n$ sudo firewall-cmd --zone=public --add-interface=enp0s3 --permanent\n$ sudo firewall-cmd --zone=public --add-service=ssh --permanent\n$ sudo firewall-cmd --zone=public --add-port=80/tcp --permanent\n$ sudo firewall-cmd --reload\n\nActive Zones:\n  public (interfaces: enp0s3) --> services: ssh, dhcpv6-client | ports: 80/tcp ✅`}
+                    {t8FirewallTool === 'ufw' &&
+                      `# 📱 FRIENDLY SECURITY MANAGER (UFW - Uncomplicated Firewall):\n$ sudo ufw enable\n$ sudo ufw allow ssh\n$ sudo ufw allow 80/tcp\n$ sudo ufw deny 8080\n$ sudo ufw status\nStatus: active\nTo          Action      From\n--          ------      ----\n22/tcp      ALLOW       Anywhere   (SSH Side Door Open ✅)\n80/tcp      ALLOW       Anywhere   (Web Front Door Open ✅)\n8080        DENY        Anywhere   (Door 8080 Padlocked 🚫)`}
+                  </pre>
+                </div>
+              </div>
+            )}
+
+            {/* =================================================================
+                TOYBOX 8.2: MANAGING IP ADDRESSES AND INTERFACES
+                ================================================================= */}
+            {activeSubtopicId === 'managing-ip-addresses-and-interfaces' && (
+              <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-md space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-emerald-100 pb-4">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-900 bg-emerald-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 8.2
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The Door & Address Plate Workbench (`ip a`, `ip link`, `ifconfig`, `ethtool`, `hostnamectl`)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Click any tool below to inspect MAC licence plates vs. IP plot numbers, bolt or unbolt the front gate (`UP`/`DOWN`), test pipe speed (`ethtool`), or paint the mailbox sign (`hostnamectl`)!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {[
+                    {
+                      id: 'ip_a',
+                      cmd: 'ip addr show  (ip a)',
+                      label: '📱 Scan All Doors & IPs'
+                    },
+                    {
+                      id: 'ip_link_up',
+                      cmd: t8GateUp ? 'sudo ip link set enp0s3 down' : 'sudo ip link set enp0s3 up',
+                      label: t8GateUp ? '🔒 Bolt Front Gate DOWN' : '🔓 Swing Front Gate UP'
+                    },
+                    {
+                      id: 'ip_addr_add',
+                      cmd: 'sudo ip addr add 192.168.1.50/24 dev enp0s3',
+                      label: '🪧 Hang Extra IP Plate'
+                    },
+                    {
+                      id: 'ifconfig',
+                      cmd: 'ifconfig enp0s3',
+                      label: '📋 Classic Door Inspector'
+                    },
+                    {
+                      id: 'ethtool',
+                      cmd: 'ethtool enp0s3',
+                      label: '🔧 Plumber’s Pipe Gauge'
+                    },
+                    {
+                      id: 'hostname',
+                      cmd: 'hostnamectl set-hostname LinuxHome',
+                      label: '📬 Mailbox Nameplate'
+                    }
+                  ].map((btn) => (
+                    <button
+                      key={btn.id}
+                      onClick={() => {
+                        sounds.playSuccess();
+                        if (btn.id === 'ip_link_up') {
+                          setT8GateUp((prev) => !prev);
+                        }
+                        setT8IpToolAction(btn.id);
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                        t8IpToolAction === btn.id
+                          ? 'bg-emerald-600 text-white border-emerald-800 shadow-sm'
+                          : 'bg-emerald-50 hover:bg-emerald-100 text-slate-900 border-emerald-200'
+                      }`}
+                    >
+                      <div className="font-mono font-black text-xs">{btn.cmd}</div>
+                      <div className="text-xs font-bold mt-1">{btn.label}</div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                  {t8IpToolAction === 'ip_a' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 state UNKNOWN
+    inet 127.0.0.1/8 scope host lo              <-- 🏠 Internal Hallway (Loopback)
+2: enp0s3: <BROADCAST,MULTICAST,${t8GateUp ? 'UP,LOWER_UP' : 'DOWN'}> mtu 1500 state ${t8GateUp ? 'UP 🟢' : 'DOWN 🔴'}
+    link/ether 08:00:27:ab:cd:ef brd ff:ff:ff:ff:ff:ff  <-- 🚗 Permanent MAC Number Plate
+    inet 192.168.1.5/24 brd 192.168.1.255 scope global enp0s3 <-- 📍 Current IP Plot Number
+3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 state UP 🟢
+    link/ether 00:1c:bf:99:88:77 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.7/24 scope global wlan0`}
+                    </pre>
+                  )}
+                  {t8IpToolAction === 'ip_link_up' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ sudo ip link set enp0s3 ${t8GateUp ? 'up' : 'down'}
+$ ip link show enp0s3
+2: enp0s3: <BROADCAST,MULTICAST${t8GateUp ? ',UP,LOWER_UP' : ''}> mtu 1500 state ${t8GateUp ? 'UP 🟢 (Front Gate Unlocked & Wide Open!)' : 'DOWN 🔴 (Front Gate Padlocked Shut!)'}
+💡 Click the button again to toggle the gate back!`}
+                    </pre>
+                  )}
+                  {t8IpToolAction === 'ip_addr_add' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ sudo ip addr add 192.168.1.50/24 dev enp0s3
+$ ip -4 addr show enp0s3
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> state UP
+    inet 192.168.1.5/24 scope global enp0s3
+    inet 192.168.1.50/24 scope global secondary enp0s3  <-- 🪧 Extra Address Plate Attached!
+
+# To remove it later:
+$ sudo ip addr del 192.168.1.50/24 dev enp0s3`}
+                    </pre>
+                  )}
+                  {t8IpToolAction === 'ifconfig' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ ifconfig enp0s3
+enp0s3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.1.5  netmask 255.255.255.0  broadcast 192.168.1.255
+        ether 08:00:27:ab:cd:ef  txqueuelen 1000  (Ethernet)
+        RX packets 1420  bytes 1854320 (1.8 MB)
+        TX packets 980   bytes 412000 (412.0 KB)
+📋 Classic Door Inspector: Shows IP, Subnet Mask (255.255.255.0 = /24), MAC, and packages received/sent!`}
+                    </pre>
+                  )}
+                  {t8IpToolAction === 'ethtool' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ ethtool enp0s3
+Settings for enp0s3:
+        Speed: 1000Mb/s          <-- 🚰 High-Pressure Gigabit Pipe!
+        Duplex: Full             <-- 🌉 Two-Way Highway Bridge (Send & Receive at once!)
+        Port: Twisted Pair
+        Link detected: yes       <-- 🔌 Physical Ethernet Cable is plugged in tight!`}
+                    </pre>
+                  )}
+                  {t8IpToolAction === 'hostname' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ hostname
+LinuxHome
+
+$ sudo hostnamectl set-hostname Sam-Cozy-Boma
+$ hostnamectl
+   Static hostname: Sam-Cozy-Boma
+         Icon name: computer-vm
+  Operating System: Ubuntu 24.04 LTS
+📬 Your house mailbox now proudly displays "Sam-Cozy-Boma" on the network!`}
+                    </pre>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* =================================================================
+                TOYBOX 8.3: MANAGING NETWORK CONNECTIONS (`nmcli` & `nmtui`)
+                ================================================================= */}
+            {activeSubtopicId === 'managing-network-connections' && (
+              <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-indigo-400 shadow-md space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-indigo-100 pb-4">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-indigo-900 bg-indigo-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 8.3
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The NetworkManager Office (`nmcli` Permanent Setup & `nmtui` Interactive Form)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Step through Sam’s permanent connection setup with `nmcli` or open the friendly `nmtui` text menu!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                  {[
+                    {
+                      id: 'step1_devices',
+                      title: '1️⃣ nmcli d',
+                      sub: 'Check All Doors & Status'
+                    },
+                    {
+                      id: 'step2_ip_gw_dns',
+                      title: '2️⃣ nmcli con mod',
+                      sub: 'Set IP, Gateway & DNS'
+                    },
+                    {
+                      id: 'step3_method',
+                      title: '3️⃣ ipv4.method',
+                      sub: 'manual (Static) vs auto'
+                    },
+                    {
+                      id: 'step4_restart_verify',
+                      title: '4️⃣ down / up & show',
+                      sub: 'Restart Door & Verify ID'
+                    },
+                    {
+                      id: 'nmtui_form',
+                      title: '5️⃣ 🖥️ nmtui Form',
+                      sub: 'Interactive Text Menu'
+                    }
+                  ].map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT8NmStep(s.id);
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                        t8NmStep === s.id
+                          ? 'bg-indigo-600 text-white border-indigo-800 shadow-sm'
+                          : 'bg-indigo-50 hover:bg-indigo-100 text-slate-900 border-indigo-200'
+                      }`}
+                    >
+                      <div className="font-mono font-black text-xs">{s.title}</div>
+                      <div className="text-xs mt-1 opacity-90">{s.sub}</div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                  {t8NmStep === 'step1_devices' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ nmcli d
+DEVICE   TYPE      STATE                   CONNECTION
+enp0s3   ethernet  connected               enp0s3
+wlan0    wifi      connected               CozyHome_WiFi
+lo       loopback  connected (externally)  lo
+
+💡 Walked around the compound: Front wired gate (enp0s3) and Wi-Fi door (wlan0) are ready!`}
+                    </pre>
+                  )}
+                  {t8NmStep === 'step2_ip_gw_dns' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`# Step 2: Give your house a Permanent Plot Number (IP), Main Estate Gate (Gateway) & Phonebook (DNS):
+$ sudo nmcli connection modify enp0s3 ipv4.addresses 192.168.1.5/24
+$ sudo nmcli connection modify enp0s3 ipv4.gateway 192.168.1.1
+$ sudo nmcli connection modify enp0s3 ipv4.dns "8.8.8.8 8.8.4.4"
+
+✅ Saved directly into /etc/NetworkManager/system-connections/enp0s3.nmconnection!`}
+                    </pre>
+                  )}
+                  {t8NmStep === 'step3_method' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`# Step 3: Choose Permanent Address (manual) OR Temporary Welcome Desk Badge (auto):
+$ sudo nmcli connection modify enp0s3 ipv4.method manual   # Locks in your permanent Static IP!
+
+# (Or if you ever want to switch back to automatic DHCP:)
+$ sudo nmcli connection modify enp0s3 ipv4.method auto`}
+                    </pre>
+                  )}
+                  {t8NmStep === 'step4_restart_verify' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`# Step 4: Close & Reopen the Gate so the new Address Plate takes effect:
+$ sudo nmcli connection down enp0s3 && sudo nmcli connection up enp0s3
+Connection 'enp0s3' successfully activated.
+
+$ nmcli device show enp0s3
+GENERAL.DEVICE:     enp0s3
+IP4.ADDRESS[1]:     192.168.1.5/24    ✅
+IP4.GATEWAY:        192.168.1.1       ✅
+IP4.DNS[1]:         8.8.8.8           ✅`}
+                    </pre>
+                  )}
+                  {t8NmStep === 'nmtui_form' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed text-sky-200">
+{`$ sudo nmtui
+┌─────────────────────────┤ NetworkManager TUI ├─────────────────────────┐
+│  Edit Connection: [ enp0s3                                          ]  │
+│  IPv4 CONFIGURATION: <Manual>                                          │
+│    Addresses: [ 192.168.1.5/24                                      ]  │
+│    Gateway:   [ 192.168.1.1                                         ]  │
+│    DNS:       [ 8.8.8.8, 8.8.4.4                                    ]  │
+│  [X] Automatically connect                                             │
+│                                              < OK >     < Cancel >     │
+└────────────────────────────────────────────────────────────────────────┘
+🖥️ Zero commands to memorize — just use Arrow Keys, type in the boxes, and hit Enter on <OK>!`}
+                    </pre>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* =================================================================
+                TOYBOX 8.4: TESTING NETWORK CONNECTIVITY (`ping`, `nslookup`, `dig`, `host`, `arp`)
+                ================================================================= */}
+            {activeSubtopicId === 'testing-network-connectivity' && (
+              <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-md space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-amber-100 pb-4">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 8.4
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The Network Detective Kit (`ping`, `nslookup`, `dig`, `host` & `arp -a`)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Knock on Google’s door (`ping`), look up addresses in the DNS Phonebook (`nslookup`, `dig`, `host`), and inspect your Local Street Map (`arp -a`)!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                  {[
+                    { id: 'ping', cmd: 'ping -c 4 google.com', label: '✊ Door Knocker' },
+                    { id: 'nslookup', cmd: 'nslookup google.com', label: '📖 Phonebook Clerk' },
+                    { id: 'dig', cmd: 'dig google.com', label: '🏛️ Town Hall Deed' },
+                    { id: 'host', cmd: 'host google.com', label: '⚡ Quick Lookup' },
+                    { id: 'arp', cmd: 'arp -a  (or ip neigh)', label: '📣 Local Street Map' }
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT8TestTool(t.id);
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                        t8TestTool === t.id
+                          ? 'bg-amber-500 text-white border-amber-700 shadow-sm'
+                          : 'bg-amber-50 hover:bg-amber-100 text-slate-900 border-amber-200'
+                      }`}
+                    >
+                      <div className="font-mono font-black text-xs">{t.cmd}</div>
+                      <div className="text-xs font-bold mt-1">{t.label}</div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                  {t8TestTool === 'ping' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ ping -c 4 google.com
+PING google.com (142.250.185.206) 56(84) bytes of data.
+64 bytes from 142.250.185.206: icmp_seq=1 ttl=115 time=12.3 ms  <-- Knock #1: Answered in 12.3ms!
+64 bytes from 142.250.185.206: icmp_seq=2 ttl=115 time=11.9 ms  <-- Knock #2: Answered in 11.9ms!
+64 bytes from 142.250.185.206: icmp_seq=3 ttl=115 time=12.1 ms  <-- Knock #3: Answered in 12.1ms!
+64 bytes from 142.250.185.206: icmp_seq=4 ttl=115 time=12.0 ms  <-- Knock #4: Answered in 12.0ms!
+
+--- google.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3004ms ✅`}
+                    </pre>
+                  )}
+                  {t8TestTool === 'nslookup' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ nslookup google.com
+Server:         8.8.8.8
+Address:        8.8.8.8#53        <-- Asked the Google Public Phonebook (Port 53)
+
+Non-authoritative answer:
+Name:   google.com
+Address: 142.250.185.206          <-- 📖 Found Google's IPv4 Plot Number!
+Name:   google.com
+Address: 2a00:1450:4001:82f::200e <-- 📖 Found Google's IPv6 Futuristic Plot Number!`}
+                    </pre>
+                  )}
+                  {t8TestTool === 'dig' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ dig google.com
+;; QUESTION SECTION:
+;google.com.                    IN      A
+
+;; ANSWER SECTION:
+google.com.             300     IN      A       142.250.185.206   <-- 🏛️ Official A-Record + 300s Cache TTL
+
+;; Query time: 14 msec
+;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)
+💡 Tip: Run 'dig +short google.com' when you just want the clean IP number by itself!`}
+                    </pre>
+                  )}
+                  {t8TestTool === 'host' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ host google.com
+google.com has address 142.250.185.206
+google.com has IPv6 address 2a00:1450:4001:82f::200e
+google.com mail is handled by 10 smtp.google.com.`}
+                    </pre>
+                  )}
+                  {t8TestTool === 'arp' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ arp -a
+_gateway (192.168.1.1) at 00:11:22:33:44:55 [ether] on enp0s3   <-- 🚧 Main Estate Router Gate
+alice-laptop (192.168.1.2) at aa:bb:cc:11:22:33 [ether] on enp0s3 <-- 💻 Neighbor Alice's MAC Plate
+bob-phone (192.168.1.3) at dd:ee:ff:44:55:66 [ether] on enp0s3    <-- 📱 Neighbor Bob's MAC Plate
+
+$ ip neigh
+192.168.1.1 dev enp0s3 lladdr 00:11:22:33:44:55 REACHABLE
+📣 Matches every neighbor's Local IP Plot Number to their permanent MAC Vehicle Number Plate!`}
+                    </pre>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* =================================================================
+                TOYBOX 8.5: MONITORING NETWORK CONNECTIONS (`netstat`, `tcpdump`, `iftop`)
+                ================================================================= */}
+            {activeSubtopicId === 'monitoring-network-connections' && (
+              <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-rose-400 shadow-md space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-rose-100 pb-4">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-rose-900 bg-rose-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 8.5
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The House Security Monitor (`netstat -tulnp`, `tcpdump` & `iftop`)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      See which service doors (ports) are open, whether visitors came by tracked TCP Van or fast UDP Boda-Boda, and inspect live packets at the gate!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {[
+                    {
+                      id: 'netstat_tulnp',
+                      cmd: 'sudo netstat -tulnp',
+                      label: '📺 Open Doors & Programs'
+                    },
+                    {
+                      id: 'netstat_states',
+                      cmd: 'netstat -ant',
+                      label: '🤝 LISTEN vs ESTABLISHED'
+                    },
+                    {
+                      id: 'tcpdump',
+                      cmd: 'sudo tcpdump -i enp0s3 -n',
+                      label: '📹 Gate Packet Camera'
+                    },
+                    {
+                      id: 'iftop',
+                      cmd: 'sudo iftop -i enp0s3',
+                      label: '💧 Live Bandwidth Meter'
+                    }
+                  ].map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT8MonitorTool(m.id);
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                        t8MonitorTool === m.id
+                          ? 'bg-rose-600 text-white border-rose-800 shadow-sm'
+                          : 'bg-rose-50 hover:bg-rose-100 text-slate-900 border-rose-200'
+                      }`}
+                    >
+                      <div className="font-mono font-black text-xs">{m.cmd}</div>
+                      <div className="text-xs font-bold mt-1">{m.label}</div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                  {t8MonitorTool === 'netstat_tulnp' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ sudo netstat -tulnp
+Proto Local Address     Foreign Address   State    PID/Program name
+tcp   0.0.0.0:80        0.0.0.0:*         LISTEN   1120/nginx          <-- 🚐 TCP Front Web Door (:80)
+tcp   0.0.0.0:22        0.0.0.0:*         LISTEN   894/sshd            <-- 🚐 TCP Side SSH Door (:22)
+udp   127.0.0.1:53      0.0.0.0:*         LISTEN   750/systemd-resolve <-- 🛵 UDP DNS Phonebook (:53)
+
+🔑 Flag Decoder: -t (TCP Vans) | -u (UDP Bikes) | -l (Listening Doors) | -n (Numbers) | -p (Program/PID)`}
+                    </pre>
+                  )}
+                  {t8MonitorTool === 'netstat_states' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ netstat -ant
+Proto Local Address        Foreign Address       State
+tcp   0.0.0.0:22           0.0.0.0:*             LISTEN       <-- 🟢 Door unlocked, waiting for guests
+tcp   192.168.1.5:22       192.168.1.2:54321     ESTABLISHED  <-- 🤝 Neighbor Alice is actively inside SSH!
+tcp   192.168.1.5:80       203.0.113.9:49100     TIME_WAIT    <-- ⏳ Web visitor said goodbye, closing door`}
+                    </pre>
+                  )}
+                  {t8MonitorTool === 'tcpdump' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ sudo tcpdump -i enp0s3 -n port 80 -c 3
+tcpdump: verbose output suppressed, listening on enp0s3
+14:20:01.102 IP 192.168.1.2.51234 > 192.168.1.5.80: Flags [S], seq 1001       <-- 1️⃣ TCP Handshake SYN ("Sasa?")
+14:20:01.103 IP 192.168.1.5.80 > 192.168.1.2.51234: Flags [S.], seq 500, ack 1002 <-- 2️⃣ SYN-ACK ("Poa, twende!")
+14:20:01.104 IP 192.168.1.2.51234 > 192.168.1.5.80: Flags [.], ack 1          <-- 3️⃣ ACK ("Connected!")
+3 packets captured right at the front gate!`}
+                    </pre>
+                  )}
+                  {t8MonitorTool === 'iftop' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ sudo iftop -i enp0s3
+192.168.1.5  <=>  142.250.185.206 (google.com)       12.4Mb   10.8Mb   11.2Mb
+192.168.1.5  <=>  192.168.1.2     (alice-laptop)      1.2Mb    950Kb    1.0Mb
+--------------------------------------------------------------------------------
+TX (Sent):     13.6Mb peak | RX (Received): 11.7Mb peak | TOTAL: 25.3Mb
+💧 Shows live pipe usage so you immediately spot who is hogging the bandwidth!`}
+                    </pre>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* =================================================================
+                TOYBOX 8.6: INSPECTING SOCKET STATISTICS (`ss`)
+                ================================================================= */}
+            {activeSubtopicId === 'inspecting-socket-statistics' && (
+              <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-purple-400 shadow-md space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-purple-100 pb-4">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-purple-900 bg-purple-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 8.6
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The High-Speed Kernel Socket Scanner (`ss -tulnp`, `ss -s` & Socket Filter Lab)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Query the Linux Kernel directly with `ss` to inspect public (`0.0.0.0`) vs. private (`127.0.0.1`) sockets, view instant summaries (`ss -s`), and filter active connections!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                  {[
+                    { id: 'ss_tulnp', cmd: 'sudo ss -tulnp', label: '⚡ All Listening Sockets' },
+                    { id: 'ss_summary', cmd: 'ss -s', label: '📊 Instant Scoreboard' },
+                    { id: 'ss_estab', cmd: 'ss -t state established', label: '🤝 Active Chats Only' },
+                    { id: 'ss_port22', cmd: 'ss -tuln sport = :22', label: '🔑 Check Port 22 SSH' },
+                    { id: 'ss_vs_netstat', cmd: 'ss vs netstat', label: '🚀 Why ss is 10x Faster' }
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT8SsOption(item.id);
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                        t8SsOption === item.id
+                          ? 'bg-purple-600 text-white border-purple-800 shadow-sm'
+                          : 'bg-purple-50 hover:bg-purple-100 text-slate-900 border-purple-200'
+                      }`}
+                    >
+                      <div className="font-mono font-black text-xs">{item.cmd}</div>
+                      <div className="text-xs font-bold mt-1">{item.label}</div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                  {t8SsOption === 'ss_tulnp' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ sudo ss -tulnp
+Netid State  Recv-Q Send-Q Local Address:Port  Peer Address:Port Process
+tcp   LISTEN 0      511    0.0.0.0:80          0.0.0.0:*         users:(("nginx",pid=1120,fd=6))  <-- 🌍 Public Street Counter
+tcp   LISTEN 0      128    0.0.0.0:22          0.0.0.0:*         users:(("sshd",pid=894,fd=3))    <-- 🌍 Public SSH Door
+tcp   LISTEN 0      70     127.0.0.1:3306      0.0.0.0:*         users:(("mysqld",pid=1402,fd=21))<-- 🏠 Family-Only Database!
+udp   UNCONN 0      0      127.0.0.53%lo:53    0.0.0.0:*         users:(("systemd-resolve",pid=750))`}
+                    </pre>
+                  )}
+                  {t8SsOption === 'ss_summary' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ ss -s
+Total: 184
+TCP:   48 (estab 42, closed 4, orphaned 0, timewait 4)
+
+Transport Total     IP        IPv6
+RAW       1         0         1
+UDP       12        8         4
+TCP       44        39        5
+📊 Instant 1-millisecond health check of every socket in your house!`}
+                    </pre>
+                  )}
+                  {t8SsOption === 'ss_estab' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ ss -t state established
+Recv-Q Send-Q   Local Address:Port      Peer Address:Port
+0      0        192.168.1.5:ssh         192.168.1.2:54321     <-- Alice connected to SSH!
+0      0        192.168.1.5:48910       142.250.185.206:https <-- Sam browsing Google over HTTPS!`}
+                    </pre>
+                  )}
+                  {t8SsOption === 'ss_port22' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ ss -tuln sport = :22
+Netid  State   Recv-Q  Send-Q   Local Address:Port   Peer Address:Port
+tcp    LISTEN  0       128      0.0.0.0:22           0.0.0.0:*
+tcp    LISTEN  0       128      [::]:22              [::]:*
+🔑 Pinpoint filter: Confirms Port 22 (SSH) is open on both IPv4 and IPv6!`}
+                    </pre>
+                  )}
+                  {t8SsOption === 'ss_vs_netstat' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`# 🚀 WHY 'ss' REPLACED 'netstat' IN MODERN LINUX:
+• netstat (Old net-tools): Slowly reads text files inside /proc/net/tcp line by line.
+• ss      (Modern iproute2): Uses 'netlink' to query the Linux Kernel memory directly!
+• Bonus:  'ss -tulnp' uses the exact same flags you already know from 'netstat -tulnp'!`}
+                    </pre>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* =================================================================
+                TOYBOX 8.7: TRACING NETWORK ROUTES (`traceroute`, `tracepath`, `mtr`, `ip route`)
+                ================================================================= */}
+            {activeSubtopicId === 'tracing-network-routes' && (
+              <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-teal-400 shadow-md space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-teal-100 pb-4">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-teal-900 bg-teal-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 8.7
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The Matatu Stage Hop Tracker & Road Map (`ip route`, `traceroute`, `tracepath` & `mtr`)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Check your local road map (`ip route`), then track a package hop-by-hop across every highway junction (`traceroute`, `tracepath`, `mtr`) to spot roadblocks!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                  {[
+                    { id: 'ip_route', cmd: 'ip route  (or route -n)', label: '🪧 House Road Map' },
+                    { id: 'traceroute_ok', cmd: 'traceroute google.com', label: '🚌 5-Stage Clear Route' },
+                    { id: 'traceroute_block', cmd: 'traceroute (Roadblock)', label: '🚧 Spot the * * * Jam' },
+                    { id: 'tracepath', cmd: 'tracepath google.com', label: '📏 Check MTU Width' },
+                    { id: 'mtr', cmd: 'mtr --report google.com', label: '🚁 Live Loss% Tracker' }
+                  ].map((r) => (
+                    <button
+                      key={r.id}
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT8RouteTool(r.id);
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                        t8RouteTool === r.id
+                          ? 'bg-teal-600 text-white border-teal-800 shadow-sm'
+                          : 'bg-teal-50 hover:bg-teal-100 text-slate-900 border-teal-200'
+                      }`}
+                    >
+                      <div className="font-mono font-black text-xs">{r.cmd}</div>
+                      <div className="text-xs font-bold mt-1">{r.label}</div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                  {t8RouteTool === 'ip_route' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ ip route show
+default via 192.168.1.1 dev enp0s3 proto static metric 100   <-- 🚧 Default Gateway (All Other Towns -> Main Gate!)
+192.168.1.0/24 dev enp0s3 proto kernel scope link src 192.168.1.5 <-- 🏘️ Local Street Neighbors (Stay in compound!)
+
+$ route -n
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 enp0s3
+192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 enp0s3`}
+                    </pre>
+                  )}
+                  {t8RouteTool === 'traceroute_ok' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ traceroute google.com
+traceroute to google.com (142.250.185.206), 30 hops max, 60 byte packets
+ 1  _gateway (192.168.1.1)         1.8 ms   1.6 ms   1.5 ms   <-- 🏠 Stage 1: Home Router Gate
+ 2  10.20.0.1 (10.20.0.1)          5.4 ms   5.1 ms   5.3 ms   <-- 🏘️ Stage 2: Estate Fiber Box
+ 3  nbo-core-01.isp.ke (197.248.1.1) 9.8 ms 9.5 ms   9.7 ms   <-- 🏙️ Stage 3: Nairobi Central Exchange
+ 4  72.14.237.14 (72.14.237.14)   11.9 ms  12.1 ms  11.8 ms   <-- 🌐 Stage 4: Google Edge Peering
+ 5  142.250.185.206               12.3 ms  12.0 ms  12.1 ms   <-- 🎯 Stage 5: Arrived at Google!`}
+                    </pre>
+                  )}
+                  {t8RouteTool === 'traceroute_block' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ traceroute broken-site.com
+traceroute to broken-site.com (198.51.100.42), 30 hops max
+ 1  _gateway (192.168.1.1)         1.9 ms   1.7 ms   1.6 ms   <-- ✅ Home Gate is fine!
+ 2  10.20.0.1 (10.20.0.1)          5.6 ms   5.4 ms   5.5 ms   <-- ✅ Estate Fiber Box is fine!
+ 3  * * *                                                     <-- 🚨 Hop 3 Timed Out (Roadblock / Firewall Drop!)
+ 4  * * *
+💡 Detective Verdict: Your home Wi-Fi and router (Hop 1) are innocent—the roadblock is out at Hop 3!`}
+                    </pre>
+                  )}
+                  {t8RouteTool === 'tracepath' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ tracepath google.com
+ 1?: [LOCALHOST]                      pmtu 1500               <-- 📏 Parcel Width Limit (MTU) = 1500 bytes
+ 1:  _gateway                                              1.842ms
+ 2:  10.20.0.1                                             5.310ms
+ 3:  142.250.185.206                                      12.290ms reached
+     Resume: pmtu 1500 hops 3 back 3 ✅ (No sudo needed!)`}
+                    </pre>
+                  )}
+                  {t8RouteTool === 'mtr' && (
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ mtr --report --report-cycles 5 google.com
+HOST: Sam-Cozy-Boma               Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- _gateway                   0.0%     5    1.8   1.7   1.5   2.0   0.2
+  2.|-- 10.20.0.1                  0.0%     5    5.3   5.2   5.0   5.5   0.2
+  3.|-- nbo-core-01.isp.ke         0.0%     5    9.7   9.6   9.4   9.9   0.2
+  4.|-- 142.250.185.206            0.0%     5   12.1  12.1  11.9  12.3   0.1
+🚁 Live Helicopter Report: Combines ping + traceroute to show exact Packet Loss% at every hop!`}
+                    </pre>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* =================================================================
+                TOYBOX 9.1: DHCP — DORA WELCOME DESK
+                ================================================================= */}
+            {activeSubtopicId === 'dhcp-service' && (() => {
+              const doraSteps = [
+                {
+                  letter: 'D',
+                  name: 'Discover',
+                  from: '💻 New Laptop',
+                  to: '📢 Everyone (Broadcast)',
+                  bubble: '“Hodi! Is there a DHCP gatekeeper here? I need an address!”',
+                  tech: 'DHCPDISCOVER  src 0.0.0.0:68 → dst 255.255.255.255:67 (MAC 08:00:27:ab:cd:ef)'
+                },
+                {
+                  letter: 'O',
+                  name: 'Offer',
+                  from: '🛎️ DHCP Server',
+                  to: '💻 New Laptop',
+                  bubble: '“Karibu! You can have 192.168.1.105, gate 192.168.1.1, phonebook 8.8.8.8—for 24 hours.”',
+                  tech: 'DHCPOFFER  yiaddr 192.168.1.105  router 192.168.1.1  dns 8.8.8.8  lease 86400s'
+                },
+                {
+                  letter: 'R',
+                  name: 'Request',
+                  from: '💻 New Laptop',
+                  to: '📢 Everyone (Broadcast)',
+                  bubble: '“Asante! I officially request 192.168.1.105 please!”',
+                  tech: 'DHCPREQUEST  requested-ip 192.168.1.105  server-id 192.168.1.1'
+                },
+                {
+                  letter: 'A',
+                  name: 'Acknowledge',
+                  from: '🛎️ DHCP Server',
+                  to: '💻 New Laptop',
+                  bubble: '“Imeandikwa! 192.168.1.105 is yours until tomorrow. Welcome to the network!” 🎉',
+                  tech: 'DHCPACK  192.168.1.105 bound to 08:00:27:ab:cd:ef — renewal (T1) in 12h'
+                }
+              ];
+              return (
+                <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-sky-400 shadow-md space-y-5">
+                  <div className="border-b-2 border-sky-100 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-sky-900 bg-sky-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 9.1
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      The DORA Welcome Desk — Get Your Laptop an Address!
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Tap “Next Step” to walk a brand-new laptop through all 4 DHCP steps, then explore the real Linux commands below.
+                    </p>
+                  </div>
+
+                  {/* DORA progress letters */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {doraSteps.map((s, i) => (
+                      <div
+                        key={s.letter}
+                        className={`rounded-2xl p-3 text-center border-2 transition-all ${
+                          t9DoraStep > i
+                            ? 'bg-sky-600 text-white border-sky-800 scale-105 shadow-sm'
+                            : 'bg-sky-50 text-sky-900 border-sky-200'
+                        }`}
+                      >
+                        <div className="text-2xl sm:text-3xl font-black">{s.letter}</div>
+                        <div className="text-[11px] sm:text-xs font-bold">{s.name}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="bg-sky-50/70 rounded-2xl p-4 border-2 border-sky-200 min-h-[120px] flex flex-col justify-center">
+                    {t9DoraStep === 0 ? (
+                      <p className="text-sm font-bold text-slate-700 text-center">
+                        💻 A new laptop just joined the Wi-Fi with address <span className="font-mono">0.0.0.0</span> (no badge yet!). Tap <b>Next Step</b> to begin.
+                      </p>
+                    ) : (
+                      (() => {
+                        const s = doraSteps[t9DoraStep - 1];
+                        return (
+                          <div className="space-y-2">
+                            <div className="text-xs font-black text-sky-900">
+                              Step {t9DoraStep}: {s.name} — {s.from} ➡️ {s.to}
+                            </div>
+                            <div className="bg-white rounded-2xl p-3 border-2 border-sky-200 text-sm sm:text-base font-extrabold text-slate-800">
+                              💬 {s.bubble}
+                            </div>
+                            <div className="font-mono text-[11px] sm:text-xs text-slate-600">{s.tech}</div>
+                          </div>
+                        );
+                      })()
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        if (t9DoraStep < 4) {
+                          const next = t9DoraStep + 1;
+                          setT9DoraStep(next);
+                          if (next === 4) {
+                            sounds.playSuccess();
+                            confetti({ particleCount: 50, spread: 65, origin: { y: 0.7 } });
+                          } else {
+                            sounds.playPop();
+                          }
+                        }
+                      }}
+                      disabled={t9DoraStep >= 4}
+                      className="px-4 py-2.5 rounded-2xl bg-sky-600 hover:bg-sky-700 disabled:bg-slate-300 text-white font-black text-sm shadow-sm"
+                    >
+                      {t9DoraStep >= 4 ? '✅ Address Received!' : '➡️ Next Step'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        sounds.playPop();
+                        setT9DoraStep(0);
+                      }}
+                      className="px-4 py-2.5 rounded-2xl bg-white hover:bg-sky-50 text-sky-900 border-2 border-sky-300 font-black text-sm"
+                    >
+                      🔄 Start Again
+                    </button>
+                  </div>
+
+                  {/* Linux DHCP tools */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    {[
+                      { id: 'client', cmd: 'sudo dhclient -r / -v', label: '💻 Client: Release & Renew' },
+                      { id: 'server', cmd: '/etc/dhcp/dhcpd.conf', label: '🛎️ Server: Key Hook Board' },
+                      { id: 'leases', cmd: 'dhcpd.leases', label: '📒 Server Logbook' },
+                      { id: 'apipa', cmd: '169.254.x.x', label: '😕 No Reception (APIPA)' }
+                    ].map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT9DhcpView(v.id);
+                        }}
+                        className={`p-3 rounded-2xl border-2 text-left transition-all ${
+                          t9DhcpView === v.id
+                            ? 'bg-sky-600 text-white border-sky-800 shadow-sm'
+                            : 'bg-sky-50 hover:bg-sky-100 text-slate-900 border-sky-200'
+                        }`}
+                      >
+                        <div className="font-mono font-black text-xs">{v.cmd}</div>
+                        <div className="text-xs font-bold mt-1">{v.label}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+                      {t9DhcpView === 'client' &&
+                        `# 💻 On the client: hand back your badge, then ask for a fresh one
+$ sudo dhclient -r enp0s3          # Release the current lease (return the key)
+$ sudo dhclient -v enp0s3          # Run DORA again (verbose shows each step)
+DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67
+DHCPOFFER of 192.168.1.105 from 192.168.1.1
+DHCPREQUEST for 192.168.1.105 on enp0s3
+DHCPACK of 192.168.1.105 from 192.168.1.1
+bound to 192.168.1.105 -- renewal in 43200 seconds.
+
+# NetworkManager way (from Topic 8.3):
+$ sudo nmcli connection modify enp0s3 ipv4.method auto && sudo nmcli con up enp0s3`}
+                      {t9DhcpView === 'server' &&
+                        `# 🛎️ On a Linux DHCP server (isc-dhcp-server):
+$ sudo apt install isc-dhcp-server
+$ sudo nano /etc/dhcp/dhcpd.conf
+
+subnet 192.168.1.0 netmask 255.255.255.0 {
+  range 192.168.1.100 192.168.1.200;        # 🪝 Key hook board (the pool)
+  option routers 192.168.1.1;               # 🚧 Main gate (Default Gateway)
+  option domain-name-servers 8.8.8.8;       # 📖 Phonebook (DNS)
+  default-lease-time 86400;                 # ⏳ 24-hour lease
+}
+host office-printer {                        # 🏷️ Reservation: same key every time
+  hardware ethernet 00:1a:2b:3c:4d:5e;
+  fixed-address 192.168.1.50;
+}
+
+$ sudo systemctl restart isc-dhcp-server && sudo systemctl enable isc-dhcp-server`}
+                      {t9DhcpView === 'leases' &&
+                        `# 📒 The gatekeeper's logbook of who borrowed which key:
+$ cat /var/lib/dhcp/dhcpd.leases
+lease 192.168.1.105 {
+  starts 2 2026/11/10 08:00:00;
+  ends   3 2026/11/11 08:00:00;
+  binding state active;
+  hardware ethernet 08:00:27:ab:cd:ef;
+  client-hostname "sams-laptop";
+}`}
+                      {t9DhcpView === 'apipa' &&
+                        `# 😕 When NO DHCP server answers the Discover shout:
+$ ip a show enp0s3
+    inet 169.254.37.12/16 scope link enp0s3   <-- Self-made paper badge!
+
+🩺 Diagnosis: "169.254.x.x" = DHCP server unreachable.
+✅ Check: Is the cable/Wi-Fi connected? Is the DHCP server running?
+   $ sudo systemctl status isc-dhcp-server
+   Is a router relay needed for another subnet (DHCP Relay / ip helper)?`}
+                    </pre>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 9.2: DNS — THE NAME LOOKUP JOURNEY
+                ================================================================= */}
+            {activeSubtopicId === 'dns-service' && (() => {
+              const dnsJourney = [
+                {
+                  who: '📝 /etc/hosts (Fridge Sticky Notes)',
+                  q: 'Do I already have www.google.com written down?',
+                  a: '❌ Not here. (Only "127.0.0.1 localhost" and "192.168.1.50 printer".)'
+                },
+                {
+                  who: '🧠 Local Cache (Memory)',
+                  q: 'Did I look this up recently?',
+                  a: '❌ No fresh sticky note (TTL expired). Must ask the librarian.'
+                },
+                {
+                  who: '👩‍🏫 Resolver 8.8.8.8 (from /etc/resolv.conf)',
+                  q: 'Librarian, please find www.google.com for me!',
+                  a: '👍 “Sawa, I’ll do the running around for you.”'
+                },
+                {
+                  who: '🏛️ Root Server ( . )',
+                  q: 'Who handles .com names?',
+                  a: '➡️ “Go ask the .com TLD servers (a.gtld-servers.net).”'
+                },
+                {
+                  who: '🗂️ TLD Server ( .com )',
+                  q: 'Who handles google.com?',
+                  a: '➡️ “Google’s own record keepers: ns1.google.com.”'
+                },
+                {
+                  who: '🏢 Authoritative Server (ns1.google.com)',
+                  q: 'What is the address of www.google.com?',
+                  a: '✅ “www.google.com = 142.251.42.78 (TTL 300s).” Saved to cache & returned! 🎉'
+                }
+              ];
+              const records = {
+                A: `$ dig +short google.com A\n142.251.42.78            <-- Name → IPv4 house number`,
+                AAAA: `$ dig +short google.com AAAA\n2a00:1450:4001:82f::200e <-- Name → IPv6 house number`,
+                CNAME: `$ dig +short www.github.com CNAME\ngithub.com.              <-- Nickname pointing to the real name`,
+                MX: `$ dig +short gmail.com MX\n5 gmail-smtp-in.l.google.com.   <-- Where to deliver email (lower number = first choice)`,
+                NS: `$ dig +short google.com NS\nns1.google.com.\nns2.google.com.          <-- Who is in charge of this name`,
+                PTR: `$ dig +short -x 8.8.8.8\ndns.google.               <-- Reverse lookup: number → name`,
+                TXT: `$ dig +short google.com TXT\n"v=spf1 include:_spf.google.com ~all"   <-- Notes & verification text`
+              };
+              return (
+                <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-md space-y-5">
+                  <div className="border-b-2 border-amber-100 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 9.2
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      Follow the Librarian! The 6-Stop DNS Lookup Journey
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Sam types <span className="font-mono">www.google.com</span>. Tap “Next Stop” to watch the name turn into a number, then explore the phonebook entry types.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    {dnsJourney.map((stop, i) => {
+                      const shown = t9DnsStep > i;
+                      const current = t9DnsStep === i + 1;
+                      return (
+                        <div
+                          key={i}
+                          className={`rounded-2xl p-3 border-2 transition-all ${
+                            current
+                              ? 'bg-amber-100 border-amber-500 shadow-sm'
+                              : shown
+                              ? 'bg-amber-50/70 border-amber-200'
+                              : 'bg-slate-50 border-slate-200 opacity-50'
+                          }`}
+                        >
+                          <div className="text-xs sm:text-sm font-black text-slate-900">
+                            Stop {i + 1}: {stop.who}
+                          </div>
+                          {shown && (
+                            <div className="text-xs sm:text-sm font-semibold text-slate-700 mt-1 space-y-0.5">
+                              <div>❓ {stop.q}</div>
+                              <div>💬 {stop.a}</div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        if (t9DnsStep < dnsJourney.length) {
+                          const next = t9DnsStep + 1;
+                          setT9DnsStep(next);
+                          if (next === dnsJourney.length) {
+                            sounds.playSuccess();
+                            confetti({ particleCount: 50, spread: 65, origin: { y: 0.7 } });
+                          } else {
+                            sounds.playPop();
+                          }
+                        }
+                      }}
+                      disabled={t9DnsStep >= dnsJourney.length}
+                      className="px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 disabled:bg-slate-300 text-white font-black text-sm shadow-sm"
+                    >
+                      {t9DnsStep >= dnsJourney.length ? '✅ Name Resolved!' : '➡️ Next Stop'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        sounds.playPop();
+                        setT9DnsStep(0);
+                      }}
+                      className="px-4 py-2.5 rounded-2xl bg-white hover:bg-amber-50 text-amber-900 border-2 border-amber-300 font-black text-sm"
+                    >
+                      🔄 Look Up Again
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="text-xs font-black uppercase tracking-wider text-slate-700">
+                      📇 Phonebook Entry Types (DNS Records) — tap one:
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.keys(records).map((r) => (
+                        <button
+                          key={r}
+                          onClick={() => {
+                            sounds.playPop();
+                            setT9DnsRecord(r);
+                          }}
+                          className={`px-3.5 py-2 rounded-xl border-2 font-mono font-black text-xs transition-all ${
+                            t9DnsRecord === r
+                              ? 'bg-amber-500 text-white border-amber-700'
+                              : 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-amber-200'
+                          }`}
+                        >
+                          {r}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+{`${records[t9DnsRecord]}
+
+# 🐧 Handy Linux DNS files & tools:
+$ cat /etc/hosts            # Your own sticky notes (checked first)
+$ cat /etc/resolv.conf      # Which librarian (resolver) to ask, e.g. nameserver 8.8.8.8
+$ resolvectl status         # systemd-resolved: current DNS servers per interface
+$ resolvectl flush-caches   # Throw away old sticky notes
+$ sudo apt install bind9    # Run your OWN DNS server (named) with zone files`}
+                    </pre>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 9.3: FTP — THE DELIVERY TRUCK SESSION
+                ================================================================= */}
+            {activeSubtopicId === 'ftp-service' && (() => {
+              const ftpCmds = [
+                {
+                  id: 'open',
+                  label: '☎️ open',
+                  needsConn: false,
+                  lines: [
+                    'ftp> open files.cozyhouse.ke',
+                    'Connected to files.cozyhouse.ke (Port 21 – Control lane).',
+                    '220 (vsFTPd 3.0.5)',
+                    'Name: sam',
+                    '331 Please specify the password.',
+                    'Password: ********',
+                    '230 Login successful. ✅'
+                  ]
+                },
+                {
+                  id: 'ls',
+                  label: '👀 ls',
+                  needsConn: true,
+                  lines: [
+                    'ftp> ls',
+                    '227 Entering Passive Mode (192,168,1,20,195,80) → data lane opened on port 50000',
+                    '-rw-r--r--  1 sam  sam   2.1M  report.pdf',
+                    '-rw-r--r--  1 sam  sam   4.3M  mombasa_trip.jpg',
+                    'drwxr-xr-x  2 sam  sam   4096  backups'
+                  ]
+                },
+                {
+                  id: 'cd',
+                  label: '🚶 cd backups',
+                  needsConn: true,
+                  lines: ['ftp> cd backups', '250 Directory successfully changed.']
+                },
+                {
+                  id: 'binary',
+                  label: '📦 binary',
+                  needsConn: true,
+                  lines: ['ftp> binary', '200 Switching to Binary mode. (Sealed boxes for images/zips!)']
+                },
+                {
+                  id: 'get',
+                  label: '⬇️ get report.pdf',
+                  needsConn: true,
+                  lines: [
+                    'ftp> get report.pdf',
+                    '150 Opening BINARY mode data connection for report.pdf (2.1 MB).',
+                    '226 Transfer complete. ⬇️ Box delivered to your house!'
+                  ]
+                },
+                {
+                  id: 'put',
+                  label: '⬆️ put chapati.txt',
+                  needsConn: true,
+                  lines: [
+                    'ftp> put chapati_recipe.txt',
+                    '150 Ok to send data.',
+                    '226 Transfer complete. ⬆️ Box sent to the warehouse!'
+                  ]
+                },
+                {
+                  id: 'mget',
+                  label: '🧺 mget *.jpg',
+                  needsConn: true,
+                  lines: [
+                    'ftp> mget *.jpg',
+                    'mget mombasa_trip.jpg? y',
+                    '226 Transfer complete. 🧺 Many boxes at once!'
+                  ]
+                },
+                {
+                  id: 'bye',
+                  label: '👋 bye',
+                  needsConn: true,
+                  lines: ['ftp> bye', '221 Goodbye. (Control lane on Port 21 closed.)']
+                }
+              ];
+              return (
+                <div className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-rose-400 shadow-md space-y-5">
+                  <div className="border-b-2 border-rose-100 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-rose-900 bg-rose-100 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 9.3
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                      Drive the FTP Delivery Truck — Then Compare It With the Sealed SFTP Van!
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                      Start with <span className="font-mono">open</span>, then browse, download (get), and upload (put) boxes. No wrong moves—just explore!
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs font-black">
+                    <span
+                      className={`px-3 py-1 rounded-full ${
+                        t9FtpConnected ? 'bg-emerald-100 text-emerald-900' : 'bg-slate-100 text-slate-600'
+                      }`}
+                    >
+                      {t9FtpConnected ? '🟢 Connected to warehouse (Port 21)' : '⚪ Not connected yet'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    {ftpCmds.map((c) => {
+                      const disabled = c.needsConn ? !t9FtpConnected : t9FtpConnected;
+                      return (
+                        <button
+                          key={c.id}
+                          disabled={disabled}
+                          onClick={() => {
+                            if (c.id === 'open') setT9FtpConnected(true);
+                            if (c.id === 'bye') setT9FtpConnected(false);
+                            if (c.id === 'get' || c.id === 'put' || c.id === 'mget') {
+                              sounds.playSuccess();
+                            } else {
+                              sounds.playPop();
+                            }
+                            setT9FtpLog((prev) =>
+                              [...(c.id === 'open' ? [] : prev), ...c.lines].slice(-22)
+                            );
+                          }}
+                          className={`p-3 rounded-2xl border-2 text-left font-mono font-black text-xs transition-all ${
+                            disabled
+                              ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                              : 'bg-rose-50 hover:bg-rose-100 text-slate-900 border-rose-200'
+                          }`}
+                        >
+                          {c.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm min-h-[140px]">
+                    <pre className="whitespace-pre-wrap leading-relaxed">{t9FtpLog.join('\n')}</pre>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="text-xs font-black uppercase tracking-wider text-slate-700">
+                      🔐 What can a nosy stranger on the road see? (packet capture view)
+                    </div>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT9FtpSecureView('ftp');
+                        }}
+                        className={`p-3 rounded-2xl border-2 text-left transition-all ${
+                          t9FtpSecureView === 'ftp'
+                            ? 'bg-rose-600 text-white border-rose-800'
+                            : 'bg-rose-50 hover:bg-rose-100 text-slate-900 border-rose-200'
+                        }`}
+                      >
+                        <div className="font-black text-xs sm:text-sm">🛻 Plain FTP (Port 21)</div>
+                        <div className="text-xs mt-1 opacity-90">Open pickup truck</div>
+                      </button>
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT9FtpSecureView('sftp');
+                        }}
+                        className={`p-3 rounded-2xl border-2 text-left transition-all ${
+                          t9FtpSecureView === 'sftp'
+                            ? 'bg-emerald-600 text-white border-emerald-800'
+                            : 'bg-emerald-50 hover:bg-emerald-100 text-slate-900 border-emerald-200'
+                        }`}
+                      >
+                        <div className="font-black text-xs sm:text-sm">🔐 SFTP / scp (SSH Port 22)</div>
+                        <div className="text-xs mt-1 opacity-90">Sealed G4S van</div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-900 text-emerald-300 rounded-2xl p-4 font-mono text-xs sm:text-sm">
+                    <pre className="whitespace-pre-wrap leading-relaxed">
+                      {t9FtpSecureView === 'ftp'
+                        ? `$ sudo tcpdump -A -i enp0s3 port 21
+USER sam
+PASS chapati2026        <-- 😱 Password readable by anyone on the road!
+RETR report.pdf
+
+⚠️ Plain FTP sends usernames, passwords, and files as readable text.
+Server setup (only for trusted/internal use): sudo apt install vsftpd
+  /etc/vsftpd.conf → anonymous_enable=NO, local_enable=YES, write_enable=YES`
+                        : `$ sudo tcpdump -A -i enp0s3 port 22
+..k8$Fq@#..z!Lp0^w..Rt%..   <-- 🔐 Scrambled! Nobody can read your password or files.
+
+✅ Same jobs, sealed van:
+$ sftp sam@files.cozyhouse.ke      # interactive: ls, cd, get, put, bye (just like ftp!)
+$ scp report.pdf sam@files.cozyhouse.ke:/home/sam/   # one-line copy
+$ lftp -u sam ftps://files.cozyhouse.ke             # FTPS = FTP wrapped in TLS`}
+                    </pre>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER */}
             <div className="bg-amber-100/80 rounded-3xl p-5 border-4 border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -6187,6 +7698,36 @@ gardeners:x:1004:alice
                         className="px-4 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
                       >
                         <span>Go to Topic 7: User & Group Management</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    );
+                  }
+                  if (mainTab === 'topic7') {
+                    return (
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setMainTab('topic8');
+                          setActiveTopic8SubId('configuring-network-interfaces');
+                        }}
+                        className="px-4 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>Go to Topic 8: Linux Networking & Firewalls</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    );
+                  }
+                  if (mainTab === 'topic8') {
+                    return (
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setMainTab('topic9');
+                          setActiveTopic9SubId('dhcp-service');
+                        }}
+                        className="px-4 py-2.5 rounded-2xl bg-sky-700 hover:bg-sky-800 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>Go to Topic 9: Networking Services</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     );
