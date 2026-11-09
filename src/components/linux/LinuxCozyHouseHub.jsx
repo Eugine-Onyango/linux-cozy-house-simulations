@@ -66,8 +66,28 @@ export default function LinuxCozyHouseHub() {
   // Analogy filter: 'both' | 'original' | 'kenyan'
   const [analogyFilter, setAnalogyFilter] = useState('both');
 
-  // Read-aloud state
+  // Read-aloud & voice pacing state
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speakingBoxId, setSpeakingBoxId] = useState(null);
+  const [speechRate, setSpeechRate] = useState(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('linux_speech_rate') : null;
+      return saved ? parseFloat(saved) : 0.95;
+    } catch {
+      return 0.95;
+    }
+  });
+
+  const handleSetSpeechRate = (newRate) => {
+    setSpeechRate(newRate);
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('linux_speech_rate', String(newRate));
+      }
+    } catch {
+      // ignore
+    }
+  };
 
   // Completed 5-second body micro-actions
   const [completedBodyMoves, setCompletedBodyMoves] = useState({});
@@ -367,6 +387,7 @@ export default function LinuxCozyHouseHub() {
   useEffect(() => {
     stopSpeech();
     setIsSpeaking(false);
+    setSpeakingBoxId(null);
     setCmdSimTriggered(false);
   }, [
     activeTopic1SubId,
@@ -407,12 +428,45 @@ export default function LinuxCozyHouseHub() {
     if (next) sounds.playPop();
   };
 
-  // Friendly Read-Aloud helper for Topic 1, 2, 4, 5, 6 & 7
-  const handleReadAloud = () => {
+  // Independent Box-by-Box Read-Aloud helper: strictly reads ONLY that box and stops!
+  const speakBoxText = (boxId, textToRead) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    if (isSpeaking) {
+    if (speakingBoxId === boxId) {
       stopSpeech();
       setIsSpeaking(false);
+      setSpeakingBoxId(null);
+      return;
+    }
+    stopSpeech();
+    setIsSpeaking(true);
+    setSpeakingBoxId(boxId);
+
+    const clean = (textToRead || '')
+      .replace(/[#*`_~]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.rate = speechRate;
+    utterance.pitch = 1.0;
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setSpeakingBoxId(null);
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setSpeakingBoxId(null);
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Full Subtopic Read-Aloud (reads the whole page if requested)
+  const handleReadAloud = () => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (isSpeaking && speakingBoxId === 'full-page') {
+      stopSpeech();
+      setIsSpeaking(false);
+      setSpeakingBoxId(null);
       return;
     }
     stopSpeech();
@@ -428,31 +482,46 @@ export default function LinuxCozyHouseHub() {
       '';
     const textToRead = `${currentSubtopic.title}. In simple terms: ${headline}. ${explanation}. Original House Analogy: ${origSummary}. Kenyan Analogy: ${kenyanSummary}.`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
-    utterance.rate = 0.93;
-    utterance.pitch = 1.02;
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.rate = speechRate;
+    utterance.pitch = 1.0;
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setSpeakingBoxId(null);
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setSpeakingBoxId(null);
+    };
     setIsSpeaking(true);
+    setSpeakingBoxId('full-page');
     window.speechSynthesis.speak(utterance);
   };
 
-  // Friendly Read-Aloud helper for Topic 3 (25 Commands)
+  // Full Command Read-Aloud for Topic 3 (25 Commands)
   const handleReadCommandAloud = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    if (isSpeaking) {
+    if (isSpeaking && speakingBoxId === 'full-cmd') {
       stopSpeech();
       setIsSpeaking(false);
+      setSpeakingBoxId(null);
       return;
     }
     stopSpeech();
     const c = currentCommandObj;
     const textToRead = `Command number ${c.num}: ${c.cmd}, which stands for ${c.fullName}. In plain English: ${c.layman}. Original House Analogy: ${c.houseAnalogy}. Kenyan Analogy: ${c.kenyanAnalogy}. 5-Second Body Move: ${c.bodyMove}`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
-    utterance.rate = 0.93;
-    utterance.pitch = 1.02;
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.rate = speechRate;
+    utterance.pitch = 1.0;
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setSpeakingBoxId(null);
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setSpeakingBoxId(null);
+    };
     setIsSpeaking(true);
+    setSpeakingBoxId('full-cmd');
     window.speechSynthesis.speak(utterance);
   };
 
@@ -1276,17 +1345,45 @@ export default function LinuxCozyHouseHub() {
                   </div>
                 </div>
 
-                {/* Read Aloud + Prev/Next Buttons */}
-                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                {/* Read Aloud + Pace Control + Prev/Next Buttons */}
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                  <div className="flex items-center gap-1.5 bg-[#0d121f] px-2.5 py-1.5 rounded-2xl border border-slate-700/60 shadow-inner">
+                    <span className="text-[11px] font-extrabold text-slate-400 shrink-0">
+                      Pace:
+                    </span>
+                    <div className="inline-flex rounded-xl p-0.5 bg-slate-900/90 border border-slate-800">
+                      {[
+                        { rate: 0.75, label: '0.75x', title: 'Slow & Gentle' },
+                        { rate: 0.95, label: '0.95x', title: 'Cozy & Clear (Default)' },
+                        { rate: 1.15, label: '1.15x', title: 'Normal' },
+                        { rate: 1.35, label: '1.35x', title: 'Brisk' }
+                      ].map((sp) => (
+                        <button
+                          key={sp.rate}
+                          onClick={() => handleSetSpeechRate(sp.rate)}
+                          title={sp.title}
+                          className={`px-2 py-0.5 rounded-lg text-xs font-black transition-all ${
+                            Math.abs(speechRate - sp.rate) < 0.05
+                              ? 'bg-amber-400 text-slate-950 shadow-sm scale-105'
+                              : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                          }`}
+                        >
+                          {sp.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <button
                     onClick={handleReadCommandAloud}
-                    className={`px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm border-2 transition-all flex items-center gap-2 shadow-sm ${
-                      isSpeaking
-                        ? 'bg-rose-500 text-white border-rose-600 animate-pulse'
+                    className={`px-3.5 py-2 rounded-2xl font-black text-xs sm:text-sm border-2 transition-all flex items-center gap-2 shadow-sm ${
+                      isSpeaking && speakingBoxId === 'full-cmd'
+                        ? 'bg-rose-500 text-white border-rose-600 animate-voice-pulse'
                         : 'bg-white hover:bg-amber-50 text-slate-800 border-slate-300'
                     }`}
+                    title="Read all sections for this command"
                   >
-                    {isSpeaking ? (
+                    {isSpeaking && speakingBoxId === 'full-cmd' ? (
                       <>
                         <VolumeX className="w-4 h-4" />
                         <span>Stop Voice</span>
@@ -1294,7 +1391,7 @@ export default function LinuxCozyHouseHub() {
                     ) : (
                       <>
                         <Volume2 className="w-4 h-4 text-emerald-600" />
-                        <span>🔊 Read Tool #{currentCommandObj.num} to Me</span>
+                        <span>🔊 Read Tool #{currentCommandObj.num}</span>
                       </>
                     )}
                   </button>
@@ -1306,7 +1403,7 @@ export default function LinuxCozyHouseHub() {
                       setSelectedCmdNum(prevNum);
                       setTriedCommands((prev) => ({ ...prev, [prevNum]: true }));
                     }}
-                    className="p-2.5 rounded-2xl bg-white hover:bg-slate-100 border-2 border-slate-300 text-slate-800 font-black text-xs"
+                    className="p-2 rounded-2xl bg-white hover:bg-slate-100 border-2 border-slate-300 text-slate-800 font-black text-xs"
                     title="Previous Tool"
                   >
                     <ArrowLeft className="w-4 h-4" />
@@ -1319,29 +1416,87 @@ export default function LinuxCozyHouseHub() {
                       setSelectedCmdNum(nextNum);
                       setTriedCommands((prev) => ({ ...prev, [nextNum]: true }));
                     }}
-                    className="px-3.5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs flex items-center gap-1 shadow-sm"
+                    className="px-3 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs flex items-center gap-1 shadow-sm"
                   >
-                    <span>Next Tool</span>
+                    <span>Next</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              {/* Plain Layman Explanation + Real Example */}
+              {/* Plain Layman Explanation + Real Example (Independent Read-Aloud for Each) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border-2 border-emerald-200 shadow-sm space-y-2">
-                  <div className="text-xs font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4" />
-                    <span>In Simple Layman’s English:</span>
+                <div
+                  className={`lg:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border-2 shadow-sm space-y-2 transition-all ${
+                    speakingBoxId === 'cmd-layman'
+                      ? 'speak-box-active border-emerald-400'
+                      : 'border-emerald-200'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-xs font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4" />
+                      <span>In Simple Layman’s English:</span>
+                    </div>
+                    <button
+                      onClick={() =>
+                        speakBoxText(
+                          'cmd-layman',
+                          `Command ${currentCommandObj.cmd}. In simple layman terms: ${currentCommandObj.layman}`
+                        )
+                      }
+                      className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
+                        speakingBoxId === 'cmd-layman'
+                          ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                          : 'bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border-emerald-500/40'
+                      }`}
+                      title="Read layman explanation aloud and stop"
+                    >
+                      {speakingBoxId === 'cmd-layman' ? (
+                        <VolumeX className="w-3.5 h-3.5" />
+                      ) : (
+                        <Volume2 className="w-3.5 h-3.5" />
+                      )}
+                      <span>{speakingBoxId === 'cmd-layman' ? 'Stop' : 'Read'}</span>
+                    </button>
                   </div>
                   <p className="text-base sm:text-xl font-black text-slate-900 leading-snug">
                     {currentCommandObj.layman}
                   </p>
                 </div>
 
-                <div className="lg:col-span-5 bg-amber-50 rounded-2xl p-4 sm:p-5 border-2 border-amber-300 shadow-sm space-y-1.5">
-                  <div className="text-xs font-black uppercase tracking-wider text-amber-900">
-                    📝 Everyday Example Command:
+                <div
+                  className={`lg:col-span-5 bg-amber-50 rounded-2xl p-4 sm:p-5 border-2 shadow-sm space-y-1.5 transition-all ${
+                    speakingBoxId === 'cmd-example'
+                      ? 'speak-box-active border-amber-400'
+                      : 'border-amber-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-xs font-black uppercase tracking-wider text-amber-900">
+                      📝 Everyday Example Command:
+                    </div>
+                    <button
+                      onClick={() =>
+                        speakBoxText(
+                          'cmd-example',
+                          `Example command: ${currentCommandObj.exampleCmd}. Translation: ${currentCommandObj.exampleMeaning}`
+                        )
+                      }
+                      className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
+                        speakingBoxId === 'cmd-example'
+                          ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                          : 'bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-300'
+                      }`}
+                      title="Read example command aloud and stop"
+                    >
+                      {speakingBoxId === 'cmd-example' ? (
+                        <VolumeX className="w-3.5 h-3.5" />
+                      ) : (
+                        <Volume2 className="w-3.5 h-3.5" />
+                      )}
+                      <span>{speakingBoxId === 'cmd-example' ? 'Stop' : 'Read'}</span>
+                    </button>
                   </div>
                   <div className="font-mono text-sm sm:text-base font-black bg-slate-900 text-amber-300 px-3.5 py-2 rounded-xl">
                     $ {currentCommandObj.exampleCmd}
@@ -1352,16 +1507,45 @@ export default function LinuxCozyHouseHub() {
                 </div>
               </div>
 
-              {/* DUAL ANALOGIES FOR THIS COMMAND */}
+              {/* DUAL ANALOGIES FOR THIS COMMAND (EACH BOX INDEPENDENT) */}
               <div
                 className={`grid grid-cols-1 ${
                   analogyFilter === 'both' ? 'md:grid-cols-2' : 'md:grid-cols-1'
                 } gap-4`}
               >
                 {(analogyFilter === 'both' || analogyFilter === 'original') && (
-                  <div className="bg-amber-50/95 rounded-3xl p-5 border-4 border-amber-300 space-y-2 shadow-sm">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-200 text-amber-950 text-xs font-black">
-                      <span>🏠 Original House Analogy (Made Simple)</span>
+                  <div
+                    className={`bg-amber-50/95 rounded-3xl p-5 border-4 space-y-2 shadow-sm transition-all ${
+                      speakingBoxId === 'cmd-house'
+                        ? 'speak-box-active border-amber-400'
+                        : 'border-amber-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-200 text-amber-950 text-xs font-black">
+                        <span>🏠 Original House Analogy</span>
+                      </div>
+                      <button
+                        onClick={() =>
+                          speakBoxText(
+                            'cmd-house',
+                            `Original House Analogy for ${currentCommandObj.cmd}: ${currentCommandObj.houseAnalogy}`
+                          )
+                        }
+                        className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
+                          speakingBoxId === 'cmd-house'
+                            ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                            : 'bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-300'
+                        }`}
+                        title="Read house analogy aloud and stop"
+                      >
+                        {speakingBoxId === 'cmd-house' ? (
+                          <VolumeX className="w-3.5 h-3.5" />
+                        ) : (
+                          <Volume2 className="w-3.5 h-3.5" />
+                        )}
+                        <span>{speakingBoxId === 'cmd-house' ? 'Stop' : 'Read'}</span>
+                      </button>
                     </div>
                     <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-relaxed">
                       {currentCommandObj.houseAnalogy}
@@ -1370,9 +1554,38 @@ export default function LinuxCozyHouseHub() {
                 )}
 
                 {(analogyFilter === 'both' || analogyFilter === 'kenyan') && (
-                  <div className="bg-white rounded-3xl p-5 border-4 border-emerald-400 space-y-2 shadow-sm">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-200 text-emerald-950 text-xs font-black">
-                      <span>🇰🇪 Kenyan Everyday Analogy</span>
+                  <div
+                    className={`bg-white rounded-3xl p-5 border-4 space-y-2 shadow-sm transition-all ${
+                      speakingBoxId === 'cmd-kenyan'
+                        ? 'speak-box-active-emerald border-emerald-400'
+                        : 'border-emerald-400'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-200 text-emerald-950 text-xs font-black">
+                        <span>🇰🇪 Kenyan Everyday Analogy</span>
+                      </div>
+                      <button
+                        onClick={() =>
+                          speakBoxText(
+                            'cmd-kenyan',
+                            `Kenyan Everyday Analogy for ${currentCommandObj.cmd}: ${currentCommandObj.kenyanAnalogy}`
+                          )
+                        }
+                        className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
+                          speakingBoxId === 'cmd-kenyan'
+                            ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                            : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border-emerald-300'
+                        }`}
+                        title="Read Kenyan analogy aloud and stop"
+                      >
+                        {speakingBoxId === 'cmd-kenyan' ? (
+                          <VolumeX className="w-3.5 h-3.5" />
+                        ) : (
+                          <Volume2 className="w-3.5 h-3.5" />
+                        )}
+                        <span>{speakingBoxId === 'cmd-kenyan' ? 'Stop' : 'Read'}</span>
+                      </button>
                     </div>
                     <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-relaxed">
                       {currentCommandObj.kenyanAnalogy}
@@ -1381,13 +1594,44 @@ export default function LinuxCozyHouseHub() {
                 )}
               </div>
 
-              {/* 5-SECOND BODY MOVE FOR THIS COMMAND */}
-              <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 rounded-3xl p-5 border-4 border-purple-300 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="space-y-1.5">
-                  <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-purple-200 text-purple-950 text-xs font-black">
-                    <span>🤸🧠 5-Second Muscle Memory Move for "{currentCommandObj.cmd}"</span>
+              {/* 5-SECOND BODY MOVE FOR THIS COMMAND (INDEPENDENT READ-ALOUD) */}
+              <div
+                className={`bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 rounded-3xl p-5 border-4 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all ${
+                  speakingBoxId === 'cmd-body'
+                    ? 'speak-box-active-purple border-purple-400'
+                    : 'border-purple-300'
+                }`}
+              >
+                <div className="space-y-1.5 w-full sm:w-auto">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-purple-200 text-purple-950 text-xs font-black">
+                      <span>
+                        🤸🧠 5-Second Muscle Memory Move for "{currentCommandObj.cmd}"
+                      </span>
+                    </div>
+                    <button
+                      onClick={() =>
+                        speakBoxText(
+                          'cmd-body',
+                          `5-Second Muscle Memory Move for ${currentCommandObj.cmd}: ${currentCommandObj.bodyMove}`
+                        )
+                      }
+                      className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
+                        speakingBoxId === 'cmd-body'
+                          ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                          : 'bg-purple-100 hover:bg-purple-200 text-purple-950 border-purple-300'
+                      }`}
+                      title="Read body move aloud and stop"
+                    >
+                      {speakingBoxId === 'cmd-body' ? (
+                        <VolumeX className="w-3.5 h-3.5" />
+                      ) : (
+                        <Volume2 className="w-3.5 h-3.5" />
+                      )}
+                      <span>{speakingBoxId === 'cmd-body' ? 'Stop' : 'Read'}</span>
+                    </button>
                   </div>
-                  <p className="text-sm sm:text-base font-black text-purple-950">
+                  <p className="text-sm sm:text-base font-black text-purple-950 pt-0.5">
                     {currentCommandObj.bodyMove}
                   </p>
                 </div>
@@ -1637,33 +1881,104 @@ export default function LinuxCozyHouseHub() {
                   </div>
                 </div>
 
-                <button
-                  onClick={handleReadAloud}
-                  className={`px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm border-2 transition-all flex items-center gap-2 shrink-0 shadow-sm ${
-                    isSpeaking
-                      ? 'bg-rose-500 text-white border-rose-600 animate-pulse'
-                      : 'bg-white hover:bg-amber-50 text-slate-800 border-slate-300'
-                  }`}
-                >
-                  {isSpeaking ? (
-                    <>
-                      <VolumeX className="w-4 h-4" />
-                      <span>Stop Reading Aloud</span>
-                    </>
-                  ) : (
-                    <>
-                      <Volume2 className="w-4 h-4 text-emerald-600" />
-                      <span>🔊 Read This Page to Me</span>
-                    </>
-                  )}
-                </button>
+                {/* Pace Controller + Full Page Read-Aloud Button */}
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                  <div className="flex items-center gap-1.5 bg-[#0d121f] px-2.5 py-1.5 rounded-2xl border border-slate-700/60 shadow-inner">
+                    <span className="text-[11px] font-extrabold text-slate-400 shrink-0">
+                      Pace:
+                    </span>
+                    <div className="inline-flex rounded-xl p-0.5 bg-slate-900/90 border border-slate-800">
+                      {[
+                        { rate: 0.75, label: '0.75x', title: 'Slow & Gentle' },
+                        { rate: 0.95, label: '0.95x', title: 'Cozy & Clear (Default)' },
+                        { rate: 1.15, label: '1.15x', title: 'Normal' },
+                        { rate: 1.35, label: '1.35x', title: 'Brisk' }
+                      ].map((sp) => (
+                        <button
+                          key={sp.rate}
+                          onClick={() => handleSetSpeechRate(sp.rate)}
+                          title={sp.title}
+                          className={`px-2 py-0.5 rounded-lg text-xs font-black transition-all ${
+                            Math.abs(speechRate - sp.rate) < 0.05
+                              ? 'bg-amber-400 text-slate-950 shadow-sm scale-105'
+                              : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                          }`}
+                        >
+                          {sp.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleReadAloud}
+                    className={`px-3.5 py-2 rounded-2xl font-black text-xs sm:text-sm border-2 transition-all flex items-center gap-2 shrink-0 shadow-sm ${
+                      isSpeaking && speakingBoxId === 'full-page'
+                        ? 'bg-rose-500 text-white border-rose-600 animate-voice-pulse'
+                        : 'bg-white hover:bg-amber-50 text-slate-800 border-slate-300'
+                    }`}
+                    title="Read all core sections on this subtopic from start to finish"
+                  >
+                    {isSpeaking && speakingBoxId === 'full-page' ? (
+                      <>
+                        <VolumeX className="w-4 h-4" />
+                        <span>Stop Page Voice</span>
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="w-4 h-4 text-emerald-600" />
+                        <span>🔊 Read This Page</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-sm space-y-3">
-                <div className="text-xs font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4" />
-                  <span>The Simple 10-Second Idea:</span>
+              {/* 10-SECOND IDEA BOX (WITH INDEPENDENT READ-ALOUD) */}
+              <div
+                className={`bg-white rounded-2xl p-4 sm:p-5 border-2 shadow-sm space-y-3 transition-all ${
+                  speakingBoxId === 'idea-box'
+                    ? 'speak-box-active border-amber-400'
+                    : 'border-slate-200'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-xs font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4" />
+                    <span>The Simple 10-Second Idea:</span>
+                  </div>
+                  <button
+                    onClick={() =>
+                      speakBoxText(
+                        'idea-box',
+                        `The Simple 10-Second Idea: ${
+                          currentSubtopic.laymanHeadline || currentSubtopic.badge
+                        }. ${
+                          currentSubtopic.laymanExplanation || currentSubtopic.plainEnglish
+                        }`
+                      )
+                    }
+                    className={`px-3 py-1 rounded-xl font-black text-xs border transition-all flex items-center gap-1.5 shrink-0 ${
+                      speakingBoxId === 'idea-box'
+                        ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                        : 'bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border-emerald-500/40'
+                    }`}
+                    title="Read this idea box aloud and stop"
+                  >
+                    {speakingBoxId === 'idea-box' ? (
+                      <>
+                        <VolumeX className="w-3.5 h-3.5" />
+                        <span>Stop</span>
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="w-3.5 h-3.5" />
+                        <span>🔊 Read Idea</span>
+                      </>
+                    )}
+                  </button>
                 </div>
+
                 <p className="text-base sm:text-xl font-black text-slate-900 leading-snug">
                   “{currentSubtopic.laymanHeadline || currentSubtopic.badge}”
                 </p>
@@ -1677,10 +1992,34 @@ export default function LinuxCozyHouseHub() {
                       {currentSubtopic.laymanPoints.map((lp, idx) => (
                         <div
                           key={idx}
-                          className="p-3 rounded-2xl bg-amber-50/70 border-2 border-amber-200/80 space-y-0.5"
+                          className={`p-3 rounded-2xl border-2 space-y-1 transition-all ${
+                            speakingBoxId === `lp-${idx}`
+                              ? 'speak-box-active bg-amber-100/90 border-amber-400'
+                              : 'bg-amber-50/70 border-amber-200/80'
+                          }`}
                         >
-                          <div className="font-mono font-black text-xs sm:text-sm text-amber-950">
-                            • {lp.term}
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="font-mono font-black text-xs sm:text-sm text-amber-950">
+                              • {lp.term}
+                            </div>
+                            <button
+                              onClick={() =>
+                                speakBoxText(`lp-${idx}`, `${lp.term}: ${lp.meaning}`)
+                              }
+                              className={`px-2 py-0.5 rounded-lg text-[11px] font-black border transition-all flex items-center gap-1 shrink-0 ${
+                                speakingBoxId === `lp-${idx}`
+                                  ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                                  : 'bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-300'
+                              }`}
+                              title={`Read ${lp.term} aloud and stop`}
+                            >
+                              {speakingBoxId === `lp-${idx}` ? (
+                                <VolumeX className="w-3 h-3" />
+                              ) : (
+                                <Volume2 className="w-3 h-3" />
+                              )}
+                              <span>{speakingBoxId === `lp-${idx}` ? 'Stop' : 'Read'}</span>
+                            </button>
                           </div>
                           <div className="text-xs font-semibold text-slate-700 leading-relaxed">
                             {lp.meaning}
@@ -1709,11 +2048,49 @@ export default function LinuxCozyHouseHub() {
                         {currentSubtopic.originalAnalogy?.title}
                       </h3>
 
-                      <p className="text-sm font-extrabold text-amber-900 bg-white/90 p-3.5 rounded-2xl border-2 border-amber-200">
-                        {currentSubtopic.originalAnalogy?.summary ||
-                          currentSubtopic.originalAnalogy?.intro}
-                      </p>
+                      {/* Summary Box with Independent Read-Aloud */}
+                      <div
+                        className={`p-3.5 rounded-2xl border-2 transition-all flex items-start justify-between gap-3 ${
+                          speakingBoxId === 'orig-summary'
+                            ? 'speak-box-active bg-amber-100/90 border-amber-400'
+                            : 'bg-white/90 border-amber-200'
+                        }`}
+                      >
+                        <p className="text-sm font-extrabold text-amber-900 leading-relaxed">
+                          {currentSubtopic.originalAnalogy?.summary ||
+                            currentSubtopic.originalAnalogy?.intro}
+                        </p>
+                        <button
+                          onClick={() =>
+                            speakBoxText(
+                              'orig-summary',
+                              `Original House Analogy: ${
+                                currentSubtopic.originalAnalogy?.title
+                              }. ${
+                                currentSubtopic.originalAnalogy?.summary ||
+                                currentSubtopic.originalAnalogy?.intro
+                              }`
+                            )
+                          }
+                          className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
+                            speakingBoxId === 'orig-summary'
+                              ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                              : 'bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-300'
+                          }`}
+                          title="Read analogy summary aloud and stop"
+                        >
+                          {speakingBoxId === 'orig-summary' ? (
+                            <VolumeX className="w-3.5 h-3.5" />
+                          ) : (
+                            <Volume2 className="w-3.5 h-3.5" />
+                          )}
+                          <span>
+                            {speakingBoxId === 'orig-summary' ? 'Stop' : 'Read Intro'}
+                          </span>
+                        </button>
+                      </div>
 
+                      {/* Each Item Card with Independent Read-Aloud */}
                       <div className="space-y-2.5 pt-1">
                         {(
                           currentSubtopic.originalAnalogy?.points ||
@@ -1722,17 +2099,46 @@ export default function LinuxCozyHouseHub() {
                         ).map((pt, idx) => (
                           <div
                             key={idx}
-                            className="bg-white rounded-2xl p-3.5 border-2 border-amber-200/90 flex items-start gap-3 shadow-sm"
+                            className={`bg-white rounded-2xl p-3.5 border-2 flex items-start justify-between gap-3 shadow-sm transition-all ${
+                              speakingBoxId === `orig-pt-${idx}`
+                                ? 'speak-box-active border-amber-400'
+                                : 'border-amber-200/90'
+                            }`}
                           >
-                            <span className="text-2xl shrink-0 mt-0.5">{pt.emoji}</span>
-                            <div>
-                              <div className="font-black text-slate-900 text-sm sm:text-base">
-                                {pt.name}
+                            <div className="flex items-start gap-3">
+                              <span className="text-2xl shrink-0 mt-0.5">{pt.emoji}</span>
+                              <div>
+                                <div className="font-black text-slate-900 text-sm sm:text-base">
+                                  {pt.name}
+                                </div>
+                                <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5 whitespace-pre-line">
+                                  {pt.desc || pt.simple}
+                                </p>
                               </div>
-                              <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5 whitespace-pre-line">
-                                {pt.desc || pt.simple}
-                              </p>
                             </div>
+                            <button
+                              onClick={() =>
+                                speakBoxText(
+                                  `orig-pt-${idx}`,
+                                  `${pt.name}. ${pt.desc || pt.simple}`
+                                )
+                              }
+                              className={`px-2 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 mt-0.5 ${
+                                speakingBoxId === `orig-pt-${idx}`
+                                  ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                                  : 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-amber-300'
+                              }`}
+                              title={`Read ${pt.name} aloud and stop`}
+                            >
+                              {speakingBoxId === `orig-pt-${idx}` ? (
+                                <VolumeX className="w-3.5 h-3.5" />
+                              ) : (
+                                <Volume2 className="w-3.5 h-3.5" />
+                              )}
+                              <span>
+                                {speakingBoxId === `orig-pt-${idx}` ? 'Stop' : 'Read'}
+                              </span>
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -1752,11 +2158,49 @@ export default function LinuxCozyHouseHub() {
                         {currentSubtopic.kenyanAnalogy?.title}
                       </h3>
 
-                      <p className="text-sm font-extrabold text-emerald-900 bg-white/90 p-3.5 rounded-2xl border-2 border-emerald-200">
-                        {currentSubtopic.kenyanAnalogy?.summary ||
-                          currentSubtopic.kenyanAnalogy?.intro}
-                      </p>
+                      {/* Summary Box with Independent Read-Aloud */}
+                      <div
+                        className={`p-3.5 rounded-2xl border-2 transition-all flex items-start justify-between gap-3 ${
+                          speakingBoxId === 'kenyan-summary'
+                            ? 'speak-box-active-emerald bg-emerald-100/90 border-emerald-400'
+                            : 'bg-white/90 border-emerald-200'
+                        }`}
+                      >
+                        <p className="text-sm font-extrabold text-emerald-900 leading-relaxed">
+                          {currentSubtopic.kenyanAnalogy?.summary ||
+                            currentSubtopic.kenyanAnalogy?.intro}
+                        </p>
+                        <button
+                          onClick={() =>
+                            speakBoxText(
+                              'kenyan-summary',
+                              `Kenyan Everyday Analogy: ${
+                                currentSubtopic.kenyanAnalogy?.title
+                              }. ${
+                                currentSubtopic.kenyanAnalogy?.summary ||
+                                currentSubtopic.kenyanAnalogy?.intro
+                              }`
+                            )
+                          }
+                          className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
+                            speakingBoxId === 'kenyan-summary'
+                              ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                              : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border-emerald-300'
+                          }`}
+                          title="Read Kenyan analogy intro aloud and stop"
+                        >
+                          {speakingBoxId === 'kenyan-summary' ? (
+                            <VolumeX className="w-3.5 h-3.5" />
+                          ) : (
+                            <Volume2 className="w-3.5 h-3.5" />
+                          )}
+                          <span>
+                            {speakingBoxId === 'kenyan-summary' ? 'Stop' : 'Read Intro'}
+                          </span>
+                        </button>
+                      </div>
 
+                      {/* Each Item Card with Independent Read-Aloud */}
                       <div className="space-y-2.5 pt-1">
                         {(
                           currentSubtopic.kenyanAnalogy?.points ||
@@ -1765,17 +2209,46 @@ export default function LinuxCozyHouseHub() {
                         ).map((pt, idx) => (
                           <div
                             key={idx}
-                            className="bg-white rounded-2xl p-3.5 border-2 border-emerald-200/90 flex items-start gap-3 shadow-sm"
+                            className={`bg-white rounded-2xl p-3.5 border-2 flex items-start justify-between gap-3 shadow-sm transition-all ${
+                              speakingBoxId === `kenyan-pt-${idx}`
+                                ? 'speak-box-active-emerald border-emerald-400'
+                                : 'border-emerald-200/90'
+                            }`}
                           >
-                            <span className="text-2xl shrink-0 mt-0.5">{pt.emoji}</span>
-                            <div>
-                              <div className="font-black text-slate-900 text-sm sm:text-base">
-                                {pt.name}
+                            <div className="flex items-start gap-3">
+                              <span className="text-2xl shrink-0 mt-0.5">{pt.emoji}</span>
+                              <div>
+                                <div className="font-black text-slate-900 text-sm sm:text-base">
+                                  {pt.name}
+                                </div>
+                                <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5 whitespace-pre-line">
+                                  {pt.desc || pt.simple}
+                                </p>
                               </div>
-                              <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5 whitespace-pre-line">
-                                {pt.desc || pt.simple}
-                              </p>
                             </div>
+                            <button
+                              onClick={() =>
+                                speakBoxText(
+                                  `kenyan-pt-${idx}`,
+                                  `${pt.name}. ${pt.desc || pt.simple}`
+                                )
+                              }
+                              className={`px-2 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 mt-0.5 ${
+                                speakingBoxId === `kenyan-pt-${idx}`
+                                  ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                                  : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border-emerald-300'
+                              }`}
+                              title={`Read ${pt.name} aloud and stop`}
+                            >
+                              {speakingBoxId === `kenyan-pt-${idx}` ? (
+                                <VolumeX className="w-3.5 h-3.5" />
+                              ) : (
+                                <Volume2 className="w-3.5 h-3.5" />
+                              )}
+                              <span>
+                                {speakingBoxId === `kenyan-pt-${idx}` ? 'Stop' : 'Read'}
+                              </span>
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -1784,20 +2257,64 @@ export default function LinuxCozyHouseHub() {
                 )}
               </div>
 
-              {/* 5-SECOND BODY & MIND MICRO-ACTION */}
+              {/* 5-SECOND BODY & MIND MICRO-ACTION (WITH INDEPENDENT READ-ALOUD) */}
               {(() => {
                 const bodyAct =
                   currentSubtopic.bodyMicroAction || currentSubtopic.bodyMove || {};
                 return (
-                  <div className="bg-gradient-to-br from-[#181329] via-[#141224] to-[#0d0f1a] rounded-3xl p-5 sm:p-6 border border-purple-500/40 shadow-xl">
+                  <div
+                    className={`bg-gradient-to-br from-[#181329] via-[#141224] to-[#0d0f1a] rounded-3xl p-5 sm:p-6 border shadow-xl transition-all ${
+                      speakingBoxId === 'body-action-box'
+                        ? 'speak-box-active-purple border-purple-400'
+                        : 'border-purple-500/40'
+                    }`}
+                  >
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="space-y-2 max-w-3xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/80 text-purple-300 border border-purple-700/60 text-xs font-black">
-                          <span>🤸🧠</span>
-                          <span>
-                            Body & Mind Memory Lock (Great for ADHD & Hands-On Learners!)
-                          </span>
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/80 text-purple-300 border border-purple-700/60 text-xs font-black">
+                            <span>🤸🧠</span>
+                            <span>
+                              Body & Mind Memory Lock (Great for ADHD & Hands-On Learners!)
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={() =>
+                              speakBoxText(
+                                'body-action-box',
+                                `5-Second Body and Mind Memory Lock: ${
+                                  bodyAct.title
+                                }. Instruction: ${bodyAct.instruction}. Steps: ${(
+                                  bodyAct.steps || []
+                                ).join('. ')}. ${
+                                  bodyAct.whyItWorks
+                                    ? 'Why this locks into memory: ' + bodyAct.whyItWorks
+                                    : ''
+                                }`
+                              )
+                            }
+                            className={`px-3 py-1 rounded-xl font-black text-xs border transition-all flex items-center gap-1.5 shrink-0 ${
+                              speakingBoxId === 'body-action-box'
+                                ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                                : 'bg-purple-900/60 hover:bg-purple-800 text-purple-200 border-purple-500/50'
+                            }`}
+                            title="Read this 5-second body move aloud and stop"
+                          >
+                            {speakingBoxId === 'body-action-box' ? (
+                              <>
+                                <VolumeX className="w-3.5 h-3.5" />
+                                <span>Stop</span>
+                              </>
+                            ) : (
+                              <>
+                                <Volume2 className="w-3.5 h-3.5" />
+                                <span>Read Move Aloud</span>
+                              </>
+                            )}
+                          </button>
                         </div>
+
                         <h3 className="text-lg sm:text-xl font-black text-white">
                           {bodyAct.title}
                         </h3>
@@ -8156,8 +8673,14 @@ $ sudo firewall-cmd --zone=public --list-all`}
               );
             })()}
 
-            {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER (NIGHT MODE) */}
-            <div className="bg-gradient-to-r from-[#141b2e] via-[#101626] to-[#0c101d] rounded-3xl p-5 border border-amber-500/30 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER (NIGHT MODE + INDEPENDENT READ-ALOUD) */}
+            <div
+              className={`bg-gradient-to-r from-[#141b2e] via-[#101626] to-[#0c101d] rounded-3xl p-5 border shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 transition-all ${
+                speakingBoxId === 'pocket-takeaway'
+                  ? 'speak-box-active border-amber-400'
+                  : 'border-amber-500/30'
+              }`}
+            >
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-2xl shadow-inner shrink-0">
                   💡
@@ -8173,6 +8696,32 @@ $ sudo firewall-cmd --zone=public --list-all`}
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() =>
+                    speakBoxText(
+                      'pocket-takeaway',
+                      `Pocket Takeaway to Remember: ${currentSubtopic.quickTakeaway}`
+                    )
+                  }
+                  className={`px-3 py-2 rounded-2xl font-black text-xs border transition-all flex items-center gap-1.5 shadow-sm ${
+                    speakingBoxId === 'pocket-takeaway'
+                      ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
+                      : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/40'
+                  }`}
+                  title="Read this takeaway aloud and stop"
+                >
+                  {speakingBoxId === 'pocket-takeaway' ? (
+                    <>
+                      <VolumeX className="w-3.5 h-3.5" />
+                      <span>Stop</span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="w-3.5 h-3.5" />
+                      <span>🔊 Read Takeaway</span>
+                    </>
+                  )}
+                </button>
                 {(() => {
                   const idx = currentSubtopicsList.findIndex(
                     (s) => s.id === activeSubtopicId

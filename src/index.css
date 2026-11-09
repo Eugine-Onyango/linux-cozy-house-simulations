@@ -448,3 +448,43 @@ html, body {
 .linux-night-hub code {
   color: #34d399;
 }
+
+/* Card Active Reading Glowing Highlights */
+.linux-night-hub .speak-box-active {
+  position: relative;
+  outline: 2px solid #fbbf24 !important;
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.4) !important;
+  transition: all 0.25s ease-in-out !important;
+}
+
+.linux-night-hub .speak-box-active-emerald {
+  position: relative;
+  outline: 2px solid #34d399 !important;
+  box-shadow: 0 0 25px rgba(52, 211, 153, 0.4) !important;
+  transition: all 0.25s ease-in-out !important;
+}
+
+.linux-night-hub .speak-box-active-purple {
+  position: relative;
+  outline: 2px solid #c084fc !important;
+  box-shadow: 0 0 25px rgba(192, 132, 252, 0.4) !important;
+  transition: all 0.25s ease-in-out !important;
+}
+
+.linux-night-hub .speak-box-active-sky {
+  position: relative;
+  outline: 2px solid #38bdf8 !important;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4) !important;
+  transition: all 0.25s ease-in-out !important;
+}
+
+/* Button pulse for currently reading voice */
+@keyframes voicePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+}
+
+.animate-voice-pulse {
+  animation: voicePulse 1.2s infinite ease-in-out;
+}
+
