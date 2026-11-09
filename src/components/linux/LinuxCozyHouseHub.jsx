@@ -544,28 +544,31 @@ export default function LinuxCozyHouseHub() {
   };
 
   return (
-    <div className="min-h-screen bg-amber-50/50 text-slate-800 flex flex-col">
-      {/* DEDICATED STANDALONE LINUX COZY HOUSE HEADER (100% Independent) */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-4 border-amber-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+    <div className="linux-night-hub min-h-screen bg-[#090d16] text-slate-100 flex flex-col relative selection:bg-amber-500/30 selection:text-amber-200 overflow-x-hidden">
+      {/* DEDICATED STANDALONE LINUX COZY HOUSE HEADER (100% Independent • Night Mode Only) */}
+      <header className="sticky top-0 z-50 bg-[#0c1222]/90 backdrop-blur-xl border-b border-slate-800/80 shadow-2xl shadow-black/40">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
           {/* Brand Title */}
           <button
             onClick={() => {
               sounds.playPop();
-              setMainTab('topic6');
+              setMainTab('topic10');
             }}
             className="flex items-center gap-3 text-left group focus:outline-none"
           >
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-amber-500 flex items-center justify-center text-2xl shadow-md group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-600 to-amber-500 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/20 group-hover:scale-105 group-hover:shadow-emerald-500/40 transition-all border border-emerald-400/40">
               🏡
             </div>
             <div>
-              <div className="flex items-center gap-1.5 font-black text-base sm:text-xl text-slate-900 tracking-tight">
+              <div className="flex items-center gap-1.5 font-black text-base sm:text-xl text-white tracking-tight">
                 <span>Sam’s Linux House & Kenyan Mtaa</span>
-                <Sparkles className="w-4 h-4 text-amber-500 fill-amber-400" />
+                <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 ml-1">
+                  🌙 Night Mode
+                </span>
               </div>
-              <p className="text-[11px] sm:text-xs font-bold text-slate-500">
-                Friendly • Hands-On • Dual Analogies • Neurodivergent & Beginner Safe
+              <p className="text-[11px] sm:text-xs font-semibold text-slate-400">
+                Starlit Mtaa • Friendly & Cozy • Dual Analogies • Neurodivergent Safe
               </p>
             </div>
           </button>
@@ -577,10 +580,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic1');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic1'
-                  ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm scale-105'
-                  : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border-emerald-300'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-emerald-400/60 shadow-[0_0_15px_rgba(16,185,129,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>🏡</span>
@@ -592,10 +595,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic2');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic2'
-                  ? 'bg-sky-600 text-white border-sky-700 shadow-sm scale-105'
-                  : 'bg-sky-50 hover:bg-sky-100 text-sky-950 border-sky-300'
+                  ? 'bg-gradient-to-r from-sky-600 to-cyan-600 text-white border-sky-400/60 shadow-[0_0_15px_rgba(14,165,233,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>🧭</span>
@@ -607,10 +610,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic3');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic3'
-                  ? 'bg-purple-600 text-white border-purple-700 shadow-sm scale-105'
-                  : 'bg-purple-50 hover:bg-purple-100 text-purple-950 border-purple-300'
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-400/60 shadow-[0_0_15px_rgba(168,85,247,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>🧰</span>
@@ -622,10 +625,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic4');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic4'
-                  ? 'bg-rose-600 text-white border-rose-700 shadow-sm scale-105'
-                  : 'bg-rose-50 hover:bg-rose-100 text-rose-950 border-rose-300'
+                  ? 'bg-gradient-to-r from-rose-600 to-pink-600 text-white border-rose-400/60 shadow-[0_0_15px_rgba(244,63,94,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>🔑</span>
@@ -637,10 +640,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic5');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic5'
-                  ? 'bg-teal-600 text-white border-teal-700 shadow-sm scale-105'
-                  : 'bg-teal-50 hover:bg-teal-100 text-teal-950 border-teal-300'
+                  ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white border-teal-400/60 shadow-[0_0_15px_rgba(20,184,166,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>📦</span>
@@ -652,10 +655,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic6');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic6'
-                  ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm scale-105'
-                  : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border-indigo-300'
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-400/60 shadow-[0_0_15px_rgba(99,102,241,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>🛒</span>
@@ -667,10 +670,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic7');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic7'
-                  ? 'bg-orange-600 text-white border-orange-700 shadow-sm scale-105'
-                  : 'bg-orange-50 hover:bg-orange-100 text-orange-950 border-orange-300'
+                  ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white border-orange-400/60 shadow-[0_0_15px_rgba(249,115,22,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>👨‍👩‍👧‍👦</span>
@@ -682,10 +685,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic8');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic8'
-                  ? 'bg-cyan-600 text-white border-cyan-700 shadow-sm scale-105'
-                  : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-950 border-cyan-300'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white border-cyan-400/60 shadow-[0_0_15px_rgba(6,182,212,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>🌐</span>
@@ -697,10 +700,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic9');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic9'
-                  ? 'bg-sky-700 text-white border-sky-800 shadow-sm scale-105'
-                  : 'bg-sky-50 hover:bg-sky-100 text-sky-950 border-sky-300'
+                  ? 'bg-gradient-to-r from-sky-700 to-indigo-700 text-white border-sky-400/60 shadow-[0_0_15px_rgba(3,105,161,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>🛎️</span>
@@ -712,10 +715,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('topic10');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'topic10'
-                  ? 'bg-red-600 text-white border-red-700 shadow-sm scale-105'
-                  : 'bg-red-50 hover:bg-red-100 text-red-950 border-red-300'
+                  ? 'bg-gradient-to-r from-red-600 to-rose-700 text-white border-red-400/60 shadow-[0_0_15px_rgba(239,68,68,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <span>🛡️</span>
@@ -727,10 +730,10 @@ export default function LinuxCozyHouseHub() {
                 sounds.playPop();
                 setMainTab('roadmap');
               }}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
                 mainTab === 'roadmap'
-                  ? 'bg-amber-500 text-white border-amber-600 shadow-sm scale-105'
-                  : 'bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-300'
+                  ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white border-amber-400/60 shadow-[0_0_15px_rgba(245,158,11,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
               }`}
             >
               <Map className="w-3.5 h-3.5" />
@@ -740,29 +743,31 @@ export default function LinuxCozyHouseHub() {
             <button
               onClick={toggleSound}
               title={soundEnabled ? 'Mute Sound Effects' : 'Enable Sound Effects'}
-              className={`px-2.5 py-1.5 sm:py-2 rounded-2xl font-bold text-xs border-2 transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 sm:py-2 rounded-2xl font-bold text-xs border transition-all flex items-center gap-1 ${
                 soundEnabled
-                  ? 'bg-amber-50 border-amber-300 text-amber-900'
-                  : 'bg-slate-100 border-slate-300 text-slate-500'
+                  ? 'bg-[#131b2e] border-amber-500/40 text-amber-300 shadow-sm'
+                  : 'bg-[#131b2e] border-slate-700/60 text-slate-500'
               }`}
             >
               {soundEnabled ? (
-                <Volume2 className="w-4 h-4 text-emerald-600" />
+                <Volume2 className="w-4 h-4 text-emerald-400" />
               ) : (
-                <VolumeX className="w-4 h-4 text-slate-400" />
+                <VolumeX className="w-4 h-4 text-slate-500" />
               )}
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6 flex-1 w-full">
-        {/* WARM COZY HERO BANNER */}
-        <div className="bg-gradient-to-r from-amber-100 via-emerald-50 to-sky-100 rounded-3xl p-5 sm:p-7 border-4 border-amber-300 shadow-sm relative overflow-hidden">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-            <div className="space-y-2 max-w-3xl">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6 flex-1 w-full relative z-10">
+        {/* WARM COZY HERO BANNER (STARLIT KENYAN MTAA & NIGHT HOUSE) */}
+        <div className="bg-gradient-to-br from-[#12192c] via-[#0f1424] to-[#090d16] rounded-3xl p-5 sm:p-7 border border-amber-500/30 shadow-2xl relative overflow-hidden">
+          <div className="absolute -top-16 -right-16 w-56 h-56 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 relative z-10">
+            <div className="space-y-2.5 max-w-3xl">
               <div className="inline-flex flex-wrap items-center gap-2">
-                <span className="px-3.5 py-1 rounded-full bg-amber-500 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5">
+                <span className="px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/20 flex items-center gap-1.5">
                   <span>🏠🇰🇪</span>
                   <span>
                     {mainTab === 'topic1'
@@ -788,12 +793,12 @@ export default function LinuxCozyHouseHub() {
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
-                <span className="px-3 py-1 rounded-full bg-white/90 border-2 border-emerald-300 text-emerald-900 font-extrabold text-xs">
+                <span className="px-3 py-1 rounded-full bg-slate-900/80 border border-emerald-500/40 text-emerald-300 font-extrabold text-xs shadow-inner">
                   ✨ Simple English • Dual Analogies • 5-Sec Body Move • Playable Toybox
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
                 {mainTab === 'topic1'
                   ? 'Topic 1: Understanding Linux Basics 🏡🍲'
                   : mainTab === 'topic2'
@@ -817,7 +822,7 @@ export default function LinuxCozyHouseHub() {
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
-              <p className="text-slate-700 font-semibold text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-300 font-medium text-sm sm:text-base leading-relaxed">
                 {mainTab === 'topic1'
                   ? 'Explore Linux Distributions, the 4-layer Architecture, and Linux vs. Unix using Sam’s Cozy House and everyday Kenyan life!'
                   : mainTab === 'topic2'
@@ -849,14 +854,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic1');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic1'
-                    ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-emerald-50'
+                    ? 'bg-emerald-600 text-white border-emerald-400 shadow-md shadow-emerald-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>🏡 1. Basics</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">3</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">3</span>
               </button>
 
               <button
@@ -864,14 +869,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic2');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic2'
-                    ? 'bg-sky-600 text-white border-sky-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-sky-50'
+                    ? 'bg-sky-600 text-white border-sky-400 shadow-md shadow-sky-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>🧭 2. File Sys</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">5</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">5</span>
               </button>
 
               <button
@@ -879,14 +884,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic3');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic3'
-                    ? 'bg-purple-600 text-white border-purple-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-purple-50'
+                    ? 'bg-purple-600 text-white border-purple-400 shadow-md shadow-purple-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>🧰 3. Commands</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">25</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">25</span>
               </button>
 
               <button
@@ -894,14 +899,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic4');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic4'
-                    ? 'bg-rose-600 text-white border-rose-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-rose-50'
+                    ? 'bg-rose-600 text-white border-rose-400 shadow-md shadow-rose-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>🔑 4. Perms</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">5</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">5</span>
               </button>
 
               <button
@@ -909,14 +914,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic5');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic5'
-                    ? 'bg-teal-600 text-white border-teal-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-teal-50'
+                    ? 'bg-teal-600 text-white border-teal-400 shadow-md shadow-teal-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>📦 5. Archive</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">6</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">6</span>
               </button>
 
               <button
@@ -924,14 +929,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic6');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic6'
-                    ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-indigo-50'
+                    ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>🛒 6. Packages</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">5</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">5</span>
               </button>
 
               <button
@@ -939,14 +944,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic7');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic7'
-                    ? 'bg-orange-600 text-white border-orange-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-orange-50'
+                    ? 'bg-orange-600 text-white border-orange-400 shadow-md shadow-orange-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>👨‍👩‍👧‍👦 7. Users</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">12</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">12</span>
               </button>
 
               <button
@@ -954,14 +959,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic8');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic8'
-                    ? 'bg-cyan-600 text-white border-cyan-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-cyan-50'
+                    ? 'bg-cyan-600 text-white border-cyan-400 shadow-md shadow-cyan-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>🌐 8. Net</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">7</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">7</span>
               </button>
 
               <button
@@ -969,14 +974,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic9');
                 }}
-                className={`px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic9'
-                    ? 'bg-sky-700 text-white border-sky-800 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-sky-50'
+                    ? 'bg-sky-700 text-white border-sky-400 shadow-md shadow-sky-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>🛎️ 9. Svc</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">3</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">3</span>
               </button>
 
               <button
@@ -984,14 +989,14 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic10');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border-2 transition-all flex items-center justify-between gap-2 ${
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic10'
-                    ? 'bg-red-600 text-white border-red-700 shadow-sm'
-                    : 'bg-white text-slate-800 border-slate-300 hover:bg-red-50'
+                    ? 'bg-red-600 text-white border-red-400 shadow-md shadow-red-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
                 <span>🛡️ 10. Firewall (iptables/firewalld/UFW)</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-black/10 text-[10px]">4</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">4</span>
               </button>
             </div>
           </div>
@@ -1473,10 +1478,10 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic10') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
-            <div className="bg-white rounded-3xl p-4 sm:p-5 border-4 border-amber-200 shadow-sm space-y-3">
+            <div className="bg-[#111728]/95 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
-                  <Compass className="w-4 h-4 text-amber-600" />
+                <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                  <Compass className="w-4 h-4 text-amber-400" />
                   <span>
                     Pick a Subtopic in{' '}
                     {mainTab === 'topic1'
@@ -1500,7 +1505,7 @@ export default function LinuxCozyHouseHub() {
                   </span>
                 </span>
 
-                <div className="flex flex-wrap items-center gap-1.5 bg-amber-50 p-1 rounded-2xl border-2 border-amber-200">
+                <div className="flex flex-wrap items-center gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
                   <button
                     onClick={() => {
                       sounds.playPop();
@@ -1508,8 +1513,8 @@ export default function LinuxCozyHouseHub() {
                     }}
                     className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
                       analogyFilter === 'both'
-                        ? 'bg-amber-500 text-white shadow-sm'
-                        : 'text-amber-900 hover:bg-amber-100'
+                        ? 'bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/20'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
                     }`}
                   >
                     🌟 Both Analogies
@@ -1521,8 +1526,8 @@ export default function LinuxCozyHouseHub() {
                     }}
                     className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
                       analogyFilter === 'original'
-                        ? 'bg-amber-500 text-white shadow-sm'
-                        : 'text-amber-900 hover:bg-amber-100'
+                        ? 'bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/20'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
                     }`}
                   >
                     🏠 Original House Only
@@ -1534,8 +1539,8 @@ export default function LinuxCozyHouseHub() {
                     }}
                     className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
                       analogyFilter === 'kenyan'
-                        ? 'bg-emerald-600 text-white shadow-sm'
-                        : 'text-emerald-900 hover:bg-emerald-100'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
                     }`}
                   >
                     🇰🇪 Kenyan Analogy Only
@@ -1566,21 +1571,21 @@ export default function LinuxCozyHouseHub() {
                         sounds.playPop();
                         setActiveSubtopicId(sub.id);
                       }}
-                      className={`p-3.5 rounded-2xl border-4 text-left transition-all flex flex-col justify-between gap-2 ${
+                      className={`p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between gap-2 ${
                         isSelected
-                          ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-emerald-700 shadow-md scale-[1.02]'
-                          : 'bg-amber-50/60 hover:bg-amber-100/70 text-slate-800 border-amber-200'
+                          ? 'bg-gradient-to-br from-emerald-600 via-teal-700 to-emerald-800 text-white border-emerald-400/80 shadow-[0_0_20px_rgba(16,185,129,0.3)] scale-[1.02]'
+                          : 'bg-[#151c2f]/90 hover:bg-[#1c263f] text-slate-200 border-slate-800 hover:border-slate-700'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-2xl bg-white/90 p-1.5 rounded-xl shadow-sm shrink-0">
+                        <span className="text-2xl bg-slate-800/90 p-1.5 rounded-xl shadow-inner border border-slate-700/60 shrink-0">
                           {sub.icon}
                         </span>
                         <span
                           className={`text-[11px] font-black uppercase px-2 py-0.5 rounded-full ${
                             isSelected
-                              ? 'bg-white/25 text-white'
-                              : 'bg-amber-200/80 text-amber-950'
+                              ? 'bg-white/20 text-white'
+                              : 'bg-slate-800 text-slate-300 border border-slate-700 font-mono'
                           }`}
                         >
                           {sub.number}
@@ -1593,7 +1598,7 @@ export default function LinuxCozyHouseHub() {
                         {moveDone && (
                           <div
                             className={`text-[10px] font-black mt-1 ${
-                              isSelected ? 'text-yellow-200' : 'text-emerald-700'
+                              isSelected ? 'text-yellow-300' : 'text-emerald-400'
                             }`}
                           >
                             ✅ Body Move Done
@@ -1784,19 +1789,19 @@ export default function LinuxCozyHouseHub() {
                 const bodyAct =
                   currentSubtopic.bodyMicroAction || currentSubtopic.bodyMove || {};
                 return (
-                  <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 rounded-3xl p-5 sm:p-6 border-4 border-purple-300 shadow-sm">
+                  <div className="bg-gradient-to-br from-[#181329] via-[#141224] to-[#0d0f1a] rounded-3xl p-5 sm:p-6 border border-purple-500/40 shadow-xl">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="space-y-2 max-w-3xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-200 text-purple-950 text-xs font-black">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/80 text-purple-300 border border-purple-700/60 text-xs font-black">
                           <span>🤸🧠</span>
                           <span>
                             Body & Mind Memory Lock (Great for ADHD & Hands-On Learners!)
                           </span>
                         </div>
-                        <h3 className="text-lg sm:text-xl font-black text-purple-950">
+                        <h3 className="text-lg sm:text-xl font-black text-white">
                           {bodyAct.title}
                         </h3>
-                        <p className="text-xs sm:text-sm font-bold text-slate-700">
+                        <p className="text-xs sm:text-sm font-bold text-slate-300">
                           {bodyAct.instruction}
                         </p>
                         {Array.isArray(bodyAct.steps) && bodyAct.steps.length > 0 && (
@@ -1804,7 +1809,7 @@ export default function LinuxCozyHouseHub() {
                             {bodyAct.steps.map((step, i) => (
                               <div
                                 key={i}
-                                className="bg-white/95 p-3 rounded-2xl border-2 border-purple-200 text-xs sm:text-sm font-extrabold text-slate-800 shadow-sm"
+                                className="bg-[#181f33]/90 p-3 rounded-2xl border border-purple-500/30 text-xs sm:text-sm font-extrabold text-slate-100 shadow-sm"
                               >
                                 {step}
                               </div>
@@ -1812,7 +1817,7 @@ export default function LinuxCozyHouseHub() {
                           </div>
                         )}
                         {bodyAct.whyItWorks && (
-                          <div className="bg-white/95 p-3 rounded-2xl border-2 border-purple-200 text-xs sm:text-sm font-extrabold text-purple-900 shadow-sm">
+                          <div className="bg-[#181f33]/90 p-3 rounded-2xl border border-purple-500/30 text-xs sm:text-sm font-extrabold text-purple-300 shadow-sm">
                             💡 Why this locks into memory: {bodyAct.whyItWorks}
                           </div>
                         )}
@@ -1821,10 +1826,10 @@ export default function LinuxCozyHouseHub() {
                       <div className="shrink-0 flex flex-col items-center gap-2">
                         <button
                           onClick={() => handleCompleteBodyMove(currentSubtopic.id)}
-                          className={`px-5 py-3.5 rounded-2xl font-black text-sm border-4 transition-all shadow-md active:scale-95 flex items-center gap-2 ${
+                          className={`px-5 py-3.5 rounded-2xl font-black text-sm border-2 transition-all shadow-lg active:scale-95 flex items-center gap-2 ${
                             completedBodyMoves[currentSubtopic.id]
-                              ? 'bg-emerald-600 text-white border-emerald-700'
-                              : 'bg-purple-600 hover:bg-purple-700 text-white border-purple-800 animate-bounce'
+                              ? 'bg-emerald-600 text-white border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.35)]'
+                              : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white border-purple-400/60 shadow-[0_0_20px_rgba(168,85,247,0.35)] animate-bounce'
                           }`}
                         >
                           <CheckCircle2 className="w-5 h-5" />
@@ -8151,15 +8156,17 @@ $ sudo firewall-cmd --zone=public --list-all`}
               );
             })()}
 
-            {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER */}
-            <div className="bg-amber-100/80 rounded-3xl p-5 border-4 border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER (NIGHT MODE) */}
+            <div className="bg-gradient-to-r from-[#141b2e] via-[#101626] to-[#0c101d] rounded-3xl p-5 border border-amber-500/30 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <span className="text-3xl">💡</span>
+                <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-2xl shadow-inner shrink-0">
+                  💡
+                </div>
                 <div>
-                  <div className="text-xs font-black uppercase tracking-wider text-amber-900">
+                  <div className="text-xs font-black uppercase tracking-wider text-amber-400">
                     Pocket Takeaway to Remember:
                   </div>
-                  <div className="text-sm sm:text-base font-black text-slate-900">
+                  <div className="text-sm sm:text-base font-black text-white">
                     {currentSubtopic.quickTakeaway}
                   </div>
                 </div>

@@ -2,24 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Fredoka', 'Nunito', sans-serif;
+:root {
+  color-scheme: dark;
 }
 
-/* Custom friendly scrollbars & animations */
+html, body {
+  background-color: #090d16;
+  color: #f1f5f9;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom sleek twilight scrollbars */
 ::-webkit-scrollbar {
   width: 10px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #fef3c7;
+  background: #090d16;
 }
 ::-webkit-scrollbar-thumb {
-  background: #f59e0b;
+  background: #1e293b;
   border-radius: 9999px;
+  border: 2px solid #090d16;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #d97706;
+  background: #334155;
 }
 
 /* Hide scrollbar for clean mobile ribbon swiping */
@@ -31,7 +39,7 @@ body {
   scrollbar-width: none;
 }
 
-
+/* Custom Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
@@ -90,4 +98,353 @@ body {
 
 .animate-shieldPulse {
   animation: shieldPulse 2s infinite;
+}
+
+/* ==========================================================================
+   LINUX COZY HOUSE — EXCLUSIVE NIGHT MODE DESIGN SYSTEM (DECENT & NOT SCARY)
+   ========================================================================== */
+.linux-night-hub {
+  background-color: #090d16 !important;
+  color: #f1f5f9 !important;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Atmospheric Ambient Lights (Warm Lantern Amber & Starlit Indigo) */
+.linux-night-hub::before {
+  content: "";
+  position: fixed;
+  top: -10%;
+  left: 15%;
+  width: 50vw;
+  height: 450px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(9, 13, 22, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.linux-night-hub::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  right: 5%;
+  width: 45vw;
+  height: 450px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, rgba(9, 13, 22, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Headings Crisp Readability */
+.linux-night-hub h1,
+.linux-night-hub h2,
+.linux-night-hub h3,
+.linux-night-hub h4 {
+  color: #ffffff !important;
+}
+
+/* High-End Dark Card Surfaces */
+.linux-night-hub .bg-white {
+  background-color: #111728 !important;
+  border-color: rgba(51, 65, 85, 0.7) !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+}
+
+.linux-night-hub .bg-white\/90,
+.linux-night-hub .bg-white\/95 {
+  background-color: rgba(17, 23, 40, 0.94) !important;
+  border-color: rgba(51, 65, 85, 0.7) !important;
+  color: #f1f5f9 !important;
+  backdrop-filter: blur(16px);
+}
+
+.linux-night-hub .bg-slate-50,
+.linux-night-hub .bg-slate-100 {
+  background-color: #161f36 !important;
+  border-color: rgba(71, 85, 105, 0.6) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Warm Lantern & Mtaa Tinted Glass Panels */
+.linux-night-hub .bg-amber-50,
+.linux-night-hub .bg-amber-50\/40,
+.linux-night-hub .bg-amber-50\/50,
+.linux-night-hub .bg-amber-50\/60,
+.linux-night-hub .bg-amber-50\/70,
+.linux-night-hub .bg-amber-50\/80,
+.linux-night-hub .bg-amber-50\/90 {
+  background-color: #12182a !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+  color: #fef3c7 !important;
+}
+
+.linux-night-hub .bg-emerald-50,
+.linux-night-hub .bg-emerald-50\/50,
+.linux-night-hub .bg-emerald-50\/70,
+.linux-night-hub .bg-emerald-50\/80,
+.linux-night-hub .bg-emerald-50\/90 {
+  background-color: #111929 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  color: #d1fae5 !important;
+}
+
+.linux-night-hub .bg-sky-50,
+.linux-night-hub .bg-sky-50\/70,
+.linux-night-hub .bg-sky-50\/80,
+.linux-night-hub .bg-sky-50\/90 {
+  background-color: #10192d !important;
+  border-color: rgba(14, 165, 233, 0.35) !important;
+  color: #e0f2fe !important;
+}
+
+.linux-night-hub .bg-purple-50,
+.linux-night-hub .bg-purple-50\/70,
+.linux-night-hub .bg-purple-50\/80,
+.linux-night-hub .bg-purple-50\/90 {
+  background-color: #16142c !important;
+  border-color: rgba(168, 85, 247, 0.35) !important;
+  color: #f3e8ff !important;
+}
+
+.linux-night-hub .bg-rose-50,
+.linux-night-hub .bg-rose-50\/70,
+.linux-night-hub .bg-rose-50\/80,
+.linux-night-hub .bg-rose-50\/90 {
+  background-color: #1c1322 !important;
+  border-color: rgba(244, 63, 94, 0.35) !important;
+  color: #ffe4e6 !important;
+}
+
+.linux-night-hub .bg-indigo-50 {
+  background-color: #131730 !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+  color: #e0e7ff !important;
+}
+
+.linux-night-hub .bg-teal-50 {
+  background-color: #0f1c28 !important;
+  border-color: rgba(20, 184, 166, 0.35) !important;
+  color: #ccfbf1 !important;
+}
+
+.linux-night-hub .bg-cyan-50 {
+  background-color: #0f1c2d !important;
+  border-color: rgba(6, 182, 212, 0.35) !important;
+  color: #cffafe !important;
+}
+
+.linux-night-hub .bg-red-50 {
+  background-color: #1c1218 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  color: #fee2e2 !important;
+}
+
+.linux-night-hub .bg-orange-50 {
+  background-color: #1c1514 !important;
+  border-color: rgba(249, 115, 22, 0.35) !important;
+  color: #ffedd5 !important;
+}
+
+/* Semi-transparent Glass Badges */
+.linux-night-hub .bg-amber-100 {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #fde68a !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
+}
+
+.linux-night-hub .bg-emerald-100 {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #a7f3d0 !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+}
+
+.linux-night-hub .bg-sky-100 {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #bae6fd !important;
+  border-color: rgba(14, 165, 233, 0.45) !important;
+}
+
+.linux-night-hub .bg-purple-100 {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #e9d5ff !important;
+  border-color: rgba(168, 85, 247, 0.45) !important;
+}
+
+.linux-night-hub .bg-rose-100 {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #fecdd3 !important;
+  border-color: rgba(244, 63, 94, 0.45) !important;
+}
+
+.linux-night-hub .bg-indigo-100 {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #c7d2fe !important;
+  border-color: rgba(99, 102, 241, 0.45) !important;
+}
+
+.linux-night-hub .bg-teal-100 {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #99f6e4 !important;
+  border-color: rgba(20, 184, 166, 0.45) !important;
+}
+
+.linux-night-hub .bg-cyan-100 {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #a5f3fc !important;
+  border-color: rgba(6, 182, 212, 0.45) !important;
+}
+
+.linux-night-hub .bg-red-100 {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.45) !important;
+}
+
+.linux-night-hub .bg-orange-100 {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.18) 0%, rgba(17, 23, 40, 0.9) 100%) !important;
+  color: #fed7aa !important;
+  border-color: rgba(249, 115, 22, 0.45) !important;
+}
+
+/* 5-Second Body Move Card Night Surface */
+.linux-night-hub .bg-gradient-to-r.from-purple-100,
+.linux-night-hub .from-purple-100,
+.linux-night-hub .bg-purple-100\/90 {
+  background: linear-gradient(135deg, #18152e 0%, #111425 100%) !important;
+  border-color: rgba(168, 85, 247, 0.4) !important;
+  color: #f3e8ff !important;
+}
+
+/* Crisp Text Readability in Night Mode */
+.linux-night-hub .text-slate-900,
+.linux-night-hub .text-slate-800 {
+  color: #ffffff !important;
+}
+
+.linux-night-hub .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+.linux-night-hub .text-slate-600,
+.linux-night-hub .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.linux-night-hub .text-amber-950,
+.linux-night-hub .text-amber-900,
+.linux-night-hub .text-amber-800 {
+  color: #fbbf24 !important;
+}
+
+.linux-night-hub .text-emerald-950,
+.linux-night-hub .text-emerald-900,
+.linux-night-hub .text-emerald-800 {
+  color: #34d399 !important;
+}
+
+.linux-night-hub .text-purple-950,
+.linux-night-hub .text-purple-900,
+.linux-night-hub .text-purple-800 {
+  color: #c084fc !important;
+}
+
+.linux-night-hub .text-sky-950,
+.linux-night-hub .text-sky-900,
+.linux-night-hub .text-sky-800 {
+  color: #38bdf8 !important;
+}
+
+.linux-night-hub .text-rose-950,
+.linux-night-hub .text-rose-900,
+.linux-night-hub .text-rose-800 {
+  color: #fb7185 !important;
+}
+
+.linux-night-hub .text-indigo-950,
+.linux-night-hub .text-indigo-900,
+.linux-night-hub .text-indigo-800 {
+  color: #818cf8 !important;
+}
+
+.linux-night-hub .text-teal-950,
+.linux-night-hub .text-teal-900,
+.linux-night-hub .text-teal-800 {
+  color: #2dd4bf !important;
+}
+
+.linux-night-hub .text-cyan-950,
+.linux-night-hub .text-cyan-900,
+.linux-night-hub .text-cyan-800 {
+  color: #22d3ee !important;
+}
+
+.linux-night-hub .text-red-950,
+.linux-night-hub .text-red-900,
+.linux-night-hub .text-red-800 {
+  color: #f87171 !important;
+}
+
+.linux-night-hub .text-orange-950,
+.linux-night-hub .text-orange-900,
+.linux-night-hub .text-orange-800 {
+  color: #fb923c !important;
+}
+
+/* Sleek Borders */
+.linux-night-hub .border-amber-200,
+.linux-night-hub .border-amber-300 {
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+.linux-night-hub .border-emerald-200,
+.linux-night-hub .border-emerald-300 {
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+.linux-night-hub .border-sky-200,
+.linux-night-hub .border-sky-300 {
+  border-color: rgba(14, 165, 233, 0.4) !important;
+}
+
+.linux-night-hub .border-purple-200,
+.linux-night-hub .border-purple-300 {
+  border-color: rgba(168, 85, 247, 0.4) !important;
+}
+
+.linux-night-hub .border-rose-200,
+.linux-night-hub .border-rose-300 {
+  border-color: rgba(244, 63, 94, 0.4) !important;
+}
+
+.linux-night-hub .border-slate-200,
+.linux-night-hub .border-slate-300 {
+  border-color: rgba(51, 65, 85, 0.7) !important;
+}
+
+.linux-night-hub .border-slate-100 {
+  border-color: rgba(51, 65, 85, 0.45) !important;
+}
+
+/* Form Inputs, Selects, and Textareas */
+.linux-night-hub input,
+.linux-night-hub select,
+.linux-night-hub textarea {
+  background-color: #0b101d !important;
+  border-color: rgba(71, 85, 105, 0.8) !important;
+  color: #f8fafc !important;
+}
+
+.linux-night-hub input:focus,
+.linux-night-hub select:focus,
+.linux-night-hub textarea:focus {
+  border-color: #f59e0b !important;
+  outline: none !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Terminal Console Windows */
+.linux-night-hub pre,
+.linux-night-hub code {
+  color: #34d399;
 }
