@@ -332,7 +332,7 @@ export default function LinuxCozyHouseHub() {
     if (next) sounds.playPop();
   };
 
-  // Friendly Read-Aloud helper for Topic 1 & Topic 2
+  // Friendly Read-Aloud helper for Topic 1, 2, 4, 5, 6 & 7
   const handleReadAloud = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     if (isSpeaking) {
@@ -341,7 +341,17 @@ export default function LinuxCozyHouseHub() {
       return;
     }
     stopSpeech();
-    const textToRead = `${currentSubtopic.title}. In simple terms: ${currentSubtopic.laymanHeadline}. ${currentSubtopic.laymanExplanation}. Original House Analogy: ${currentSubtopic.originalAnalogy.summary}. Kenyan Analogy: ${currentSubtopic.kenyanAnalogy.summary}.`;
+    const headline = currentSubtopic.laymanHeadline || currentSubtopic.badge || '';
+    const explanation = currentSubtopic.laymanExplanation || currentSubtopic.plainEnglish || '';
+    const origSummary =
+      currentSubtopic.originalAnalogy?.summary ||
+      currentSubtopic.originalAnalogy?.intro ||
+      '';
+    const kenyanSummary =
+      currentSubtopic.kenyanAnalogy?.summary ||
+      currentSubtopic.kenyanAnalogy?.intro ||
+      '';
+    const textToRead = `${currentSubtopic.title}. In simple terms: ${headline}. ${explanation}. Original House Analogy: ${origSummary}. Kenyan Analogy: ${kenyanSummary}.`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.rate = 0.93;
     utterance.pitch = 1.02;
@@ -1402,7 +1412,9 @@ export default function LinuxCozyHouseHub() {
 
             {/* STEP 2: SIMPLE LAYMAN EXPLANATION + READ ALOUD SPEAKER */}
             <div
-              className={`rounded-3xl p-5 sm:p-7 border-4 ${currentSubtopic.pastelBg} ${currentSubtopic.borderColor} shadow-sm space-y-4`}
+              className={`rounded-3xl p-5 sm:p-7 border-4 ${
+                currentSubtopic.pastelBg || 'bg-amber-50/80'
+              } ${currentSubtopic.borderColor || 'border-amber-300'} shadow-sm space-y-4`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-slate-200/80 pb-4">
                 <div className="flex items-center gap-3">
@@ -1411,7 +1423,10 @@ export default function LinuxCozyHouseHub() {
                   </span>
                   <div>
                     <span
-                      className={`px-3 py-0.5 rounded-full text-xs font-black ${currentSubtopic.badgeBg}`}
+                      className={`px-3 py-0.5 rounded-full text-xs font-black ${
+                        currentSubtopic.badgeBg ||
+                        'bg-amber-100 text-amber-950 border-amber-300'
+                      }`}
                     >
                       Subtopic {currentSubtopic.number} • Plain Layman’s English
                     </span>
@@ -1443,17 +1458,36 @@ export default function LinuxCozyHouseHub() {
                 </button>
               </div>
 
-              <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-sm space-y-2">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-sm space-y-3">
                 <div className="text-xs font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4" />
                   <span>The Simple 10-Second Idea:</span>
                 </div>
                 <p className="text-base sm:text-xl font-black text-slate-900 leading-snug">
-                  “{currentSubtopic.laymanHeadline}”
+                  “{currentSubtopic.laymanHeadline || currentSubtopic.badge}”
                 </p>
                 <p className="text-sm sm:text-base font-semibold text-slate-700 leading-relaxed pt-1">
-                  {currentSubtopic.laymanExplanation}
+                  {currentSubtopic.laymanExplanation || currentSubtopic.plainEnglish}
                 </p>
+
+                {Array.isArray(currentSubtopic.laymanPoints) &&
+                  currentSubtopic.laymanPoints.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                      {currentSubtopic.laymanPoints.map((lp, idx) => (
+                        <div
+                          key={idx}
+                          className="p-3 rounded-2xl bg-amber-50/70 border-2 border-amber-200/80 space-y-0.5"
+                        >
+                          <div className="font-mono font-black text-xs sm:text-sm text-amber-950">
+                            • {lp.term}
+                          </div>
+                          <div className="text-xs font-semibold text-slate-700 leading-relaxed">
+                            {lp.meaning}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
               </div>
 
               {/* DUAL ANALOGIES */}
@@ -1466,20 +1500,25 @@ export default function LinuxCozyHouseHub() {
                   <div className="bg-amber-50/90 rounded-3xl p-5 sm:p-6 border-4 border-amber-300 shadow-sm flex flex-col justify-between space-y-4">
                     <div className="space-y-3">
                       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-200 text-amber-950 text-xs font-black">
-                        <span>{currentSubtopic.originalAnalogy.icon}</span>
+                        <span>{currentSubtopic.originalAnalogy?.icon || '🏠'}</span>
                         <span>Original Analogy (Simplified & Cozy)</span>
                       </div>
 
                       <h3 className="text-lg sm:text-xl font-black text-amber-950">
-                        {currentSubtopic.originalAnalogy.title}
+                        {currentSubtopic.originalAnalogy?.title}
                       </h3>
 
                       <p className="text-sm font-extrabold text-amber-900 bg-white/90 p-3.5 rounded-2xl border-2 border-amber-200">
-                        {currentSubtopic.originalAnalogy.summary}
+                        {currentSubtopic.originalAnalogy?.summary ||
+                          currentSubtopic.originalAnalogy?.intro}
                       </p>
 
                       <div className="space-y-2.5 pt-1">
-                        {currentSubtopic.originalAnalogy.points.map((pt, idx) => (
+                        {(
+                          currentSubtopic.originalAnalogy?.points ||
+                          currentSubtopic.originalAnalogy?.cards ||
+                          []
+                        ).map((pt, idx) => (
                           <div
                             key={idx}
                             className="bg-white rounded-2xl p-3.5 border-2 border-amber-200/90 flex items-start gap-3 shadow-sm"
@@ -1489,8 +1528,8 @@ export default function LinuxCozyHouseHub() {
                               <div className="font-black text-slate-900 text-sm sm:text-base">
                                 {pt.name}
                               </div>
-                              <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5">
-                                {pt.desc}
+                              <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5 whitespace-pre-line">
+                                {pt.desc || pt.simple}
                               </p>
                             </div>
                           </div>
@@ -1504,20 +1543,25 @@ export default function LinuxCozyHouseHub() {
                   <div className="bg-emerald-50/90 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-sm flex flex-col justify-between space-y-4">
                     <div className="space-y-3">
                       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-200 text-emerald-950 text-xs font-black">
-                        <span>{currentSubtopic.kenyanAnalogy.icon}</span>
+                        <span>{currentSubtopic.kenyanAnalogy?.icon || '🇰🇪'}</span>
                         <span>Kenyan Everyday Analogy (Mtaa & Home Life)</span>
                       </div>
 
                       <h3 className="text-lg sm:text-xl font-black text-emerald-950">
-                        {currentSubtopic.kenyanAnalogy.title}
+                        {currentSubtopic.kenyanAnalogy?.title}
                       </h3>
 
                       <p className="text-sm font-extrabold text-emerald-900 bg-white/90 p-3.5 rounded-2xl border-2 border-emerald-200">
-                        {currentSubtopic.kenyanAnalogy.summary}
+                        {currentSubtopic.kenyanAnalogy?.summary ||
+                          currentSubtopic.kenyanAnalogy?.intro}
                       </p>
 
                       <div className="space-y-2.5 pt-1">
-                        {currentSubtopic.kenyanAnalogy.points.map((pt, idx) => (
+                        {(
+                          currentSubtopic.kenyanAnalogy?.points ||
+                          currentSubtopic.kenyanAnalogy?.cards ||
+                          []
+                        ).map((pt, idx) => (
                           <div
                             key={idx}
                             className="bg-white rounded-2xl p-3.5 border-2 border-emerald-200/90 flex items-start gap-3 shadow-sm"
@@ -1527,8 +1571,8 @@ export default function LinuxCozyHouseHub() {
                               <div className="font-black text-slate-900 text-sm sm:text-base">
                                 {pt.name}
                               </div>
-                              <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5">
-                                {pt.desc}
+                              <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5 whitespace-pre-line">
+                                {pt.desc || pt.simple}
                               </p>
                             </div>
                           </div>
@@ -1540,50 +1584,65 @@ export default function LinuxCozyHouseHub() {
               </div>
 
               {/* 5-SECOND BODY & MIND MICRO-ACTION */}
-              <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 rounded-3xl p-5 sm:p-6 border-4 border-purple-300 shadow-sm">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-2 max-w-3xl">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-200 text-purple-950 text-xs font-black">
-                      <span>🤸🧠</span>
-                      <span>Body & Mind Memory Lock (Great for ADHD & Hands-On Learners!)</span>
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-black text-purple-950">
-                      {currentSubtopic.bodyMicroAction.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm font-bold text-slate-700">
-                      {currentSubtopic.bodyMicroAction.instruction}
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                      {currentSubtopic.bodyMicroAction.steps.map((step, i) => (
-                        <div
-                          key={i}
-                          className="bg-white/95 p-3 rounded-2xl border-2 border-purple-200 text-xs sm:text-sm font-extrabold text-slate-800 shadow-sm"
-                        >
-                          {step}
+              {(() => {
+                const bodyAct =
+                  currentSubtopic.bodyMicroAction || currentSubtopic.bodyMove || {};
+                return (
+                  <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 rounded-3xl p-5 sm:p-6 border-4 border-purple-300 shadow-sm">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="space-y-2 max-w-3xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-200 text-purple-950 text-xs font-black">
+                          <span>🤸🧠</span>
+                          <span>
+                            Body & Mind Memory Lock (Great for ADHD & Hands-On Learners!)
+                          </span>
                         </div>
-                      ))}
+                        <h3 className="text-lg sm:text-xl font-black text-purple-950">
+                          {bodyAct.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm font-bold text-slate-700">
+                          {bodyAct.instruction}
+                        </p>
+                        {Array.isArray(bodyAct.steps) && bodyAct.steps.length > 0 && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                            {bodyAct.steps.map((step, i) => (
+                              <div
+                                key={i}
+                                className="bg-white/95 p-3 rounded-2xl border-2 border-purple-200 text-xs sm:text-sm font-extrabold text-slate-800 shadow-sm"
+                              >
+                                {step}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {bodyAct.whyItWorks && (
+                          <div className="bg-white/95 p-3 rounded-2xl border-2 border-purple-200 text-xs sm:text-sm font-extrabold text-purple-900 shadow-sm">
+                            💡 Why this locks into memory: {bodyAct.whyItWorks}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="shrink-0 flex flex-col items-center gap-2">
+                        <button
+                          onClick={() => handleCompleteBodyMove(currentSubtopic.id)}
+                          className={`px-5 py-3.5 rounded-2xl font-black text-sm border-4 transition-all shadow-md active:scale-95 flex items-center gap-2 ${
+                            completedBodyMoves[currentSubtopic.id]
+                              ? 'bg-emerald-600 text-white border-emerald-700'
+                              : 'bg-purple-600 hover:bg-purple-700 text-white border-purple-800 animate-bounce'
+                          }`}
+                        >
+                          <CheckCircle2 className="w-5 h-5" />
+                          <span>
+                            {completedBodyMoves[currentSubtopic.id]
+                              ? '🎉 Body Move Locked In!'
+                              : '🙌 I Did This 5-Sec Move!'}
+                          </span>
+                        </button>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="shrink-0 flex flex-col items-center gap-2">
-                    <button
-                      onClick={() => handleCompleteBodyMove(currentSubtopic.id)}
-                      className={`px-5 py-3.5 rounded-2xl font-black text-sm border-4 transition-all shadow-md active:scale-95 flex items-center gap-2 ${
-                        completedBodyMoves[currentSubtopic.id]
-                          ? 'bg-emerald-600 text-white border-emerald-700'
-                          : 'bg-purple-600 hover:bg-purple-700 text-white border-purple-800 animate-bounce'
-                      }`}
-                    >
-                      <CheckCircle2 className="w-5 h-5" />
-                      <span>
-                        {completedBodyMoves[currentSubtopic.id]
-                          ? '🎉 Body Move Locked In!'
-                          : '🙌 I Did This 5-Sec Move!'}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                );
+              })()}
             </div>
 
             {/* TOPIC 1 & 2 TOYBOXES */}
