@@ -785,6 +785,21 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 11,
+    title: 'Monitoring & Troubleshooting',
+    status: 'playable',
+    topicKey: 'topic11',
+    icon: '🩺',
+    subtopics: [
+      '11.1 Configure network interfaces in CentOS (nmcli, nmtui, /etc/sysconfig/network-scripts & ONBOOT)',
+      '11.2 Network configuration and troubleshooting (The 5-Step Diagnostic Ladder & 7 Core Tools)',
+      '11.3 System Monitoring (CPU, RAM, Disk, Load Average, Processes & Logs)'
+    ],
+    laymanSummary: 'Diagnosing network drops from physical link to DNS, configuring enterprise CentOS network interfaces with ONBOOT=yes, and checking the system pulse with top, free, df, and journalctl.',
+    houseAnalogy: 'The Basement Utility Breaker panel (CentOS ifcfg & ONBOOT), the 5-Step Water Pipe Leak Detective, and the Smart-House Health Dashboard & Circuit Breaker (CPU, RAM, Disk, and unplugging runaway appliances with kill -9).',
+    kenyanAnalogy: 'Registering a KPLC Smart Meter & Nairobi Water connection in Ruiru (CentOS ONBOOT), diagnosing why the cyber café M-Pesa till stopped working, and the Matatu Driver & Sacco Mechanic Dashboard (RPM, passenger seats, luggage boot, and conductor ejecting a troublemaker).'
+  },
+  {
+    id: 12,
     title: 'Shell & Bash Scripting',
     status: 'upcoming',
     icon: '📜',

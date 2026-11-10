@@ -36,16 +36,17 @@ import { linuxTopic7Subtopics } from './linuxTopic7Data';
 import { linuxTopic8Subtopics } from './linuxTopic8Data';
 import { linuxTopic9Subtopics } from './linuxTopic9Data';
 import { linuxTopic10Subtopics } from './linuxTopic10Data';
+import { linuxTopic11Subtopics } from './linuxTopic11Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
-  // Top-level view: 'topic1' ... 'topic10' | 'roadmap'
-  // Default to 'topic10' so the user immediately sees Topic 10: Linux Firewall!
-  const [mainTab, setMainTab] = useState('topic10');
+  // Top-level view: 'topic1' ... 'topic11' | 'roadmap'
+  // Default to 'topic11' so the user immediately sees Topic 11: Monitoring & Troubleshooting!
+  const [mainTab, setMainTab] = useState('topic11');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, Topic 8, Topic 9, and Topic 10
+  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, Topic 8, Topic 9, Topic 10, and Topic 11
   const [activeTopic1SubId, setActiveTopic1SubId] = useState('distributions');
   const [activeTopic2SubId, setActiveTopic2SubId] = useState('file-system');
   const [activeTopic4SubId, setActiveTopic4SubId] = useState('file-management');
@@ -55,6 +56,7 @@ export default function LinuxCozyHouseHub() {
   const [activeTopic8SubId, setActiveTopic8SubId] = useState('configuring-network-interfaces');
   const [activeTopic9SubId, setActiveTopic9SubId] = useState('dhcp-service');
   const [activeTopic10SubId, setActiveTopic10SubId] = useState('linux-firewall-overview');
+  const [activeTopic11SubId, setActiveTopic11SubId] = useState('centos-network-interfaces');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -312,7 +314,28 @@ export default function LinuxCozyHouseHub() {
   // 10.4 Managing Firewall Configuration: Rule Order & Permanent Save Lab
   const [t10RuleOrderMode, setT10RuleOrderMode] = useState('fixed'); // 'bug' | 'fixed' | 'save' | 'zones'
 
-  // Determine current active subtopics list and current subtopic object for Topic 1..10
+  // ==========================================================================
+  // TOPIC 11 TOYBOX STATES (MONITORING & TROUBLESHOOTING - 3 SUBTOPICS)
+  // ==========================================================================
+  // 11.1 CentOS Interface Configurator
+  const [t11CentosIface, setT11CentosIface] = useState('ens33');
+  const [t11CentosBootproto, setT11CentosBootproto] = useState('static'); // 'static' | 'dhcp'
+  const [t11CentosOnboot, setT11CentosOnboot] = useState(true);
+  const [t11CentosIp, setT11CentosIp] = useState('192.168.1.50');
+  const [t11CentosGateway, setT11CentosGateway] = useState('192.168.1.1');
+  const [t11CentosDns, setT11CentosDns] = useState('8.8.8.8');
+  const [t11CentosView, setT11CentosView] = useState('ifcfg'); // 'ifcfg' | 'nmcli' | 'nmtui'
+  const [t11CentosTested, setT11CentosTested] = useState(false);
+
+  // 11.2 Network Troubleshooting Detective Ladder
+  const [t11TroubleScenario, setT11TroubleScenario] = useState('dns_broken'); // 'cable_down' | 'no_ip' | 'gateway_lost' | 'dns_broken' | 'port_closed'
+  const [t11TroubleSolved, setT11TroubleSolved] = useState(false);
+
+  // 11.3 System Monitoring & Process Killer
+  const [t11MonTab, setT11MonTab] = useState('top'); // 'top' | 'free' | 'df' | 'logs'
+  const [t11RogueKilled, setT11RogueKilled] = useState(false);
+
+  // Determine current active subtopics list and current subtopic object for Topic 1..11
   const currentSubtopicsList =
     mainTab === 'topic1'
       ? linuxTopic1Subtopics
@@ -330,7 +353,9 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic8Subtopics
       : mainTab === 'topic9'
       ? linuxTopic9Subtopics
-      : linuxTopic10Subtopics;
+      : mainTab === 'topic10'
+      ? linuxTopic10Subtopics
+      : linuxTopic11Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -348,7 +373,9 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic8SubId
       : mainTab === 'topic9'
       ? activeTopic9SubId
-      : activeTopic10SubId;
+      : mainTab === 'topic10'
+      ? activeTopic10SubId
+      : activeTopic11SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
@@ -358,7 +385,8 @@ export default function LinuxCozyHouseHub() {
     else if (mainTab === 'topic7') setActiveTopic7SubId(id);
     else if (mainTab === 'topic8') setActiveTopic8SubId(id);
     else if (mainTab === 'topic9') setActiveTopic9SubId(id);
-    else setActiveTopic10SubId(id);
+    else if (mainTab === 'topic10') setActiveTopic10SubId(id);
+    else setActiveTopic11SubId(id);
   };
 
   const currentSubtopic =
@@ -399,6 +427,7 @@ export default function LinuxCozyHouseHub() {
     activeTopic8SubId,
     activeTopic9SubId,
     activeTopic10SubId,
+    activeTopic11SubId,
     selectedCmdNum,
     mainTab
   ]);
@@ -797,6 +826,21 @@ export default function LinuxCozyHouseHub() {
             <button
               onClick={() => {
                 sounds.playPop();
+                setMainTab('topic11');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
+                mainTab === 'topic11'
+                  ? 'bg-gradient-to-r from-teal-600 to-emerald-700 text-white border-teal-400/60 shadow-[0_0_15px_rgba(20,184,166,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
+              }`}
+            >
+              <span>🩺</span>
+              <span>Topic 11: Monitor & Troubleshoot (3)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
                 setMainTab('roadmap');
               }}
               className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
@@ -859,6 +903,8 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 9 • Networking Services (3 Subtopics)'
                       : mainTab === 'topic10'
                       ? 'Topic 10 • Linux Firewall (4 Subtopics)'
+                      : mainTab === 'topic11'
+                      ? 'Topic 11 • Monitoring & Troubleshooting (3 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -888,6 +934,8 @@ export default function LinuxCozyHouseHub() {
                   ? 'Topic 9: Networking Services 🪪📖🚚'
                   : mainTab === 'topic10'
                   ? 'Topic 10: Linux Firewall & Security Gatekeepers 🛡️⚙️📕📝'
+                  : mainTab === 'topic11'
+                  ? 'Topic 11: Monitoring & Troubleshooting 🖥️🩺📊💓'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -912,7 +960,9 @@ export default function LinuxCozyHouseHub() {
                   ? 'Meet the three helpers every network depends on: the Gatekeeper who hands out addresses automatically (DHCP), the Librarian who turns names into numbers (DNS), and the Delivery Truck that carries files between computers (FTP)—plus why the sealed SFTP van beats the open FTP pickup!'
                   : mainTab === 'topic10'
                   ? 'Master the complete Linux Firewall security system! Explore packet filtering, compare the 3 managers (iptables, firewalld, UFW), learn the essential iptables commands (Tables, Chains, Options & Targets), and conquer rule order and permanent saving!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 10 are fully interactive right now!'}
+                  : mainTab === 'topic11'
+                  ? 'Configure CentOS network interfaces with ONBOOT=yes (nmcli/nmtui), climb the 5-step network diagnostic troubleshooting ladder (ping, traceroute, ss, dig, tcpdump), and monitor system vital signs (CPU load, free RAM, df disk space, and kill -9)!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 11 are fully interactive right now!'}
               </p>
             </div>
 
@@ -1058,14 +1108,29 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic10');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic10'
                     ? 'bg-red-600 text-white border-red-400 shadow-md shadow-red-500/25 scale-[1.02]'
                     : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
-                <span>🛡️ 10. Firewall (iptables/firewalld/UFW)</span>
+                <span>🛡️ 10. Firewall</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">4</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic11');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic11'
+                    ? 'bg-teal-600 text-white border-teal-400 shadow-md shadow-teal-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
+                }`}
+              >
+                <span>🩺 11. Monitoring & Troubleshooting</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">3</span>
               </button>
             </div>
           </div>
@@ -1719,7 +1784,8 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic7' ||
           mainTab === 'topic8' ||
           mainTab === 'topic9' ||
-          mainTab === 'topic10') && (
+          mainTab === 'topic10' ||
+          mainTab === 'topic11') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-[#111728]/95 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3">
@@ -1744,7 +1810,9 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 8: Linux Networking (7 Subtopics)'
                       : mainTab === 'topic9'
                       ? 'Topic 9: Networking Services (3 Subtopics)'
-                      : 'Topic 10: Linux Firewall (4 Subtopics)'}
+                      : mainTab === 'topic10'
+                      ? 'Topic 10: Linux Firewall (4 Subtopics)'
+                      : 'Topic 11: Monitoring & Troubleshooting (3 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -8673,6 +8741,687 @@ $ sudo firewall-cmd --zone=public --list-all`}
               );
             })()}
 
+            {/* =================================================================
+                TOYBOX 11.1: CONFIGURE NETWORK INTERFACES IN CENTOS
+                ================================================================= */}
+            {activeSubtopicId === 'centos-network-interfaces' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-indigo-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-indigo-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-indigo-300 bg-indigo-950/80 border border-indigo-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 11.1
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      CentOS Interface Configurator (ifcfg vs nmcli vs nmtui)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Configure your enterprise CentOS/RHEL network card, test the famous <code>ONBOOT=yes</code> rule, and see how ifcfg files translate to nmcli commands!
+                    </p>
+                  </div>
+
+                  {/* Interface Control Panel */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-black uppercase tracking-wider text-indigo-300">
+                        Device / Interface:
+                      </label>
+                      <div className="flex gap-2">
+                        {['ens33', 'eth0'].map((dev) => (
+                          <button
+                            key={dev}
+                            onClick={() => {
+                              sounds.playPop();
+                              setT11CentosIface(dev);
+                              setT11CentosTested(false);
+                            }}
+                            className={`flex-1 py-2 px-3 rounded-xl font-mono font-black text-xs border transition-all ${
+                              t11CentosIface === dev
+                                ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
+                                : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                            }`}
+                          >
+                            {dev}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-black uppercase tracking-wider text-indigo-300">
+                        Boot Protocol (BOOTPROTO):
+                      </label>
+                      <div className="flex gap-2">
+                        {[
+                          { id: 'static', label: 'Static (Fixed)' },
+                          { id: 'dhcp', label: 'DHCP (Auto)' }
+                        ].map((proto) => (
+                          <button
+                            key={proto.id}
+                            onClick={() => {
+                              sounds.playPop();
+                              setT11CentosBootproto(proto.id);
+                              setT11CentosTested(false);
+                            }}
+                            className={`flex-1 py-2 px-3 rounded-xl font-black text-xs border transition-all ${
+                              t11CentosBootproto === proto.id
+                                ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
+                                : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                            }`}
+                          >
+                            {proto.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-black uppercase tracking-wider text-indigo-300">
+                        Start on Boot (ONBOOT):
+                      </label>
+                      <div className="flex gap-2">
+                        {[
+                          { val: true, label: '✅ ONBOOT=yes (Safe)', color: 'bg-emerald-600 border-emerald-400' },
+                          { val: false, label: '❌ ONBOOT=no (Trap!)', color: 'bg-rose-600 border-rose-400' }
+                        ].map((opt) => (
+                          <button
+                            key={String(opt.val)}
+                            onClick={() => {
+                              sounds.playPop();
+                              setT11CentosOnboot(opt.val);
+                              setT11CentosTested(false);
+                            }}
+                            className={`flex-1 py-2 px-2.5 rounded-xl font-black text-xs border transition-all ${
+                              t11CentosOnboot === opt.val
+                                ? `${opt.color} text-white shadow-md`
+                                : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Manual IP Fields when static */}
+                  {t11CentosBootproto === 'static' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#0d121f] p-3.5 rounded-2xl border border-slate-800">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                          IP Address (IPADDR):
+                        </label>
+                        <input
+                          type="text"
+                          value={t11CentosIp}
+                          onChange={(e) => setT11CentosIp(e.target.value)}
+                          className="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-amber-300 font-mono text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                          Default Gateway (GATEWAY):
+                        </label>
+                        <input
+                          type="text"
+                          value={t11CentosGateway}
+                          onChange={(e) => setT11CentosGateway(e.target.value)}
+                          className="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-amber-300 font-mono text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                          Primary DNS (DNS1):
+                        </label>
+                        <input
+                          type="text"
+                          value={t11CentosDns}
+                          onChange={(e) => setT11CentosDns(e.target.value)}
+                          className="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-amber-300 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* View Tabs: ifcfg File vs nmcli vs nmtui */}
+                  <div className="flex gap-2 border-b border-slate-800 pb-2">
+                    {[
+                      { id: 'ifcfg', label: `📄 /etc/sysconfig/network-scripts/ifcfg-${t11CentosIface}` },
+                      { id: 'nmcli', label: '⚡ nmcli Command Equivalents' },
+                      { id: 'nmtui', label: '📱 nmtui Terminal GUI Preview' }
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT11CentosView(tab.id);
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                          t11CentosView === tab.id
+                            ? 'bg-indigo-600 text-white shadow-md'
+                            : 'bg-slate-900/80 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Code Screen */}
+                  <div className="bg-[#0a0d16] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm">
+                    {t11CentosView === 'ifcfg' && (
+                      <pre className="text-emerald-300 whitespace-pre-wrap leading-relaxed">
+{`# File: /etc/sysconfig/network-scripts/ifcfg-${t11CentosIface}
+TYPE=Ethernet
+DEVICE=${t11CentosIface}
+NAME=${t11CentosIface}
+BOOTPROTO=${t11CentosBootproto}
+ONBOOT=${t11CentosOnboot ? 'yes' : 'no'}    # <-- ${t11CentosOnboot ? '✅ Awakens automatically on boot!' : '❌ Will stay SLEEPING after reboot!'}
+${t11CentosBootproto === 'static' ? `IPADDR=${t11CentosIp}
+PREFIX=24
+GATEWAY=${t11CentosGateway}
+DNS1=${t11CentosDns}
+DNS2=1.1.1.1` : `# Network router will provide automatic IP via DHCP`}
+DEFROUTE=yes`}
+                      </pre>
+                    )}
+
+                    {t11CentosView === 'nmcli' && (
+                      <pre className="text-cyan-300 whitespace-pre-wrap leading-relaxed">
+{`# ⚡ The Modern DevOps nmcli Commands:
+$ sudo nmcli connection show
+$ sudo nmcli connection modify ${t11CentosIface} connection.autoconnect ${t11CentosOnboot ? 'yes' : 'no'}
+${t11CentosBootproto === 'static'
+  ? `$ sudo nmcli connection modify ${t11CentosIface} ipv4.method manual
+$ sudo nmcli connection modify ${t11CentosIface} ipv4.addresses ${t11CentosIp}/24
+$ sudo nmcli connection modify ${t11CentosIface} ipv4.gateway ${t11CentosGateway}
+$ sudo nmcli connection modify ${t11CentosIface} ipv4.dns "${t11CentosDns} 1.1.1.1"`
+  : `$ sudo nmcli connection modify ${t11CentosIface} ipv4.method auto`}
+
+# Activate changes live without rebooting:
+$ sudo nmcli connection up ${t11CentosIface}
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/1) ✅`}
+                      </pre>
+                    )}
+
+                    {t11CentosView === 'nmtui' && (
+                      <pre className="text-yellow-300 whitespace-pre-wrap leading-relaxed">
+{`┌──────────────────────┤ NetworkManager TUI ├──────────────────────┐
+│                                                                 │
+│  Profile name: ${t11CentosIface}                                               │
+│  Device:       ${t11CentosIface} (00:0c:29:1f:3a:b2)                            │
+│                                                                 │
+│  IPv4 CONFIGURATION <${t11CentosBootproto === 'static' ? 'Manual' : 'Automatic'}>                                 │
+│    Addresses: ${t11CentosBootproto === 'static' ? `${t11CentosIp}/24` : '<dynamic>'}                                 │
+│    Gateway:   ${t11CentosBootproto === 'static' ? t11CentosGateway : '<dynamic>'}                                    │
+│    DNS servers: ${t11CentosBootproto === 'static' ? t11CentosDns : '<dynamic>'}                                  │
+│                                                                 │
+│  [${t11CentosOnboot ? 'X' : ' '}] Automatically connect (ONBOOT)                       │
+│  [X] Available to all users                                     │
+│                                                                 │
+│                                      <OK>          <Cancel>     │
+└─────────────────────────────────────────────────────────────────┘`}
+                      </pre>
+                    )}
+                  </div>
+
+                  {/* Reboot Test Button */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                    <button
+                      onClick={() => {
+                        if (t11CentosOnboot) {
+                          sounds.playSuccess();
+                          confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                        } else {
+                          sounds.playPop();
+                        }
+                        setT11CentosTested(true);
+                      }}
+                      className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm border-2 border-indigo-400 shadow-md flex items-center gap-2"
+                    >
+                      <Play className="w-4 h-4 fill-white" />
+                      <span>🔄 Reboot CentOS Server to Test Link!</span>
+                    </button>
+
+                    {t11CentosTested && (
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-black border flex items-center gap-2 ${
+                          t11CentosOnboot
+                            ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500'
+                            : 'bg-rose-950/80 text-rose-300 border-rose-500 animate-pulse'
+                        }`}
+                      >
+                        {t11CentosOnboot ? (
+                          <>
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                            <span>
+                              🎉 SERVER ONLINE! Interface {t11CentosIface} auto-awakened with {t11CentosBootproto === 'static' ? t11CentosIp : 'DHCP IP'}!
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span>❌ NO INTERNET AFTER REBOOT! Interface {t11CentosIface} is asleep because ONBOOT=no. Fix: Flip to ONBOOT=yes!</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 11.2: NETWORK CONFIGURATION AND TROUBLESHOOTING
+                ================================================================= */}
+            {activeSubtopicId === 'network-troubleshooting' && (() => {
+              const scenarios = {
+                dns_broken: {
+                  title: '🌐 DNS Breakdown (ping 8.8.8.8 works, google.com fails)',
+                  symptom: 'Server can ping numbers (8.8.8.8) but "curl https://google.com" returns "Could not resolve host"!',
+                  checks: { link: true, ip: true, gw: true, pubIp: true, dns: false },
+                  fixCmd: 'echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf',
+                  fixExplanation: 'Your DNS phonebook was empty or pointing to a dead nameserver. Writing a valid nameserver (8.8.8.8) into /etc/resolv.conf instantly restored domain lookups!'
+                },
+                cable_down: {
+                  title: '🔌 Layer 1 Down (Cable unplugged or interface down)',
+                  symptom: 'Cannot reach any machine. "ip link show eth0" shows state DOWN!',
+                  checks: { link: false, ip: false, gw: false, pubIp: false, dns: false },
+                  fixCmd: 'sudo ip link set eth0 up',
+                  fixExplanation: 'The network interface card was administratively disabled. Bringing it UP initialized the physical link light!'
+                },
+                no_ip: {
+                  title: '🆔 DHCP Failed (No IP Address or 169.254 APIPA)',
+                  symptom: 'Interface is UP, but "ip addr" has no valid 192.168.x.x address.',
+                  checks: { link: true, ip: false, gw: false, pubIp: false, dns: false },
+                  fixCmd: 'sudo dhclient -v eth0',
+                  fixExplanation: 'Running dhclient sent a fresh DORA request to the DHCP server and leased a valid IP address (192.168.1.120)!'
+                },
+                gateway_lost: {
+                  title: '🚪 Missing Default Gateway (No route to host)',
+                  symptom: 'Can ping neighboring machines in the same room, but cannot reach the internet!',
+                  checks: { link: true, ip: true, gw: false, pubIp: false, dns: false },
+                  fixCmd: 'sudo ip route add default via 192.168.1.1',
+                  fixExplanation: 'Packets did not know which door led to the outside world. Adding the default gateway (192.168.1.1) restored outbound routing!'
+                },
+                port_closed: {
+                  title: '🔒 Inactive Service (Web Server down on Port 80)',
+                  symptom: 'Network ping works, but visitors cannot open your website. "ss -tulnp | grep :80" is empty!',
+                  checks: { link: true, ip: true, gw: true, pubIp: true, dns: true, webPort: false },
+                  fixCmd: 'sudo systemctl start nginx',
+                  fixExplanation: 'The network and DNS were 100% fine—the Nginx web server service was simply stopped! Starting Nginx opened listening port 80.'
+                }
+              };
+
+              const currentScen = scenarios[t11TroubleScenario];
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-teal-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-teal-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-teal-300 bg-teal-950/80 border border-teal-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 11.2
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      The 5-Step Network Detective Ladder
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Pick a real-world server network crisis, watch the 5 diagnostic checks test the stack from Layer 1 to DNS, and apply the surgical fix!
+                    </p>
+                  </div>
+
+                  {/* Pick Scenario */}
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                    {[
+                      { id: 'dns_broken', label: '1. DNS Dead', icon: '🌐' },
+                      { id: 'cable_down', label: '2. Link Down', icon: '🔌' },
+                      { id: 'no_ip', label: '3. No IP Lease', icon: '🆔' },
+                      { id: 'gateway_lost', label: '4. Lost Gateway', icon: '🚪' },
+                      { id: 'port_closed', label: '5. Port Closed', icon: '🔒' }
+                    ].map((sc) => (
+                      <button
+                        key={sc.id}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT11TroubleScenario(sc.id);
+                          setT11TroubleSolved(false);
+                        }}
+                        className={`p-2.5 rounded-2xl border text-center transition-all ${
+                          t11TroubleScenario === sc.id
+                            ? 'bg-teal-600 text-white border-teal-400 shadow-md font-black scale-105'
+                            : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                        }`}
+                      >
+                        <div className="text-lg">{sc.icon}</div>
+                        <div className="text-xs mt-1">{sc.label}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Symptom Banner */}
+                  <div className="bg-[#172036] p-3.5 rounded-2xl border border-teal-500/30 flex items-start gap-3">
+                    <span className="text-2xl shrink-0 mt-0.5">⚠️</span>
+                    <div>
+                      <div className="text-xs font-black uppercase tracking-wider text-amber-400">
+                        {currentScen.title}
+                      </div>
+                      <p className="text-xs sm:text-sm font-bold text-white mt-0.5">
+                        {currentScen.symptom}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 5-Step Diagnostic Status Ladder */}
+                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
+                    {[
+                      {
+                        step: 'Step 1: Link',
+                        cmd: 'ip link show',
+                        ok: t11TroubleSolved || currentScen.checks.link,
+                        label: 'Layer 1 Cable'
+                      },
+                      {
+                        step: 'Step 2: Address',
+                        cmd: 'ip addr show',
+                        ok: t11TroubleSolved || currentScen.checks.ip,
+                        label: 'Layer 3 Local IP'
+                      },
+                      {
+                        step: 'Step 3: Gateway',
+                        cmd: 'ping -c 2 192.168.1.1',
+                        ok: t11TroubleSolved || currentScen.checks.gw,
+                        label: 'Local Router'
+                      },
+                      {
+                        step: 'Step 4: Internet IP',
+                        cmd: 'ping -c 2 8.8.8.8',
+                        ok: t11TroubleSolved || currentScen.checks.pubIp,
+                        label: 'Global WAN'
+                      },
+                      {
+                        step: 'Step 5: DNS Name',
+                        cmd: 'dig google.com',
+                        ok: t11TroubleSolved || (currentScen.checks.dns !== false),
+                        label: 'Nameservers'
+                      }
+                    ].map((st, i) => (
+                      <div
+                        key={i}
+                        className={`p-3 rounded-2xl border transition-all ${
+                          st.ok
+                            ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300'
+                            : 'bg-rose-950/60 border-rose-500/60 text-rose-300 animate-pulse'
+                        }`}
+                      >
+                        <div className="text-[10px] font-mono font-bold uppercase opacity-80">
+                          {st.step}
+                        </div>
+                        <div className="text-xs font-black mt-1 flex items-center justify-between">
+                          <span>{st.label}</span>
+                          <span>{st.ok ? '✅ PASS' : '❌ FAIL'}</span>
+                        </div>
+                        <div className="font-mono text-[10px] text-slate-400 mt-1 truncate">
+                          $ {st.cmd}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Fix Station */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div className="text-xs font-black uppercase tracking-wider text-teal-400">
+                      🛠️ Recommended Surgical Fix:
+                    </div>
+                    <div className="font-mono text-xs sm:text-sm bg-slate-900 text-amber-300 p-3 rounded-xl border border-slate-800">
+                      $ {currentScen.fixCmd}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          confetti({ particleCount: 60, spread: 70, origin: { y: 0.65 } });
+                          setT11TroubleSolved(true);
+                        }}
+                        className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm border-2 transition-all flex items-center gap-2 ${
+                          t11TroubleSolved
+                            ? 'bg-emerald-600 text-white border-emerald-400'
+                            : 'bg-teal-600 hover:bg-teal-700 text-white border-teal-400 animate-bounce'
+                        }`}
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>{t11TroubleSolved ? '🎉 Problem Resolved!' : '⚡ Apply Fix & Run Diagnostics'}</span>
+                      </button>
+
+                      {t11TroubleSolved && (
+                        <p className="text-xs font-bold text-emerald-300 max-w-lg">
+                          💡 {currentScen.fixExplanation}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 11.3: SYSTEM MONITORING (CPU, RAM, DISK & PROCESS KILLER)
+                ================================================================= */}
+            {activeSubtopicId === 'system-monitoring' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-emerald-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 11.3
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Live System Vital Signs & Task Manager Simulator
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Monitor server vital signs in real time! Spot rogue CPU hogs in <code>top</code>, test <code>kill -9</code> to rescue the server, and inspect <code>free -h</code> RAM buffers and <code>df -h</code> disk partitions!
+                    </p>
+                  </div>
+
+                  {/* 3 Real-time Gauges (CPU, RAM, Disk) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="bg-[#151c30] p-4 rounded-2xl border border-slate-700/70 space-y-2">
+                      <div className="flex items-center justify-between text-xs font-black">
+                        <span className="text-slate-300 flex items-center gap-1.5">
+                          <span>💓 CPU & Load Average:</span>
+                        </span>
+                        <span className={t11RogueKilled ? 'text-emerald-400' : 'text-rose-400 animate-pulse'}>
+                          {t11RogueKilled ? '4.2% (Load: 0.12)' : '98.6% (Load: 4.85) ⚠️'}
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-500 ${
+                            t11RogueKilled ? 'bg-emerald-500 w-[4%]' : 'bg-rose-500 w-[99%]'
+                          }`}
+                        />
+                      </div>
+                      <div className="text-[11px] font-mono text-slate-400">
+                        {t11RogueKilled ? 'Cozy & calm • 4 Cores idle' : 'HIGH LOAD: Rogue process running!'}
+                      </div>
+                    </div>
+
+                    <div className="bg-[#151c30] p-4 rounded-2xl border border-slate-700/70 space-y-2">
+                      <div className="flex items-center justify-between text-xs font-black">
+                        <span className="text-slate-300 flex items-center gap-1.5">
+                          <span>🧠 RAM Memory:</span>
+                        </span>
+                        <span className="text-cyan-400">
+                          {t11RogueKilled ? '2.1 GB / 8.0 GB (26%)' : '6.4 GB / 8.0 GB (80%)'}
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-500 ${
+                            t11RogueKilled ? 'bg-cyan-500 w-[26%]' : 'bg-amber-500 w-[80%]'
+                          }`}
+                        />
+                      </div>
+                      <div className="text-[11px] font-mono text-slate-400">
+                        Buff/Cache: 3.8 GB • Swap: 0 MB
+                      </div>
+                    </div>
+
+                    <div className="bg-[#151c30] p-4 rounded-2xl border border-slate-700/70 space-y-2">
+                      <div className="flex items-center justify-between text-xs font-black">
+                        <span className="text-slate-300 flex items-center gap-1.5">
+                          <span>💽 Disk Space (/dev/sda1):</span>
+                        </span>
+                        <span className="text-amber-400">42% (21 GB / 50 GB)</span>
+                      </div>
+                      <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
+                        <div className="h-full bg-emerald-500 w-[42%]" />
+                      </div>
+                      <div className="text-[11px] font-mono text-slate-400">
+                        29 GB Free • Healthy filesystem
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tool Tabs */}
+                  <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+                    {[
+                      { id: 'top', label: '📊 top / htop (Process Manager)' },
+                      { id: 'free', label: '🧠 free -h (RAM & Buffers)' },
+                      { id: 'df', label: '💽 df -h & du -sh (Storage)' },
+                      { id: 'logs', label: '📜 journalctl -xe & dmesg' }
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT11MonTab(tab.id);
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                          t11MonTab === tab.id
+                            ? 'bg-emerald-600 text-white shadow-md'
+                            : 'bg-slate-900/80 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Tab Views */}
+                  {t11MonTab === 'top' && (
+                    <div className="space-y-3">
+                      <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800 font-mono text-xs overflow-x-auto">
+                        <div className="text-slate-400 pb-2 border-b border-slate-800 flex justify-between">
+                          <span>PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND</span>
+                          <span>Tasks: {t11RogueKilled ? '142 total' : '143 total, 1 RUNNING'}</span>
+                        </div>
+                        <div className="space-y-1.5 pt-2">
+                          {!t11RogueKilled ? (
+                            <div className="p-2 rounded-xl bg-rose-950/60 border border-rose-500 text-rose-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <span>412 hacker    20   0  890420 412580  12540 R  98.4  14.2   4:12.80 python3 rogue_miner.py 🚨</span>
+                              <div className="flex gap-1.5 shrink-0">
+                                <button
+                                  onClick={() => {
+                                    sounds.playSuccess();
+                                    setT11RogueKilled(true);
+                                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-slate-950 font-black text-[11px]"
+                                  title="SIGTERM graceful termination"
+                                >
+                                  kill -15 412
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    sounds.playSuccess();
+                                    setT11RogueKilled(true);
+                                    confetti({ particleCount: 70, spread: 80, origin: { y: 0.65 } });
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-black text-[11px] animate-pulse"
+                                  title="SIGKILL forceful termination"
+                                >
+                                  kill -9 412
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="p-2 rounded-xl bg-emerald-950/60 border border-emerald-500/60 text-emerald-300 flex items-center justify-between">
+                              <span>✅ PID 412 terminated! Rogue miner ejected from CPU.</span>
+                              <button
+                                onClick={() => setT11RogueKilled(false)}
+                                className="text-[11px] underline text-slate-400 hover:text-white"
+                              >
+                                Re-spawn miner to test again
+                              </button>
+                            </div>
+                          )}
+                          <div className="text-slate-300 p-1 flex justify-between">
+                            <span>891 www-data  20   0  145200  28400   9400 S   0.4   0.3   0:15.12 nginx: worker process</span>
+                          </div>
+                          <div className="text-slate-300 p-1 flex justify-between">
+                            <span>1024 postgres  20   0  380500  84100  32100 S   1.2   1.0   1:02.40 postgres: checkpointer</span>
+                          </div>
+                          <div className="text-slate-400 p-1 flex justify-between">
+                            <span>1560 root      20   0   45200   9100   6200 S   0.1   0.1   0:05.10 systemd-journald</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {t11MonTab === 'free' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm text-cyan-300">
+                      <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       2.1Gi       1.9Gi       140Mi       3.8Gi       5.4Gi
+Swap:          2.0Gi          0B       2.0Gi
+
+💡 Pro-Tip for Linux Engineers:
+Do NOT panic if "free" looks small (1.9Gi)!
+Notice "buff/cache" (3.8Gi): Linux borrows unused RAM to cache recently read disk files so apps open 100x faster.
+When an application asks for memory, Linux instantly evaporates the cache and gives it to the app!
+Always check "available" (5.4Gi)—that is your real true breathing room!`}
+                      </pre>
+                    </div>
+                  )}
+
+                  {t11MonTab === 'df' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm text-amber-300">
+                      <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        50G   21G   29G  42% /           <-- 29G healthy free space
+/dev/sda2       1.0G  240M  760M  24% /boot       <-- Kernel boot files
+/dev/sdb1       200G   45G  155G  23% /home       <-- User home folders
+tmpfs           3.9G     0  3.9G   0% /dev/shm
+
+# How to find who is eating your disk space:
+$ sudo du -sh /var/log/* | sort -h
+4.0K    /var/log/alternatives.log
+120K    /var/log/auth.log
+14M     /var/log/journal
+18G     /var/log/giant_debug.log   <-- 🚨 Found the 18GB culprit!`}
+                      </pre>
+                    </div>
+                  )}
+
+                  {t11MonTab === 'logs' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm text-emerald-300">
+                      <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ sudo journalctl -xe --no-pager | tail -n 8
+Nov 10 14:15:02 cozy-house systemd[1]: Starting Nginx Web Server...
+Nov 10 14:15:03 cozy-house nginx[891]: [notice] Configuration test successful
+Nov 10 14:15:03 cozy-house systemd[1]: Started Nginx Web Server. ✅
+Nov 10 14:15:10 cozy-house sshd[2410]: Accepted publickey for sam from 192.168.1.5 port 52410 ssh2
+
+$ dmesg -T | tail -n 4
+[Sun Nov 10 14:10:00 2026] eth0: Link is Up - 1000Mbps/Full - flow control rx/tx
+[Sun Nov 10 14:10:01 2026] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready`}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
             {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER (NIGHT MODE + INDEPENDENT READ-ALOUD) */}
             <div
               className={`bg-gradient-to-r from-[#141b2e] via-[#101626] to-[#0c101d] rounded-3xl p-5 border shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 transition-all ${
@@ -8858,6 +9607,21 @@ $ sudo firewall-cmd --zone=public --list-all`}
                         className="px-4 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
                       >
                         <span>Go to Topic 10: Linux Firewall</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    );
+                  }
+                  if (mainTab === 'topic10') {
+                    return (
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setMainTab('topic11');
+                          setActiveTopic11SubId('centos-network-interfaces');
+                        }}
+                        className="px-4 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>Go to Topic 11: Monitoring & Troubleshooting</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     );
