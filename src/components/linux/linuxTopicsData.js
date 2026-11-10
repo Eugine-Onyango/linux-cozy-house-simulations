@@ -800,6 +800,24 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 12,
+    title: 'Process Management',
+    status: 'playable',
+    topicKey: 'topic12',
+    icon: '⚙️',
+    subtopics: [
+      '12.1 Viewing Processes (ps, ps aux, ps -ef, pstree & Process States: R, S, D, Z, T)',
+      '12.2 Real-Time & Enhanced Process Monitoring (top vs htop, Load Average & Hotkeys)',
+      '12.3 Managing Processes & Signals (kill, killall, pkill, SIGTERM 15 & SIGKILL 9)',
+      '12.4 Controlling Process Priority (nice & renice: The -20 to +19 Politeness Scale)',
+      '12.5 Managing Background & Foreground Jobs (&, Ctrl+Z, jobs, bg, fg & nohup)',
+      '12.6 Monitoring Disk Usage (df -h, df -i Inodes, du -sh & ncdu)'
+    ],
+    laymanSummary: 'Inspect running workers (ps, top, htop), master Linux signal codes (kill -15 vs -9), balance CPU politeness with nice/renice (-20 to +19), juggle background/foreground tasks (&, Ctrl+Z, bg, fg, nohup), and hunt storage bloat with df -h and du -sh.',
+    houseAnalogy: 'Staff badges and family hierarchy (pstree), the digital thermostat screen (top/htop), the household intercom paging and master power breaker (kill/signals), waiting in line for the kitchen microwave (nice/renice), running laundry in the background (&), and auditing attic trunks (df vs du).',
+    kenyanAnalogy: 'The construction site (mjengo) worker register (ps/pstree), the Sacco fleet GPS dashboard (top/htop), restaurant bouncers ejecting troublemakers (kill -9), sand lorries yielding to ambulance sirens on Thika highway (nice/renice), cyber café background printing (&, bg, fg), and checking rooftop Roto water tanks and Gikomba warehouse gunias (df vs du).'
+  },
+  {
+    id: 13,
     title: 'Shell & Bash Scripting',
     status: 'upcoming',
     icon: '📜',
@@ -814,7 +832,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'Leaving a clear morning duty roster on the kitchen table (chopping sukuma, boiling tea, locking the gate) with labeled spice tins (variables) so everything runs like clockwork!'
   },
   {
-    id: 12,
+    id: 14,
     title: 'System Administration & Boot Process',
     status: 'upcoming',
     icon: '🎛️',

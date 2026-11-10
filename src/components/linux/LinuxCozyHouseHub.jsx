@@ -37,16 +37,17 @@ import { linuxTopic8Subtopics } from './linuxTopic8Data';
 import { linuxTopic9Subtopics } from './linuxTopic9Data';
 import { linuxTopic10Subtopics } from './linuxTopic10Data';
 import { linuxTopic11Subtopics } from './linuxTopic11Data';
+import { linuxTopic12Subtopics } from './linuxTopic12Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
-  // Top-level view: 'topic1' ... 'topic11' | 'roadmap'
-  // Default to 'topic11' so the user immediately sees Topic 11: Monitoring & Troubleshooting!
-  const [mainTab, setMainTab] = useState('topic11');
+  // Top-level view: 'topic1' ... 'topic12' | 'roadmap'
+  // Default to 'topic12' so the user immediately sees Topic 12: Process Management!
+  const [mainTab, setMainTab] = useState('topic12');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, Topic 8, Topic 9, Topic 10, and Topic 11
+  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, Topic 8, Topic 9, Topic 10, Topic 11, and Topic 12
   const [activeTopic1SubId, setActiveTopic1SubId] = useState('distributions');
   const [activeTopic2SubId, setActiveTopic2SubId] = useState('file-system');
   const [activeTopic4SubId, setActiveTopic4SubId] = useState('file-management');
@@ -57,6 +58,7 @@ export default function LinuxCozyHouseHub() {
   const [activeTopic9SubId, setActiveTopic9SubId] = useState('dhcp-service');
   const [activeTopic10SubId, setActiveTopic10SubId] = useState('linux-firewall-overview');
   const [activeTopic11SubId, setActiveTopic11SubId] = useState('centos-network-interfaces');
+  const [activeTopic12SubId, setActiveTopic12SubId] = useState('viewing-processes');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -335,7 +337,30 @@ export default function LinuxCozyHouseHub() {
   const [t11MonTab, setT11MonTab] = useState('top'); // 'top' | 'free' | 'df' | 'logs'
   const [t11RogueKilled, setT11RogueKilled] = useState(false);
 
-  // Determine current active subtopics list and current subtopic object for Topic 1..11
+  // ==========================================================================
+  // TOPIC 12 TOYBOX STATES (PROCESS MANAGEMENT - 6 SUBTOPICS)
+  // ==========================================================================
+  // 12.1 Viewing Processes & States
+  const [t12ViewMode, setT12ViewMode] = useState('ps_aux'); // 'ps_aux' | 'pstree' | 'states'
+  const [t12SelectedState, setT12SelectedState] = useState('R'); // 'R' | 'S' | 'D' | 'Z' | 'T'
+  // 12.2 top vs htop
+  const [t12HtopSort, setT12HtopSort] = useState('cpu'); // 'cpu' | 'mem' | 'pid'
+  const [t12HtopTree, setT12HtopTree] = useState(false);
+  // 12.3 Signals & Killer
+  const [t12TargetPid, setT12TargetPid] = useState(412);
+  const [t12SelectedSignal, setT12SelectedSignal] = useState(15);
+  const [t12KilledPids, setT12KilledPids] = useState({});
+  const [t12SignalOutput, setT12SignalOutput] = useState('');
+  // 12.4 Niceness Priority
+  const [t12NiceVal, setT12NiceVal] = useState(0); // -20..+19
+  // 12.5 Background & Foreground Jobs
+  const [t12JobStatus, setT12JobStatus] = useState('stopped'); // 'fg_running' | 'stopped' | 'bg_running' | 'done'
+  const [t12JobNohup, setT12JobNohup] = useState(false);
+  // 12.6 Disk Usage
+  const [t12DiskMode, setT12DiskMode] = useState('df'); // 'df' | 'inodes' | 'du' | 'ncdu'
+  const [t12DeletedCulprit, setT12DeletedCulprit] = useState(false);
+
+  // Determine current active subtopics list and current subtopic object for Topic 1..12
   const currentSubtopicsList =
     mainTab === 'topic1'
       ? linuxTopic1Subtopics
@@ -355,7 +380,9 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic9Subtopics
       : mainTab === 'topic10'
       ? linuxTopic10Subtopics
-      : linuxTopic11Subtopics;
+      : mainTab === 'topic11'
+      ? linuxTopic11Subtopics
+      : linuxTopic12Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -375,7 +402,9 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic9SubId
       : mainTab === 'topic10'
       ? activeTopic10SubId
-      : activeTopic11SubId;
+      : mainTab === 'topic11'
+      ? activeTopic11SubId
+      : activeTopic12SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
@@ -386,7 +415,8 @@ export default function LinuxCozyHouseHub() {
     else if (mainTab === 'topic8') setActiveTopic8SubId(id);
     else if (mainTab === 'topic9') setActiveTopic9SubId(id);
     else if (mainTab === 'topic10') setActiveTopic10SubId(id);
-    else setActiveTopic11SubId(id);
+    else if (mainTab === 'topic11') setActiveTopic11SubId(id);
+    else setActiveTopic12SubId(id);
   };
 
   const currentSubtopic =
@@ -428,6 +458,7 @@ export default function LinuxCozyHouseHub() {
     activeTopic9SubId,
     activeTopic10SubId,
     activeTopic11SubId,
+    activeTopic12SubId,
     selectedCmdNum,
     mainTab
   ]);
@@ -841,6 +872,21 @@ export default function LinuxCozyHouseHub() {
             <button
               onClick={() => {
                 sounds.playPop();
+                setMainTab('topic12');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
+                mainTab === 'topic12'
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white border-blue-400/60 shadow-[0_0_15px_rgba(59,130,246,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
+              }`}
+            >
+              <span>⚙️</span>
+              <span>Topic 12: Process Mgmt (6)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
                 setMainTab('roadmap');
               }}
               className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
@@ -905,6 +951,8 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 10 • Linux Firewall (4 Subtopics)'
                       : mainTab === 'topic11'
                       ? 'Topic 11 • Monitoring & Troubleshooting (3 Subtopics)'
+                      : mainTab === 'topic12'
+                      ? 'Topic 12 • Process Management (6 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -936,6 +984,8 @@ export default function LinuxCozyHouseHub() {
                   ? 'Topic 10: Linux Firewall & Security Gatekeepers 🛡️⚙️📕📝'
                   : mainTab === 'topic11'
                   ? 'Topic 11: Monitoring & Troubleshooting 🖥️🩺📊💓'
+                  : mainTab === 'topic12'
+                  ? 'Topic 12: Process Management ⚙️👥📊🛑⚖️🤹💽'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -962,7 +1012,9 @@ export default function LinuxCozyHouseHub() {
                   ? 'Master the complete Linux Firewall security system! Explore packet filtering, compare the 3 managers (iptables, firewalld, UFW), learn the essential iptables commands (Tables, Chains, Options & Targets), and conquer rule order and permanent saving!'
                   : mainTab === 'topic11'
                   ? 'Configure CentOS network interfaces with ONBOOT=yes (nmcli/nmtui), climb the 5-step network diagnostic troubleshooting ladder (ping, traceroute, ss, dig, tcpdump), and monitor system vital signs (CPU load, free RAM, df disk space, and kill -9)!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 11 are fully interactive right now!'}
+                  : mainTab === 'topic12'
+                  ? 'Master Linux Process Management from creation to termination! Explore ps aux & pstree hierarchies, compare live top and htop monitors, master kill & signal codes (SIGTERM 15 vs SIGKILL 9), fine-tune CPU priority with nice & renice (-20 to +19), juggle background and foreground jobs (&, Ctrl+Z, jobs, bg, fg, nohup), and audit disk storage with df -h and du -sh!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 12 are fully interactive right now!'}
               </p>
             </div>
 
@@ -1123,14 +1175,29 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic11');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic11'
                     ? 'bg-teal-600 text-white border-teal-400 shadow-md shadow-teal-500/25 scale-[1.02]'
                     : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
-                <span>🩺 11. Monitoring & Troubleshooting</span>
+                <span>🩺 11. Monitor & Trouble</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">3</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic12');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic12'
+                    ? 'bg-blue-600 text-white border-blue-400 shadow-md shadow-blue-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
+                }`}
+              >
+                <span>⚙️ 12. Process Management (Jobs, Signals, Priority, Disk)</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">6</span>
               </button>
             </div>
           </div>
@@ -1785,7 +1852,8 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic8' ||
           mainTab === 'topic9' ||
           mainTab === 'topic10' ||
-          mainTab === 'topic11') && (
+          mainTab === 'topic11' ||
+          mainTab === 'topic12') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-[#111728]/95 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3">
@@ -1812,7 +1880,9 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 9: Networking Services (3 Subtopics)'
                       : mainTab === 'topic10'
                       ? 'Topic 10: Linux Firewall (4 Subtopics)'
-                      : 'Topic 11: Monitoring & Troubleshooting (3 Subtopics)'}
+                      : mainTab === 'topic11'
+                      ? 'Topic 11: Monitoring & Troubleshooting (3 Subtopics)'
+                      : 'Topic 12: Process Management (6 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -9422,6 +9492,638 @@ $ dmesg -T | tail -n 4
               );
             })()}
 
+            {/* =================================================================
+                TOYBOX 12.1: VIEWING PROCESSES (ps aux, pstree & PROCESS STATES)
+                ================================================================= */}
+            {activeSubtopicId === 'viewing-processes' && (() => {
+              const statesMeta = {
+                R: { label: 'R (Running / Runnable)', desc: 'Actively executing on CPU or waiting in run queue for its time slice.', color: 'text-emerald-400 border-emerald-500 bg-emerald-950/60' },
+                S: { label: 'S (Interruptible Sleep)', desc: 'Sleeping while waiting for an event (keystroke, network packet, or timer). Wakes up immediately when signaled.', color: 'text-blue-400 border-blue-500 bg-blue-950/60' },
+                D: { label: 'D (Uninterruptible Sleep)', desc: 'Deep hardware sleep waiting for disk I/O. CANNOT be killed even with kill -9 until hardware responds!', color: 'text-amber-400 border-amber-500 bg-amber-950/60' },
+                Z: { label: 'Z (Zombie / Defunct)', desc: 'Child process that finished execution, but whose parent process has not yet read its exit status with wait().', color: 'text-rose-400 border-rose-500 bg-rose-950/60' },
+                T: { label: 'T (Stopped / Suspended)', desc: 'Temporarily frozen by job control (Ctrl+Z) or by receiving a SIGSTOP signal.', color: 'text-purple-400 border-purple-500 bg-purple-950/60' }
+              };
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-blue-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-blue-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-blue-300 bg-blue-950/80 border border-blue-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 12.1
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Process Explorer (ps aux vs pstree & The 5 Process States)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Explore live process snapshots, inspect how PID 1 (systemd) parents the entire operating system, and demystify the 5 process state letters (R, S, D, Z, T)!
+                    </p>
+                  </div>
+
+                  {/* Mode Tabs */}
+                  <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+                    {[
+                      { id: 'ps_aux', label: '📋 ps aux (Snapshot Table)' },
+                      { id: 'pstree', label: '🌳 pstree (Family Hierarchy)' },
+                      { id: 'states', label: '🧬 The 5 Process States (R, S, D, Z, T)' }
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT12ViewMode(tab.id);
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                          t12ViewMode === tab.id
+                            ? 'bg-blue-600 text-white shadow-md'
+                            : 'bg-slate-900/80 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {t12ViewMode === 'ps_aux' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs overflow-x-auto space-y-2">
+                      <div className="text-slate-400 pb-1 border-b border-slate-800 flex justify-between font-bold">
+                        <span>USER       PID  %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>
+                      </div>
+                      <div className="text-cyan-300 space-y-1">
+                        <div>root         1   0.0  0.2 168920 13420 ?        Ss   10:00   0:02 /sbin/init splash</div>
+                        <div>root       840   0.0  0.1  15800  7120 ?        Ss   10:01   0:00 /usr/sbin/sshd -D</div>
+                        <div>sam       1120   0.0  0.1  10240  5200 pts/0    Ss   10:05   0:01 -bash</div>
+                        <div>sam       1420   0.4  0.8  45120 18400 pts/0    R+   10:12   0:00 ps aux</div>
+                        <div>postgres  1024   0.1  1.2 380500 84100 ?        S    10:02   0:15 postgres: checkpointer</div>
+                        <div className="text-rose-400">sam       1890   0.0  0.0      0     0 pts/0    Z+   10:20   0:00 [backup.sh] &lt;defunct&gt; 🧟</div>
+                      </div>
+                      <div className="pt-2 text-[11px] text-slate-400 border-t border-slate-800/80">
+                        💡 STAT Column Guide: <b>S</b> = Sleep, <b>R</b> = Running, <b>s</b> = Session Leader, <b>+</b> = Foreground Process Group, <b>Z</b> = Zombie.
+                      </div>
+                    </div>
+                  )}
+
+                  {t12ViewMode === 'pstree' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm text-emerald-300 space-y-2">
+                      <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ pstree -p
+systemd(1) ──┬── systemd-journal(410)
+             ├── NetworkManager(620)
+             ├── sshd(840) ──── sshd(1110) ──── bash(1120) ──── python3(1420)
+             ├── nginx(891) ───┬── nginx(892)
+             │                 └── nginx(893)
+             └── postgres(1024) ─── postgres(1025)
+
+💡 Notice how every branch traces back to PID 1 (systemd)!
+When you launch python3 in your terminal, its parent (PPID) is bash(1120), whose parent is sshd(1110).`}
+                      </pre>
+                    </div>
+                  )}
+
+                  {t12ViewMode === 'states' && (
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap gap-2">
+                        {['R', 'S', 'D', 'Z', 'T'].map((stKey) => (
+                          <button
+                            key={stKey}
+                            onClick={() => {
+                              sounds.playPop();
+                              setT12SelectedState(stKey);
+                            }}
+                            className={`px-3 py-1.5 rounded-xl font-mono font-black text-xs border transition-all ${
+                              t12SelectedState === stKey
+                                ? 'bg-blue-600 text-white border-blue-400 shadow-md scale-105'
+                                : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                            }`}
+                          >
+                            State {stKey}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className={`p-4 rounded-2xl border ${statesMeta[t12SelectedState].color}`}>
+                        <div className="font-mono font-black text-sm sm:text-base">
+                          {statesMeta[t12SelectedState].label}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold mt-1 text-slate-200">
+                          {statesMeta[t12SelectedState].desc}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 12.2: REAL-TIME & ENHANCED PROCESS MONITORING (top vs htop)
+                ================================================================= */}
+            {activeSubtopicId === 'realtime-process-monitoring' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-emerald-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 12.2
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Interactive htop Color Dashboard Simulator
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Experience the multi-core CPU meters of htop, sort columns with Shift+P / Shift+M, and toggle the tree view with F5!
+                    </p>
+                  </div>
+
+                  {/* 4 CPU Core Visual Meters */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#0a0e1a] p-4 rounded-2xl border border-slate-800">
+                    {[
+                      { core: '1 [||||||||||||||||||||||||||        62.4%]', pct: 'w-[62%]', col: 'bg-emerald-500' },
+                      { core: '2 [||||||||||||||                    34.1%]', pct: 'w-[34%]', col: 'bg-emerald-500' },
+                      { core: '3 [||||||||||||||||||||||||||||||||  88.5%]', pct: 'w-[88%]', col: 'bg-amber-500' },
+                      { core: '4 [|||||                             12.0%]', pct: 'w-[12%]', col: 'bg-emerald-500' }
+                    ].map((c, i) => (
+                      <div key={i} className="font-mono text-xs text-slate-300 space-y-1">
+                        <div className="flex justify-between text-[11px]">
+                          <span>CPU Core {i + 1}</span>
+                          <span className="text-emerald-400">{c.core.split(']').pop().trim()}</span>
+                        </div>
+                        <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                          <div className={`h-full ${c.col} ${c.pct} transition-all`} />
+                        </div>
+                      </div>
+                    ))}
+                    <div className="sm:col-span-2 pt-2 border-t border-slate-800/80 flex flex-wrap justify-between text-xs font-mono text-cyan-300">
+                      <span>Mem: 2.14G/7.84G [|||||||||||      27.3%]</span>
+                      <span>Swp: 0K/2.00G [                     0.0%]</span>
+                      <span>Load average: 1.42 0.88 0.52 (4 Cores)</span>
+                    </div>
+                  </div>
+
+                  {/* Action Toolbar */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-black text-slate-400">Sort By:</span>
+                    <button
+                      onClick={() => {
+                        sounds.playPop();
+                        setT12HtopSort('cpu');
+                      }}
+                      className={`px-3 py-1 rounded-xl text-xs font-mono font-black border transition-all ${
+                        t12HtopSort === 'cpu'
+                          ? 'bg-emerald-600 text-white border-emerald-400'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+                      }`}
+                    >
+                      Shift+P (%CPU)
+                    </button>
+                    <button
+                      onClick={() => {
+                        sounds.playPop();
+                        setT12HtopSort('mem');
+                      }}
+                      className={`px-3 py-1 rounded-xl text-xs font-mono font-black border transition-all ${
+                        t12HtopSort === 'mem'
+                          ? 'bg-emerald-600 text-white border-emerald-400'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+                      }`}
+                    >
+                      Shift+M (%MEM)
+                    </button>
+                    <button
+                      onClick={() => {
+                        sounds.playPop();
+                        setT12HtopTree(!t12HtopTree);
+                      }}
+                      className={`px-3 py-1 rounded-xl text-xs font-mono font-black border transition-all ${
+                        t12HtopTree
+                          ? 'bg-purple-600 text-white border-purple-400'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+                      }`}
+                    >
+                      F5 (Tree View: {t12HtopTree ? 'ON' : 'OFF'})
+                    </button>
+                  </div>
+
+                  {/* htop Process View */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs overflow-x-auto">
+                    <div className="text-slate-400 pb-1.5 border-b border-slate-800 flex justify-between font-bold">
+                      <span>  PID USER      PRI  NI  VIRT   RES   SHR S CPU% MEM%   TIME+  Command</span>
+                    </div>
+                    <div className="space-y-1 pt-1.5 text-slate-200">
+                      {t12HtopSort === 'cpu' ? (
+                        <>
+                          <div className="text-amber-400"> 1420 sam        20   0  520M  180M 32.1M R 78.4  2.3  1:12.40 ffmpeg -i input.mp4 output.mkv</div>
+                          <div> 1024 postgres   20   0  380M 84.1M 32.1M S  4.2  1.1  0:45.10 postgres: worker process</div>
+                          <div>  891 www-data   20   0  145M 28.4M  9.4M S  1.1  0.4  0:12.30 nginx: worker process</div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-cyan-400"> 2100 mysql      20   0 1.2G  680M 45.0M S  0.8  8.7  4:20.10 /usr/sbin/mysqld</div>
+                          <div> 1420 sam        20   0  520M  180M 32.1M R 78.4  2.3  1:12.40 ffmpeg -i input.mp4 output.mkv</div>
+                          <div> 1024 postgres   20   0  380M 84.1M 32.1M S  4.2  1.1  0:45.10 postgres: worker process</div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 12.3: MANAGING PROCESSES & SIGNALS
+                ================================================================= */}
+            {activeSubtopicId === 'managing-processes-and-signals' && (() => {
+              const signalOptions = [
+                { sig: 15, name: 'SIGTERM', desc: 'Polite request to terminate. Process flushes files and exits cleanly.' },
+                { sig: 9, name: 'SIGKILL', desc: 'Kernel hammer! Unblockable immediate termination with zero warning.' },
+                { sig: 1, name: 'SIGHUP', desc: 'Hangup signal. Re-reads configuration file without dropping users.' },
+                { sig: 19, name: 'SIGSTOP', desc: 'Freezes process execution in place (like pause on a video).' },
+                { sig: 18, name: 'SIGCONT', desc: 'Resumes frozen process execution right where it paused.' }
+              ];
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-rose-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-rose-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-rose-300 bg-rose-950/80 border border-rose-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 12.3
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Signal Transmitter & Process Killer Lab
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Send different Linux signals to PID 412 (<code>python3 heavy_app.py</code>) and witness how it reacts to SIGTERM 15, SIGKILL 9, SIGHUP 1, and SIGSTOP 19!
+                    </p>
+                  </div>
+
+                  {/* Pick Signal */}
+                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                    {signalOptions.map((opt) => (
+                      <button
+                        key={opt.sig}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT12SelectedSignal(opt.sig);
+                          setT12SignalOutput('');
+                        }}
+                        className={`p-3 rounded-2xl border text-left transition-all ${
+                          t12SelectedSignal === opt.sig
+                            ? 'bg-rose-600 text-white border-rose-400 shadow-md font-black'
+                            : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                        }`}
+                      >
+                        <div className="font-mono text-xs font-black">
+                          kill -{opt.sig}
+                        </div>
+                        <div className="text-[11px] opacity-90 mt-0.5">{opt.name}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Fire Button & Output */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="font-mono text-xs sm:text-sm text-amber-300">
+                        Target: PID 412 (<code>python3 heavy_app.py</code>)
+                      </div>
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          confetti({ particleCount: 50, spread: 60, origin: { y: 0.65 } });
+                          if (t12SelectedSignal === 15) {
+                            setT12SignalOutput('✅ kill -15 sent! PID 412 caught SIGTERM: saved open state to disk and exited cleanly (Exit Code 0).');
+                          } else if (t12SelectedSignal === 9) {
+                            setT12SignalOutput('⚡ kill -9 sent! Linux Kernel forcefully nuked PID 412 instantly. Process destroyed with no chance to reply.');
+                          } else if (t12SelectedSignal === 1) {
+                            setT12SignalOutput('🔄 kill -1 sent! PID 412 caught SIGHUP: reloaded configuration file successfully without dropping active tasks!');
+                          } else if (t12SelectedSignal === 19) {
+                            setT12SignalOutput('⏸️ kill -19 sent! PID 412 caught SIGSTOP: process is now FROZEN in state T (Stopped). Send -18 to unfreeze!');
+                          } else {
+                            setT12SignalOutput('▶️ kill -18 sent! PID 412 caught SIGCONT: process unfrozen and resumed running smoothly!');
+                          }
+                        }}
+                        className="px-5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs sm:text-sm border-2 border-rose-400 flex items-center gap-2"
+                      >
+                        <span>🚀 Send Signal {t12SelectedSignal} to PID 412</span>
+                      </button>
+                    </div>
+
+                    {t12SignalOutput && (
+                      <div className="p-3 rounded-xl bg-slate-900 border border-emerald-500/50 text-emerald-300 font-mono text-xs sm:text-sm">
+                        {t12SignalOutput}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 12.4: CONTROLLING PROCESS PRIORITY (NICE & RENICE)
+                ================================================================= */}
+            {activeSubtopicId === 'controlling-process-priority' && (() => {
+              // Calculate simulated CPU share based on niceness (-20 to +19)
+              // -20 gives ~95%, 0 gives ~50%, +19 gives ~5%
+              const cpuShare = Math.round(50 - (t12NiceVal * 2.3));
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-purple-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-purple-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-purple-300 bg-purple-950/80 border border-purple-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 12.4
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      The Niceness Scale Dial (-20 VIP to +19 Polite)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Drag the niceness slider from -20 to +19 and see how the Linux CPU Scheduler shifts time slices between polite background tasks and aggressive VIP tasks!
+                    </p>
+                  </div>
+
+                  {/* Slider Control */}
+                  <div className="bg-[#151c30] p-4 rounded-2xl border border-slate-700/70 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black uppercase tracking-wider text-purple-300">
+                        Niceness Value (NI):
+                      </span>
+                      <span className="font-mono font-black text-base px-3 py-1 rounded-xl bg-purple-900/80 text-white border border-purple-500">
+                        {t12NiceVal > 0 ? `+${t12NiceVal}` : t12NiceVal} {t12NiceVal < 0 ? '🚨 (VIP / Selfish)' : t12NiceVal > 0 ? '😇 (Very Polite)' : '⚖️ (Default)'}
+                      </span>
+                    </div>
+
+                    <input
+                      type="range"
+                      min="-20"
+                      max="19"
+                      value={t12NiceVal}
+                      onChange={(e) => {
+                        sounds.playPop();
+                        setT12NiceVal(parseInt(e.target.value, 10));
+                      }}
+                      className="w-full accent-purple-500 cursor-pointer"
+                    />
+
+                    <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                      <span>-20 (VIP / Grab CPU)</span>
+                      <span>0 (Normal Default)</span>
+                      <span>+19 (Polite / Step Aside)</span>
+                    </div>
+                  </div>
+
+                  {/* Simulated CPU Share Meter */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <div className="flex justify-between text-xs font-mono font-bold">
+                      <span className="text-slate-300">Simulated CPU Time Slice for Video Encoding:</span>
+                      <span className="text-purple-300">{cpuShare}% of CPU capacity</span>
+                    </div>
+                    <div className="w-full bg-slate-800 h-4 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300"
+                        style={{ width: `${cpuShare}%` }}
+                      />
+                    </div>
+                    <div className="font-mono text-xs text-slate-400 pt-2 space-y-1">
+                      <div># To launch with this priority:</div>
+                      <div className="text-emerald-300">$ {t12NiceVal < 0 ? 'sudo ' : ''}nice -n {t12NiceVal} ffmpeg -i movie.mp4 output.mkv</div>
+                      <div># To change priority on a running process:</div>
+                      <div className="text-cyan-300">$ {t12NiceVal < 0 ? 'sudo ' : ''}renice {t12NiceVal} -p 104</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 12.5: MANAGING BACKGROUND AND FOREGROUND JOBS
+                ================================================================= */}
+            {activeSubtopicId === 'background-and-foreground-jobs' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-amber-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 12.5
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Terminal Multitasking & Job Control Simulator
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Step through the classic job control workflow: freeze a foreground command with <code>Ctrl+Z</code>, push it to background with <code>bg</code>, pull it back with <code>fg</code>, and protect it with <code>nohup</code>!
+                    </p>
+                  </div>
+
+                  {/* 4 Interactive Step Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                    <button
+                      onClick={() => {
+                        sounds.playPop();
+                        setT12JobStatus('fg_running');
+                      }}
+                      className={`p-3 rounded-2xl border text-left transition-all ${
+                        t12JobStatus === 'fg_running'
+                          ? 'bg-amber-600 text-white border-amber-400 shadow-md font-black'
+                          : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                      }`}
+                    >
+                      <div className="text-xs font-black">1. Start in FG</div>
+                      <div className="text-[11px] opacity-80 mt-0.5">$ tar -czf backup.tar.gz</div>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        sounds.playPop();
+                        setT12JobStatus('stopped');
+                      }}
+                      className={`p-3 rounded-2xl border text-left transition-all ${
+                        t12JobStatus === 'stopped'
+                          ? 'bg-amber-600 text-white border-amber-400 shadow-md font-black'
+                          : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                      }`}
+                    >
+                      <div className="text-xs font-black">2. Press Ctrl+Z</div>
+                      <div className="text-[11px] opacity-80 mt-0.5">Suspend / Freeze Job</div>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT12JobStatus('bg_running');
+                      }}
+                      className={`p-3 rounded-2xl border text-left transition-all ${
+                        t12JobStatus === 'bg_running'
+                          ? 'bg-amber-600 text-white border-amber-400 shadow-md font-black'
+                          : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                      }`}
+                    >
+                      <div className="text-xs font-black">3. Run "bg %1"</div>
+                      <div className="text-[11px] opacity-80 mt-0.5">Resume in Background</div>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        sounds.playSuccess();
+                        setT12JobStatus('done');
+                        confetti({ particleCount: 50, spread: 60, origin: { y: 0.65 } });
+                      }}
+                      className={`p-3 rounded-2xl border text-left transition-all ${
+                        t12JobStatus === 'done'
+                          ? 'bg-emerald-600 text-white border-emerald-400 shadow-md font-black'
+                          : 'bg-[#182035] text-slate-300 border-slate-700 hover:bg-[#202b48]'
+                      }`}
+                    >
+                      <div className="text-xs font-black">4. Run "fg %1"</div>
+                      <div className="text-[11px] opacity-80 mt-0.5">Pull to Foreground</div>
+                    </button>
+                  </div>
+
+                  {/* Terminal Simulation Console */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm">
+                    {t12JobStatus === 'fg_running' && (
+                      <div className="text-amber-300 space-y-1">
+                        <div>sam@cozy-house:~$ tar -czf backup.tar.gz /home/sam/data</div>
+                        <div className="text-slate-400 animate-pulse">[Terminal Locked... Keyboard standard input belongs to tar. Press Ctrl+Z to freeze!]</div>
+                      </div>
+                    )}
+                    {t12JobStatus === 'stopped' && (
+                      <div className="text-slate-200 space-y-1">
+                        <div>sam@cozy-house:~$ ^Z</div>
+                        <div className="text-purple-300">[1]+  Stopped                 tar -czf backup.tar.gz /home/sam/data</div>
+                        <div>sam@cozy-house:~$ jobs -l</div>
+                        <div className="text-cyan-300">[1]+  1420 Stopped (SIGTSTP)   tar -czf backup.tar.gz /home/sam/data</div>
+                        <div className="text-emerald-400">✅ Prompt freed! Type "bg %1" to resume running in the background.</div>
+                      </div>
+                    )}
+                    {t12JobStatus === 'bg_running' && (
+                      <div className="text-slate-200 space-y-1">
+                        <div>sam@cozy-house:~$ bg %1</div>
+                        <div className="text-emerald-300">[1]+ tar -czf backup.tar.gz /home/sam/data &</div>
+                        <div>sam@cozy-house:~$ jobs</div>
+                        <div className="text-cyan-300">[1]+  Running                 tar -czf backup.tar.gz /home/sam/data &</div>
+                        <div className="text-yellow-300">🎉 It is running silently behind the scenes! You can keep typing commands in your terminal!</div>
+                      </div>
+                    )}
+                    {t12JobStatus === 'done' && (
+                      <div className="text-slate-200 space-y-1">
+                        <div>sam@cozy-house:~$ fg %1</div>
+                        <div className="text-cyan-300">tar -czf backup.tar.gz /home/sam/data</div>
+                        <div className="text-emerald-400">Compression complete! Exit Code: 0 (Success) ✅</div>
+                        <div>sam@cozy-house:~$ _</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 12.6: MONITORING DISK USAGE
+                ================================================================= */}
+            {activeSubtopicId === 'monitoring-disk-usage' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-cyan-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/80 border border-cyan-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 12.6
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Disk Detective & Space Recovery Station (df -h vs du -sh)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Explore partition capacity with <code>df -h</code>, understand Inode exhaustion with <code>df -i</code>, and use <code>du -sh *</code> to track down and delete a rogue 24GB log file!
+                    </p>
+                  </div>
+
+                  {/* Mode Tabs */}
+                  <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+                    {[
+                      { id: 'df', label: '💽 df -h (Partition View)' },
+                      { id: 'inodes', label: '🏷️ df -i (Inode Limits)' },
+                      { id: 'du', label: '🔍 du -sh * (Find Bloatware)' }
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT12DiskMode(tab.id);
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                          t12DiskMode === tab.id
+                            ? 'bg-cyan-600 text-white shadow-md'
+                            : 'bg-slate-900/80 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {t12DiskMode === 'df' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm">
+                      <pre className="whitespace-pre-wrap leading-relaxed text-cyan-300">
+{`$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        50G   ${t12DeletedCulprit ? '12G   38G  24%' : '48G  2.0G  96% ⚠️'} /
+/dev/sda2       1.0G  240M  760M  24% /boot
+/dev/sdb1       200G   45G  155G  23% /home
+tmpfs           3.9G     0  3.9G   0% /dev/shm
+
+${t12DeletedCulprit ? '✅ Root partition has 38GB of free space! Everything is breathing easy.' : '🚨 WARNING: Root partition is 96% FULL! Switch to the "du -sh" tab to find who ate the disk space!'}`}
+                      </pre>
+                    </div>
+                  )}
+
+                  {t12DiskMode === 'inodes' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm text-yellow-300">
+                      <pre className="whitespace-pre-wrap leading-relaxed">
+{`$ df -i
+Filesystem       Inodes   IUsed   IFree IUse% Mounted on
+/dev/sda1       3276800  412580 2864220   13% /
+/dev/sda2         65536     320   65216    1% /boot
+/dev/sdb1      13107200  891000 12216200   7% /home
+
+💡 What are Inodes?
+Every single file, folder, and symlink in Linux requires 1 Inode (index card).
+Even if your hard drive has 100 GB of free bytes, if a broken script creates millions of 0-byte files and uses up 100% of your Inodes, Linux will throw:
+"No space left on device" and refuse to save anything!`}
+                      </pre>
+                    </div>
+                  )}
+
+                  {t12DiskMode === 'du' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm space-y-3">
+                      <div className="text-slate-300">
+                        $ sudo du -sh /var/log/* | sort -h
+                      </div>
+                      <div className="space-y-1 text-slate-300">
+                        <div>12K     /var/log/dpkg.log</div>
+                        <div>450K    /var/log/auth.log</div>
+                        <div>12M     /var/log/syslog</div>
+                        {!t12DeletedCulprit ? (
+                          <div className="p-2 rounded-xl bg-rose-950/60 border border-rose-500 text-rose-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <span>24G     /var/log/bloated_debug.log 🚨 (Found the disk hog!)</span>
+                            <button
+                              onClick={() => {
+                                sounds.playSuccess();
+                                setT12DeletedCulprit(true);
+                                confetti({ particleCount: 70, spread: 80, origin: { y: 0.65 } });
+                              }}
+                              className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs"
+                            >
+                              🗑️ sudo rm -f bloated_debug.log
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="p-2 rounded-xl bg-emerald-950/60 border border-emerald-500/60 text-emerald-300 flex items-center justify-between">
+                            <span>✅ Deleted bloated_debug.log! 24 GB reclaimed instantly.</span>
+                            <button
+                              onClick={() => setT12DeletedCulprit(false)}
+                              className="text-[11px] underline text-slate-400 hover:text-white"
+                            >
+                              Recreate file to test again
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
             {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER (NIGHT MODE + INDEPENDENT READ-ALOUD) */}
             <div
               className={`bg-gradient-to-r from-[#141b2e] via-[#101626] to-[#0c101d] rounded-3xl p-5 border shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 transition-all ${
@@ -9622,6 +10324,21 @@ $ dmesg -T | tail -n 4
                         className="px-4 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
                       >
                         <span>Go to Topic 11: Monitoring & Troubleshooting</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    );
+                  }
+                  if (mainTab === 'topic11') {
+                    return (
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setMainTab('topic12');
+                          setActiveTopic12SubId('viewing-processes');
+                        }}
+                        className="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>Go to Topic 12: Process Management</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     );
