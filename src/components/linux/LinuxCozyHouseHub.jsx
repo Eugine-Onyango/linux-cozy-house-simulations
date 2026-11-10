@@ -38,16 +38,17 @@ import { linuxTopic9Subtopics } from './linuxTopic9Data';
 import { linuxTopic10Subtopics } from './linuxTopic10Data';
 import { linuxTopic11Subtopics } from './linuxTopic11Data';
 import { linuxTopic12Subtopics } from './linuxTopic12Data';
+import { linuxTopic13Subtopics } from './linuxTopic13Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
-  // Top-level view: 'topic1' ... 'topic12' | 'roadmap'
-  // Default to 'topic12' so the user immediately sees Topic 12: Process Management!
-  const [mainTab, setMainTab] = useState('topic12');
+  // Top-level view: 'topic1' ... 'topic13' | 'roadmap'
+  // Default to 'topic13' so the user immediately sees Topic 13: System Services & systemd!
+  const [mainTab, setMainTab] = useState('topic13');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, Topic 8, Topic 9, Topic 10, Topic 11, and Topic 12
+  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, Topic 8, Topic 9, Topic 10, Topic 11, Topic 12, and Topic 13
   const [activeTopic1SubId, setActiveTopic1SubId] = useState('distributions');
   const [activeTopic2SubId, setActiveTopic2SubId] = useState('file-system');
   const [activeTopic4SubId, setActiveTopic4SubId] = useState('file-management');
@@ -59,6 +60,7 @@ export default function LinuxCozyHouseHub() {
   const [activeTopic10SubId, setActiveTopic10SubId] = useState('linux-firewall-overview');
   const [activeTopic11SubId, setActiveTopic11SubId] = useState('centos-network-interfaces');
   const [activeTopic12SubId, setActiveTopic12SubId] = useState('viewing-processes');
+  const [activeTopic13SubId, setActiveTopic13SubId] = useState('systemd-introduction');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -360,7 +362,31 @@ export default function LinuxCozyHouseHub() {
   const [t12DiskMode, setT12DiskMode] = useState('df'); // 'df' | 'inodes' | 'du' | 'ncdu'
   const [t12DeletedCulprit, setT12DeletedCulprit] = useState(false);
 
-  // Determine current active subtopics list and current subtopic object for Topic 1..12
+  // ==========================================================================
+  // TOPIC 13 TOYBOX STATES (SYSTEM SERVICES & SYSTEMD - 5 SUBTOPICS)
+  // ==========================================================================
+  // 13.1 Systemd Introduction & Unit Types
+  const [t13UnitType, setT13UnitType] = useState('service'); // 'service' | 'target' | 'socket' | 'timer'
+  const [t13CgroupForks, setT13CgroupForks] = useState([1240, 1241, 1242]);
+  const [t13CgroupCleaned, setT13CgroupCleaned] = useState(false);
+  // 13.2 Linux Boot Process Stepper (1..5)
+  const [t13BootStage, setT13BootStage] = useState(1); // 1..5
+  const [t13BootTarget, setT13BootTarget] = useState('graphical'); // 'multi-user' | 'graphical'
+  const [t13BootPlaying, setT13BootPlaying] = useState(false);
+  // 13.3 Controlling Services: Lifecycle & Masking
+  const [t13SelectedSvc, setT13SelectedSvc] = useState('nginx.service');
+  const [t13SvcRuntime, setT13SvcRuntime] = useState('active'); // 'active' | 'inactive' | 'failed'
+  const [t13SvcEnabled, setT13SvcEnabled] = useState(true);
+  const [t13SvcMasked, setT13SvcMasked] = useState(false);
+  const [t13StateMessage, setT13StateMessage] = useState('nginx.service is active (running) and enabled for boot.');
+  // 13.4 Systemctl Masterclass & Unit File Studio
+  const [t13CmdInput, setT13CmdInput] = useState('status'); // 'status' | 'start' | 'stop' | 'reload' | 'restart' | 'enable_now' | 'daemon_reload' | 'cat'
+  const [t13UnitTab, setT13UnitTab] = useState('unit'); // 'unit' | 'service' | 'install'
+  // 13.5 Journalctl Flight Recorder
+  const [t13JournalFilter, setT13JournalFilter] = useState('all'); // 'all' | 'nginx' | 'follow' | 'xe' | 'boot' | 'err'
+  const [t13VacuumCleaned, setT13VacuumCleaned] = useState(false);
+
+  // Determine current active subtopics list and current subtopic object for Topic 1..13
   const currentSubtopicsList =
     mainTab === 'topic1'
       ? linuxTopic1Subtopics
@@ -382,7 +408,9 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic10Subtopics
       : mainTab === 'topic11'
       ? linuxTopic11Subtopics
-      : linuxTopic12Subtopics;
+      : mainTab === 'topic12'
+      ? linuxTopic12Subtopics
+      : linuxTopic13Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -404,7 +432,9 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic10SubId
       : mainTab === 'topic11'
       ? activeTopic11SubId
-      : activeTopic12SubId;
+      : mainTab === 'topic12'
+      ? activeTopic12SubId
+      : activeTopic13SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
@@ -416,7 +446,8 @@ export default function LinuxCozyHouseHub() {
     else if (mainTab === 'topic9') setActiveTopic9SubId(id);
     else if (mainTab === 'topic10') setActiveTopic10SubId(id);
     else if (mainTab === 'topic11') setActiveTopic11SubId(id);
-    else setActiveTopic12SubId(id);
+    else if (mainTab === 'topic12') setActiveTopic12SubId(id);
+    else setActiveTopic13SubId(id);
   };
 
   const currentSubtopic =
@@ -459,9 +490,28 @@ export default function LinuxCozyHouseHub() {
     activeTopic10SubId,
     activeTopic11SubId,
     activeTopic12SubId,
+    activeTopic13SubId,
     selectedCmdNum,
     mainTab
   ]);
+
+  // Topic 13.2 Boot Elevator Auto-Play Timer
+  useEffect(() => {
+    if (!t13BootPlaying) return;
+    const interval = setInterval(() => {
+      setT13BootStage((prev) => {
+        if (prev >= 5) {
+          setT13BootPlaying(false);
+          sounds.playSuccess();
+          try { confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } }); } catch {}
+          return 5;
+        }
+        sounds.playPop();
+        return prev + 1;
+      });
+    }, 1800);
+    return () => clearInterval(interval);
+  }, [t13BootPlaying]);
 
   // Topic 1.2 Architecture Live Journey Timer
   useEffect(() => {
@@ -881,7 +931,22 @@ export default function LinuxCozyHouseHub() {
               }`}
             >
               <span>⚙️</span>
-              <span>Topic 12: Process Mgmt (6)</span>
+              <span>Topic 12 (6)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
+                setMainTab('topic13');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
+                mainTab === 'topic13'
+                  ? 'bg-gradient-to-r from-amber-500 via-orange-600 to-amber-700 text-white border-amber-400/60 shadow-[0_0_15px_rgba(245,158,11,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
+              }`}
+            >
+              <span>⚡</span>
+              <span>Topic 13: Systemd & Services (5)</span>
             </button>
 
             <button
@@ -953,6 +1018,8 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 11 • Monitoring & Troubleshooting (3 Subtopics)'
                       : mainTab === 'topic12'
                       ? 'Topic 12 • Process Management (6 Subtopics)'
+                      : mainTab === 'topic13'
+                      ? 'Topic 13 • System Services & systemd (5 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -986,6 +1053,8 @@ export default function LinuxCozyHouseHub() {
                   ? 'Topic 11: Monitoring & Troubleshooting 🖥️🩺📊💓'
                   : mainTab === 'topic12'
                   ? 'Topic 12: Process Management ⚙️👥📊🛑⚖️🤹💽'
+                  : mainTab === 'topic13'
+                  ? 'Topic 13: System Services & systemd ⚡🏛️🚀🔄🎛️📜'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -1014,7 +1083,9 @@ export default function LinuxCozyHouseHub() {
                   ? 'Configure CentOS network interfaces with ONBOOT=yes (nmcli/nmtui), climb the 5-step network diagnostic troubleshooting ladder (ping, traceroute, ss, dig, tcpdump), and monitor system vital signs (CPU load, free RAM, df disk space, and kill -9)!'
                   : mainTab === 'topic12'
                   ? 'Master Linux Process Management from creation to termination! Explore ps aux & pstree hierarchies, compare live top and htop monitors, master kill & signal codes (SIGTERM 15 vs SIGKILL 9), fine-tune CPU priority with nice & renice (-20 to +19), juggle background and foreground jobs (&, Ctrl+Z, jobs, bg, fg, nohup), and audit disk storage with df -h and du -sh!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 12 are fully interactive right now!'}
+                  : mainTab === 'topic13'
+                  ? 'Understand how Linux boots and controls every background worker: PID 1 architecture, the 5-stage boot sequence, active vs enabled service states, the systemctl master remote, and black-box diagnostics with journalctl -xe!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 13 are fully interactive right now!'}
               </p>
             </div>
 
@@ -1190,14 +1261,29 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic12');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic12'
                     ? 'bg-blue-600 text-white border-blue-400 shadow-md shadow-blue-500/25 scale-[1.02]'
                     : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
-                <span>⚙️ 12. Process Management (Jobs, Signals, Priority, Disk)</span>
+                <span>⚙️ 12. Process</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">6</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic13');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic13'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-400 shadow-md shadow-amber-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
+                }`}
+              >
+                <span>⚡ 13. System Services & systemd (Boot, systemctl, logs)</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">5</span>
               </button>
             </div>
           </div>
@@ -1853,7 +1939,8 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic9' ||
           mainTab === 'topic10' ||
           mainTab === 'topic11' ||
-          mainTab === 'topic12') && (
+          mainTab === 'topic12' ||
+          mainTab === 'topic13') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-[#111728]/95 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3">
@@ -1882,7 +1969,9 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 10: Linux Firewall (4 Subtopics)'
                       : mainTab === 'topic11'
                       ? 'Topic 11: Monitoring & Troubleshooting (3 Subtopics)'
-                      : 'Topic 12: Process Management (6 Subtopics)'}
+                      : mainTab === 'topic12'
+                      ? 'Topic 12: Process Management (6 Subtopics)'
+                      : 'Topic 13: System Services & systemd (5 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -10115,6 +10204,896 @@ Even if your hard drive has 100 GB of free bytes, if a broken script creates mil
               );
             })()}
 
+            {/* =================================================================
+                TOYBOX 13.1: SYSTEMD INTRODUCTION (PID 1 & CGROUPS SANDBOXING)
+                ================================================================= */}
+            {activeSubtopicId === 'systemd-introduction' && (() => {
+              const unitTypesMeta = {
+                service: {
+                  badge: '.service (Daemons)',
+                  color: 'text-emerald-400 border-emerald-500 bg-emerald-950/60',
+                  file: 'nginx.service',
+                  desc: 'Continuous background workers (web servers, databases, SSH). Configures how to start, restart on crash, and track execution.',
+                  example: `[Unit]\nDescription=The NGINX HTTP and reverse proxy server\nAfter=network.target remote-fs.target\n\n[Service]\nType=forking\nPIDFile=/run/nginx.pid\nExecStart=/usr/sbin/nginx\nExecReload=/usr/sbin/nginx -s reload\nRestart=on-failure\n\n[Install]\nWantedBy=multi-user.target`
+                },
+                target: {
+                  badge: '.target (Milestones)',
+                  color: 'text-blue-400 border-blue-500 bg-blue-950/60',
+                  file: 'multi-user.target',
+                  desc: 'Synchronization group units that bundle multiple services together. Replaces old SysVinit runlevels (e.g. multi-user.target = Runlevel 3; graphical.target = Runlevel 5).',
+                  example: `[Unit]\nDescription=Multi-User System (Headless Server Console)\nDocumentation=man:systemd.special(7)\nRequires=basic.target\nConflicts=rescue.service rescue.target\nAfter=basic.target rescue.service rescue.target\nAllowIsolate=yes`
+                },
+                socket: {
+                  badge: '.socket (On-Demand Activation)',
+                  color: 'text-purple-400 border-purple-500 bg-purple-950/60',
+                  file: 'sshd.socket',
+                  desc: 'Listens on a network port or IPC socket. When a client connects, systemd instantly spawns the associated .service on demand, saving idle RAM!',
+                  example: `[Unit]\nDescription=OpenSSH Server Socket (On-Demand Activation)\nBefore=sshd.service\nConflicts=sshd.service\n\n[Socket]\nListenStream=22\nAccept=yes\n\n[Install]\nWantedBy=sockets.target`
+                },
+                timer: {
+                  badge: '.timer (Scheduled Cron Replacement)',
+                  color: 'text-amber-400 border-amber-500 bg-amber-950/60',
+                  file: 'logrotate.timer',
+                  desc: 'Modern, high-precision replacement for cron jobs. Supports monotonic timers (e.g. 15min after boot) and calendar events (e.g. daily at midnight), with built-in persistent catch-up.',
+                  example: `[Unit]\nDescription=Daily rotation of log files\nDocumentation=man:logrotate(8)\n\n[Timer]\nOnCalendar=daily\nAccuracySec=12h\nPersistent=true\n\n[Install]\nWantedBy=timers.target`
+                }
+              };
+
+              const currentUnitMeta = unitTypesMeta[t13UnitType] || unitTypesMeta.service;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-emerald-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 13.1
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Systemd Unit Inspector & PID 1 Cgroup Sandboxing
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Explore the 4 primary systemd unit types (.service, .target, .socket, .timer) and test how PID 1 tracks every child process in Linux cgroups so zero orphaned workers get left behind!
+                    </p>
+                  </div>
+
+                  {/* Unit Type Switcher */}
+                  <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+                    {Object.entries(unitTypesMeta).map(([key, data]) => (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13UnitType(key);
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+                          t13UnitType === key
+                            ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 scale-105'
+                            : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
+                        }`}
+                      >
+                        <span>{key === 'service' ? '🛠️' : key === 'target' ? '🎯' : key === 'socket' ? '🔌' : '⏱️'}</span>
+                        <span>{data.badge}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Unit File Anatomy Display */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono font-bold text-slate-400">📄 File: /lib/systemd/system/{currentUnitMeta.file}</span>
+                        <span className={`px-2 py-0.5 rounded-lg text-[11px] font-black border ${currentUnitMeta.color}`}>
+                          {currentUnitMeta.badge}
+                        </span>
+                      </div>
+                      <p className="text-xs sm:text-sm font-medium text-slate-300 bg-[#0b0f19] p-3 rounded-2xl border border-slate-800">
+                        {currentUnitMeta.desc}
+                      </p>
+                      <pre className="p-3.5 rounded-2xl bg-[#080c14] border border-slate-800 font-mono text-[11px] sm:text-xs text-emerald-300 overflow-x-auto leading-relaxed">
+                        {currentUnitMeta.example}
+                      </pre>
+                    </div>
+
+                    {/* Cgroups Sandbox Overseer */}
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
+                            <span>🛡️</span>
+                            <span>PID 1 Cgroup Sandbox Hierarchy:</span>
+                          </span>
+                          <span className="text-[11px] font-mono text-slate-400">/sys/fs/cgroup/system.slice/</span>
+                        </div>
+                        <p className="text-xs text-slate-300">
+                          In old SysVinit, if a worker spawned 3 child forks and died, those 3 children became untracked zombies. In systemd, everything is trapped inside a dedicated control group (cgroup)!
+                        </p>
+
+                        <div className="p-3 rounded-xl bg-[#131b2e] border border-slate-700/80 font-mono text-xs space-y-1.5">
+                          <div className="text-cyan-300 font-bold">PID 1 (systemd) [system.slice]</div>
+                          <div className="pl-4 text-emerald-300">└─ nginx.service (cgroup id: 410)</div>
+                          <div className="pl-8 text-amber-300">├─ PID 1240 (nginx: master process)</div>
+                          {!t13CgroupCleaned ? (
+                            t13CgroupForks.map((pid, idx) => (
+                              <div key={pid} className="pl-8 text-slate-300 flex items-center justify-between">
+                                <span>{idx === t13CgroupForks.length - 1 ? '└─' : '├─'} PID {pid} (nginx: worker process #{idx + 1})</span>
+                                <span className="text-[10px] text-emerald-400 font-bold">CPU: 0.2% | RAM: 8MB</span>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="pl-8 text-rose-400 font-bold italic">
+                              [Cgroup terminated: 0 child processes remaining in memory!]
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Controls */}
+                      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-800">
+                        <button
+                          onClick={() => {
+                            sounds.playPop();
+                            setT13CgroupCleaned(false);
+                            setT13CgroupForks((prev) => [...prev, 1240 + prev.length + 1]);
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs transition-all shadow-sm"
+                        >
+                          ➕ Spawn Child Fork (PID {1240 + t13CgroupForks.length + 1})
+                        </button>
+                        <button
+                          onClick={() => {
+                            sounds.playSuccess();
+                            setT13CgroupCleaned(true);
+                            try { confetti({ particleCount: 35, spread: 50, origin: { y: 0.7 } }); } catch {}
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs transition-all shadow-sm"
+                        >
+                          🛑 sudo systemctl stop nginx (Clean Cgroup Kill)
+                        </button>
+                        {t13CgroupCleaned && (
+                          <button
+                            onClick={() => {
+                              sounds.playPop();
+                              setT13CgroupCleaned(false);
+                              setT13CgroupForks([1240, 1241, 1242]);
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-xs transition-all"
+                          >
+                            🔄 Reset Daemon
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 13.2: LINUX BOOT PROCESS (5-STAGE BOOT ELEVATOR)
+                ================================================================= */}
+            {activeSubtopicId === 'linux-boot-process' && (() => {
+              const stages = [
+                {
+                  num: 1,
+                  name: 'BIOS / UEFI',
+                  subtitle: 'Power-On Self Test (POST)',
+                  icon: '🔌',
+                  color: 'from-blue-600 to-indigo-700',
+                  badge: 'Motherboard Firmware',
+                  files: 'CMOS / NVRAM, EFI System Partition (ESP: /boot/efi)',
+                  desc: 'Motherboard tests physical hardware (CPU, RAM, storage controllers). Once POST passes without error beeps, firmware locates the bootable disk priority list.',
+                  command: 'dmesg | grep -i efi'
+                },
+                {
+                  num: 2,
+                  name: 'MBR / GPT',
+                  subtitle: 'Partition Table Inspection',
+                  icon: '💾',
+                  color: 'from-sky-600 to-cyan-700',
+                  badge: 'Disk Partition',
+                  files: '/dev/nvme0n1 (Sector 0) or GUID Partition Table',
+                  desc: 'Finds where the operating system lives. Modern systems use GPT (GUID Partition Table) to identify the EFI system partition holding boot code.',
+                  command: 'sudo gdisk -l /dev/nvme0n1'
+                },
+                {
+                  num: 3,
+                  name: 'GRUB2 Bootloader',
+                  subtitle: 'Kernel Image Selection',
+                  icon: '🎯',
+                  color: 'from-purple-600 to-indigo-700',
+                  badge: 'Bootloader',
+                  files: '/boot/grub/grub.cfg, /boot/vmlinuz-6.8.0',
+                  desc: 'Presents the OS boot menu (useful for dual-booting). Passes kernel arguments (e.g. "ro quiet splash") and loads the compressed Linux kernel image into RAM.',
+                  command: 'cat /etc/default/grub'
+                },
+                {
+                  num: 4,
+                  name: 'Kernel & initramfs',
+                  subtitle: 'Drivers & Root Filesystem Mount',
+                  icon: '🐧',
+                  color: 'from-amber-600 to-orange-700',
+                  badge: 'Operating System Core',
+                  files: '/boot/vmlinuz-*, /boot/initrd.img-*, /etc/fstab',
+                  desc: 'The kernel uncompresses itself in RAM. Uses temporary initramfs (initial RAM filesystem) drivers to recognize storage controllers, mounts the real root (/) filesystem read-only, and runs PID 1.',
+                  command: 'uname -r && ls -lh /boot'
+                },
+                {
+                  num: 5,
+                  name: 'systemd (PID 1)',
+                  subtitle: 'Target Milestone Reached!',
+                  icon: '⚡',
+                  color: 'from-emerald-600 to-teal-700',
+                  badge: 'Init System (PID 1)',
+                  files: '/etc/systemd/system/default.target',
+                  desc: `systemd takes control as PID 1, mounts all filesystems read-write from /etc/fstab, starts background daemons in parallel, and activates ${t13BootTarget === 'graphical' ? 'graphical.target (Desktop GUI & Display Manager)' : 'multi-user.target (Headless Server Console)'}!`,
+                  command: `systemctl get-default # => ${t13BootTarget}.target`
+                }
+              ];
+
+              const currentStage = stages[t13BootStage - 1] || stages[0];
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-cyan-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/80 border border-cyan-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 13.2
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        5-Stage Linux Boot Elevator Simulator
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Step through the exact 5 milestones from cold hardware power-on to the systemd login screen!
+                      </p>
+                    </div>
+
+                    {/* Target Toggle */}
+                    <div className="flex items-center gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800 shrink-0">
+                      <span className="text-[11px] font-bold text-slate-400 pl-1">Target:</span>
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13BootTarget('multi-user');
+                        }}
+                        className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all ${
+                          t13BootTarget === 'multi-user'
+                            ? 'bg-cyan-600 text-white shadow-sm'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🖥️ Server (multi-user)
+                      </button>
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13BootTarget('graphical');
+                        }}
+                        className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all ${
+                          t13BootTarget === 'graphical'
+                            ? 'bg-emerald-600 text-white shadow-sm'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🎨 Desktop (graphical)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 5-Step Stepper Bar */}
+                  <div className="grid grid-cols-5 gap-2">
+                    {stages.map((st) => (
+                      <button
+                        key={st.num}
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13BootPlaying(false);
+                          setT13BootStage(st.num);
+                        }}
+                        className={`p-2.5 sm:p-3 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                          t13BootStage === st.num
+                            ? `bg-gradient-to-br ${st.color} text-white border-white/60 shadow-lg scale-105 z-10`
+                            : t13BootStage > st.num
+                            ? 'bg-[#10192e] text-slate-300 border-cyan-800/60 hover:border-cyan-600'
+                            : 'bg-[#0b0f19] text-slate-500 border-slate-800/80 hover:text-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-xs font-bold">
+                          <span>Stage {st.num}</span>
+                          <span>{st.icon}</span>
+                        </div>
+                        <div className="font-black text-xs sm:text-sm mt-1 truncate">
+                          {st.name}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Active Stage Detailed Card */}
+                  <div className="bg-[#0b0f19] p-5 rounded-3xl border border-slate-800 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                      <div className="flex items-center gap-3">
+                        <span className="w-12 h-12 rounded-2xl bg-cyan-950/80 border border-cyan-700/60 flex items-center justify-center text-2xl shadow-inner">
+                          {currentStage.icon}
+                        </span>
+                        <div>
+                          <span className="text-[11px] font-mono font-bold text-cyan-400">
+                            MILESTONE #{currentStage.num} • {currentStage.badge}
+                          </span>
+                          <h5 className="text-base sm:text-lg font-black text-white">
+                            {currentStage.name} — {currentStage.subtitle}
+                          </h5>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            sounds.playPop();
+                            setT13BootPlaying((prev) => !prev);
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-black text-xs transition-all flex items-center gap-1.5 shadow-sm"
+                        >
+                          {t13BootPlaying ? '⏸️ Pause' : '▶️ Play Full Sequence'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            sounds.playPop();
+                            setT13BootPlaying(false);
+                            setT13BootStage(1);
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-xs transition-all"
+                        >
+                          🔄 Reset (Reboot)
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <div className="text-xs font-bold text-slate-400">What is Happening:</div>
+                        <p className="text-sm font-semibold text-slate-200 leading-relaxed bg-[#101728] p-3.5 rounded-2xl border border-slate-800">
+                          {currentStage.desc}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="text-xs font-bold text-slate-400">Files & Diagnostics:</div>
+                        <div className="bg-[#101728] p-3.5 rounded-2xl border border-slate-800 space-y-2 font-mono text-xs">
+                          <div>
+                            <span className="text-slate-400">Files: </span>
+                            <span className="text-amber-300 font-bold">{currentStage.files}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400">Inspect: </span>
+                            <span className="text-emerald-300 font-bold">$ {currentStage.command}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stage Progress Bar */}
+                    <div className="space-y-1 pt-1">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-400">
+                        <span>Boot Elevator Progress</span>
+                        <span>Stage {t13BootStage} of 5 ({t13BootStage * 20}%)</span>
+                      </div>
+                      <div className="w-full h-2.5 rounded-full bg-slate-900 border border-slate-800 overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 transition-all duration-500"
+                          style={{ width: `${t13BootStage * 20}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 13.3: CONTROLLING SERVICES (LIFECYCLE, STATES & MASKING)
+                ================================================================= */}
+            {activeSubtopicId === 'controlling-systemd-services' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-amber-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 13.3
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Service Lifecycle State Machine (Active vs Enabled vs Masked)
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Master the critical distinction between runtime memory states (Active/Inactive/Failed) and boot persistence (Enabled/Disabled), plus the unbreakable /dev/null security lock (Masking)!
+                    </p>
+                  </div>
+
+                  {/* Service Selector & Telemetry Board */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="p-3.5 rounded-2xl bg-[#0b0f19] border border-slate-800 space-y-1">
+                      <span className="text-[11px] font-mono text-slate-400 uppercase font-bold">1. Runtime State (Now in RAM)</span>
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className={`w-3.5 h-3.5 rounded-full ${t13SvcRuntime === 'active' ? 'bg-emerald-500 animate-pulse' : t13SvcRuntime === 'failed' ? 'bg-rose-500 animate-bounce' : 'bg-slate-600'}`} />
+                        <span className={`font-black text-sm uppercase ${t13SvcRuntime === 'active' ? 'text-emerald-400' : t13SvcRuntime === 'failed' ? 'text-rose-400' : 'text-slate-400'}`}>
+                          {t13SvcRuntime === 'active' ? 'Active (Running)' : t13SvcRuntime === 'failed' ? 'Failed (Crashed)' : 'Inactive (Dead)'}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-400">PID: {t13SvcRuntime === 'active' ? '8420' : 'None'} | Memory: {t13SvcRuntime === 'active' ? '14.2 MB' : '0 MB'}</div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-[#0b0f19] border border-slate-800 space-y-1">
+                      <span className="text-[11px] font-mono text-slate-400 uppercase font-bold">2. Boot Persistence (Tomorrow)</span>
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className={`font-black text-sm ${t13SvcEnabled ? 'text-amber-400' : 'text-slate-400'}`}>
+                          {t13SvcEnabled ? '⚡ Enabled (Auto-Boot)' : '💤 Disabled (Manual)'}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-400">
+                        {t13SvcEnabled ? 'Symlinked in multi-user.target.wants' : 'No boot symlink on disk'}
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-[#0b0f19] border border-slate-800 space-y-1">
+                      <span className="text-[11px] font-mono text-slate-400 uppercase font-bold">3. Security Lock (Masking)</span>
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className={`font-black text-sm ${t13SvcMasked ? 'text-rose-400' : 'text-emerald-400'}`}>
+                          {t13SvcMasked ? '🔒 Masked (Locked to /dev/null)' : '🔓 Unmasked (Operational)'}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-400">
+                        {t13SvcMasked ? 'Unit symlinked to /dev/null' : 'Normal unit file in /lib/systemd'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-slate-400">Trigger State Changes:</div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => {
+                          if (t13SvcMasked) {
+                            sounds.playPop();
+                            setT13StateMessage('❌ Failed to start nginx.service: Unit nginx.service is masked! Unmask it first.');
+                            return;
+                          }
+                          sounds.playSuccess();
+                          setT13SvcRuntime('active');
+                          setT13StateMessage('✅ sudo systemctl start nginx: Started worker daemon (PID 8420). Runtime state is now active (running).');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>▶️ Start Service</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13SvcRuntime('inactive');
+                          setT13StateMessage('⏹️ sudo systemctl stop nginx: Gracefully stopped worker daemon. Runtime state is now inactive (dead).');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>⏹️ Stop Service</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13SvcRuntime('failed');
+                          setT13StateMessage('💥 Service crashed! Port 80 conflict: nginx exited with code 1/FAILURE. Status is now "failed".');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>💥 Simulate Crash (Failed)</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13SvcEnabled(true);
+                          setT13StateMessage('⭐ sudo systemctl enable nginx: Created symlink in /etc/systemd/system/multi-user.target.wants/nginx.service. Will start automatically on every boot!');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>⭐ Enable for Boot</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13SvcEnabled(false);
+                          setT13StateMessage('💤 sudo systemctl disable nginx: Removed symlink from multi-user.target.wants. Will NOT start on boot.');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>💤 Disable Auto-Boot</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT13SvcMasked(true);
+                          setT13SvcRuntime('inactive');
+                          setT13StateMessage('🔒 sudo systemctl mask nginx: Symlinked /etc/systemd/system/nginx.service -> /dev/null! Nobody (manual or service) can start it now.');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>🔒 Mask (/dev/null Lock)</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT13SvcMasked(false);
+                          setT13StateMessage('🔓 sudo systemctl unmask nginx: Removed /dev/null symlink. The unit is normal and operational again.');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>🔓 Unmask Service</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Terminal Log Output */}
+                  <div className="p-3.5 rounded-2xl bg-[#080c14] border border-slate-800 font-mono text-xs text-amber-300 space-y-1">
+                    <div className="text-slate-500 font-bold"># Live systemctl outcome:</div>
+                    <div className="text-slate-100 whitespace-pre-wrap">{t13StateMessage}</div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 13.4: SYSTEMCTL COMMAND MASTERCLASS & UNIT FILE STUDIO
+                ================================================================= */}
+            {activeSubtopicId === 'systemctl-command' && (() => {
+              const cmdOutputs = {
+                status: `● nginx.service - The NGINX HTTP and reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2026-11-10 10:14:02 EAT; 3h 12min ago
+   Main PID: 8420 (nginx)
+      Tasks: 3 (limit: 4680)
+     Memory: 14.2M (limit: 512.0M)
+        CPU: 420ms
+     CGroup: /system.slice/nginx.service
+             ├─8420 "nginx: master process /usr/sbin/nginx"
+             ├─8421 "nginx: worker process"
+             └─8422 "nginx: worker process"
+
+Nov 10 10:14:02 linux-box systemd[1]: Starting The NGINX HTTP and reverse proxy server...
+Nov 10 10:14:02 linux-box systemd[1]: Started The NGINX HTTP and reverse proxy server.`,
+                start: `sam@cozy-house:~$ sudo systemctl start nginx
+[systemd] Initiating start job for unit nginx.service...
+[systemd] ExecStart=/usr/sbin/nginx spawned PID 8420
+[systemd] Started The NGINX HTTP and reverse proxy server.`,
+                stop: `sam@cozy-house:~$ sudo systemctl stop nginx
+[systemd] Stopping The NGINX HTTP and reverse proxy server...
+[systemd] Sending SIGQUIT to Main PID 8420
+[systemd] Stopped The NGINX HTTP and reverse proxy server. (0 child leaks)`,
+                reload: `sam@cozy-house:~$ sudo systemctl reload nginx
+[systemd] Reloading The NGINX HTTP and reverse proxy server...
+[systemd] Sent SIGHUP to Main PID 8420.
+[nginx] Configuration file /etc/nginx/nginx.conf test is successful.
+[nginx] Worker processes gracefully reloaded. ZERO active connections dropped!`,
+                restart: `sam@cozy-house:~$ sudo systemctl restart nginx
+[systemd] Stopping old PID 8420...
+[systemd] Spawning new master process PID 8890...
+[systemd] Restart completed. (Note: Existing socket connections were briefly reset)`,
+                enable_now: `sam@cozy-house:~$ sudo systemctl enable --now nginx
+Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /lib/systemd/system/nginx.service.
+[systemd] Started The NGINX HTTP and reverse proxy server.
+💡 Pro-tip: --now combines 'enable' (boot persistence) AND 'start' (current memory) in 1 command!`,
+                daemon_reload: `sam@cozy-house:~$ sudo systemctl daemon-reload
+[systemd] Re-reading all unit files from disk...
+[systemd] Re-building dependency graphs across /etc/systemd/system and /lib/systemd/system.
+✅ In-memory unit cache refreshed! Your new or modified .service files are now recognized.`,
+                cat: `# /lib/systemd/system/nginx.service
+[Unit]
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t -q -g 'daemon on; master_process on;'
+ExecStart=/usr/sbin/nginx -g 'daemon on; master_process on;'
+ExecReload=/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
+ExecStop=-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
+TimeoutStopSec=5
+KillMode=mixed
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target`
+              };
+
+              const unitSections = {
+                unit: {
+                  title: '[Unit] — Metadata & Dependencies',
+                  desc: 'Configures general information, documentation, and boot order. "After=" controls what must start before this service; "Requires=" creates a strict failure dependency.',
+                  fields: [
+                    { k: 'Description', v: 'Friendly label displayed in logs and systemctl status.' },
+                    { k: 'After=network.target', v: 'Delays startup until the network interface is ready.' },
+                    { k: 'Requires=db.service', v: 'Strict dependency: if db fails, this service will not start.' }
+                  ]
+                },
+                service: {
+                  title: '[Service] — Execution & Lifecycle Instructions',
+                  desc: 'The technical heart of the unit. Defines what command launches the daemon, how it behaves when reloaded, and whether it auto-restarts upon crashing.',
+                  fields: [
+                    { k: 'Type=forking', v: 'Tells systemd the binary forks child workers (e.g. nginx, sshd).' },
+                    { k: 'ExecStart=/usr/sbin/nginx', v: 'Absolute path to the program binary to execute.' },
+                    { k: 'ExecReload=/usr/sbin/nginx -s reload', v: 'Command for zero-downtime graceful config updates.' },
+                    { k: 'Restart=on-failure', v: 'Automatically resurrects the daemon if it crashes with an error.' }
+                  ]
+                },
+                install: {
+                  title: '[Install] — Boot Target Registration',
+                  desc: 'Used ONLY when you run "systemctl enable". Tells systemd which target directory should hold the boot symlink.',
+                  fields: [
+                    { k: 'WantedBy=multi-user.target', v: 'Creates symlink inside /etc/systemd/system/multi-user.target.wants/ so it auto-starts when Linux boots to console/server mode.' }
+                  ]
+                }
+              };
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-purple-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-purple-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-purple-300 bg-purple-950/80 border border-purple-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 13.4
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Systemctl Command Remote & Unit File Studio
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Issue live simulated systemctl commands, see realistic console feedback, compare reload vs restart, and inspect the 3 building blocks of a .service unit file!
+                    </p>
+                  </div>
+
+                  {/* Command Buttons */}
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-slate-400">Click a systemctl Command to Execute:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { id: 'status', label: 'systemctl status nginx', icon: '📊' },
+                        { id: 'start', label: 'sudo systemctl start nginx', icon: '▶️' },
+                        { id: 'reload', label: 'sudo systemctl reload nginx (Graceful)', icon: '🔄' },
+                        { id: 'restart', label: 'sudo systemctl restart nginx', icon: '⚡' },
+                        { id: 'stop', label: 'sudo systemctl stop nginx', icon: '⏹️' },
+                        { id: 'enable_now', label: 'sudo systemctl enable --now nginx', icon: '⭐' },
+                        { id: 'daemon_reload', label: 'sudo systemctl daemon-reload', icon: '📡' },
+                        { id: 'cat', label: 'systemctl cat nginx.service', icon: '📄' }
+                      ].map((cmd) => (
+                        <button
+                          key={cmd.id}
+                          onClick={() => {
+                            sounds.playPop();
+                            setT13CmdInput(cmd.id);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            t13CmdInput === cmd.id
+                              ? 'bg-purple-600 text-white shadow-md shadow-purple-500/25 scale-105'
+                              : 'bg-slate-900/80 text-slate-300 border border-slate-700/70 hover:bg-slate-800 hover:text-white'
+                          }`}
+                        >
+                          <span>{cmd.icon}</span>
+                          <span>{cmd.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Terminal Screen */}
+                  <div className="p-4 rounded-2xl bg-[#080c14] border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800 pb-2">
+                      <span className="text-purple-300 font-bold">$ {t13CmdInput === 'cat' ? 'systemctl cat nginx.service' : t13CmdInput === 'status' ? 'systemctl status nginx.service' : `sudo systemctl ${t13CmdInput.replace('_', ' ')} nginx`}</span>
+                      <span className="text-emerald-400 font-bold">Exit Code: 0 (SUCCESS)</span>
+                    </div>
+                    <pre className="font-mono text-xs text-slate-200 whitespace-pre-wrap leading-relaxed overflow-x-auto max-h-64">
+                      {cmdOutputs[t13CmdInput] || cmdOutputs.status}
+                    </pre>
+                  </div>
+
+                  {/* Unit File 3-Section Anatomy Studio */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black uppercase text-amber-400">
+                        📄 The 3 Mandatory Unit File Sections (/etc/systemd/system/*.service):
+                      </span>
+                    </div>
+
+                    <div className="flex gap-2 border-b border-slate-800 pb-2">
+                      {['unit', 'service', 'install'].map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => {
+                            sounds.playPop();
+                            setT13UnitTab(tab);
+                          }}
+                          className={`px-3 py-1 rounded-xl font-mono text-xs font-black uppercase transition-all ${
+                            t13UnitTab === tab
+                              ? 'bg-amber-500 text-slate-950 shadow-sm'
+                              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                          }`}
+                        >
+                          [{tab}]
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="text-sm font-black text-white">{unitSections[t13UnitTab].title}</div>
+                      <p className="text-xs text-slate-300">{unitSections[t13UnitTab].desc}</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                        {unitSections[t13UnitTab].fields.map((f, idx) => (
+                          <div key={idx} className="p-2.5 rounded-xl bg-[#101728] border border-slate-800 space-y-0.5">
+                            <div className="font-mono text-xs font-bold text-amber-300">{f.k}</div>
+                            <div className="text-[11px] text-slate-300">{f.v}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOYBOX 13.5: JOURNALCTL FLIGHT RECORDER & LOG DETECTIVE
+                ================================================================= */}
+            {activeSubtopicId === 'journalctl' && (() => {
+              const logSets = {
+                all: [
+                  { time: 'Nov 10 10:14:00', host: 'linux-box', proc: 'kernel', pid: '0', pri: 'INFO', msg: 'Linux version 6.8.0-48-generic (buildd@lcy02)' },
+                  { time: 'Nov 10 10:14:01', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'INFO', msg: 'Reached target Multi-User System.' },
+                  { time: 'Nov 10 10:14:02', host: 'linux-box', proc: 'sshd', pid: '840', pri: 'INFO', msg: 'Server listening on 0.0.0.0 port 22.' },
+                  { time: 'Nov 10 10:14:02', host: 'linux-box', proc: 'nginx', pid: '8420', pri: 'INFO', msg: 'Started The NGINX HTTP and reverse proxy server.' },
+                  { time: 'Nov 10 10:15:30', host: 'linux-box', proc: 'sshd', pid: '9120', pri: 'NOTICE', msg: 'Accepted publickey for sam from 192.168.1.50 port 54120' },
+                  { time: 'Nov 10 10:20:11', host: 'linux-box', proc: 'cron', pid: '1040', pri: 'INFO', msg: '(root) CMD (/usr/local/bin/backup-check.sh)' }
+                ],
+                nginx: [
+                  { time: 'Nov 10 10:14:02', host: 'linux-box', proc: 'nginx', pid: '8420', pri: 'INFO', msg: 'Configuration file /etc/nginx/nginx.conf test is successful.' },
+                  { time: 'Nov 10 10:14:02', host: 'linux-box', proc: 'nginx', pid: '8420', pri: 'INFO', msg: 'Started The NGINX HTTP and reverse proxy server.' },
+                  { time: 'Nov 10 11:00:15', host: 'linux-box', proc: 'nginx', pid: '8421', pri: 'INFO', msg: 'GET /index.html HTTP/1.1 200 4096 Mozilla/5.0' },
+                  { time: 'Nov 10 11:05:42', host: 'linux-box', proc: 'nginx', pid: '8422', pri: 'INFO', msg: 'GET /api/status HTTP/1.1 200 256 curl/7.88' }
+                ],
+                follow: [
+                  { time: 'Nov 10 10:25:01', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'INFO', msg: 'Started Daily rotation of log files.' },
+                  { time: 'Nov 10 10:25:02', host: 'linux-box', proc: 'logrotate', pid: '12890', pri: 'INFO', msg: 'Rotating 14 log files in /var/log/...' },
+                  { time: 'Nov 10 10:25:03', host: 'linux-box', proc: 'sshd', pid: '13100', pri: 'NOTICE', msg: 'Connection closed by authenticating user sam 192.168.1.50 port 54120' },
+                  { time: 'Nov 10 10:25:05', host: 'linux-box', proc: 'systemd-journald', pid: '380', pri: 'INFO', msg: 'Live stream active: awaiting next event... (press Ctrl+C to exit)' }
+                ],
+                xe: [
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'ERR', msg: 'Failed to start Web Application Server.' },
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'INFO', msg: '-- Subject: A start job for unit webapp.service has failed' },
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'INFO', msg: '-- Defined-By: systemd (Catalog entry: 80868b7e-982c-47fc)' },
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'ERR', msg: '-- Support: https://www.ubuntu.com/support' },
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'ERR', msg: '-- Result: Failed with result "exit-code". Status=98 (Address already in use)' },
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'ERR', msg: '-- Diagnosis: Another process is already bound to TCP Port 80! Run "sudo ss -tulnp | grep :80" to identify the culprit.' }
+                ],
+                boot: [
+                  { time: 'Nov 10 10:13:58', host: 'linux-box', proc: 'kernel', pid: '0', pri: 'INFO', msg: 'Command line: BOOT_IMAGE=/boot/vmlinuz root=UUID=748f9-4b21 ro quiet splash' },
+                  { time: 'Nov 10 10:13:59', host: 'linux-box', proc: 'kernel', pid: '0', pri: 'INFO', msg: 'x86/fpu: Supporting XSAVE feature 0x001: "x87 floating point registers"' },
+                  { time: 'Nov 10 10:14:00', host: 'linux-box', proc: 'systemd[1]', pid: '1', pri: 'INFO', msg: 'systemd 255.4-1ubuntu8 running in system mode (+PAM +AUDIT +SELINUX)' },
+                  { time: 'Nov 10 10:14:01', host: 'linux-box', proc: 'systemd[1]', pid: '1', pri: 'INFO', msg: 'Mounted /sys/fs/cgroup (cgroup2).' }
+                ],
+                err: [
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'webapp', pid: '7920', pri: 'ERR', msg: 'bind(): Address already in use on 0.0.0.0:80' },
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'CRIT', msg: 'webapp.service: Main process exited, code=exited, status=98/FAILURE' },
+                  { time: 'Nov 10 09:58:12', host: 'linux-box', proc: 'systemd', pid: '1', pri: 'CRIT', msg: 'webapp.service: Failed with result "exit-code".' }
+                ]
+              };
+
+              const activeLogList = logSets[t13JournalFilter] || logSets.all;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-rose-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-rose-900/60 pb-4">
+                    <span className="text-xs font-black uppercase tracking-wider text-rose-300 bg-rose-950/80 border border-rose-700/60 px-3 py-1 rounded-full">
+                      🎮 Playable Toybox 13.5
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                      Journalctl Flight Recorder & Crash Diagnostic Detective
+                    </h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                      Query the tamper-resistant binary log journal! Filter by individual service (-u), live stream (-f), diagnose crash causes (-xe), and reclaim disk space with vacuuming.
+                    </p>
+                  </div>
+
+                  {/* Filter Buttons */}
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-slate-400">Select a journalctl Filter:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { id: 'all', label: '📋 journalctl (All Logs)', desc: 'Full timeline' },
+                        { id: 'nginx', label: '🔍 -u nginx (Single Service)', desc: 'Service filter' },
+                        { id: 'follow', label: '📡 -f (Follow Live Stream)', desc: 'Real-time tail' },
+                        { id: 'xe', label: '🚨 -xe (eXplain & End)', desc: 'Error catalog' },
+                        { id: 'boot', label: '🔄 -b (Current Boot)', desc: 'Boot session' },
+                        { id: 'err', label: '⚠️ -p err (Errors Only)', desc: 'Priority filter' }
+                      ].map((flt) => (
+                        <button
+                          key={flt.id}
+                          onClick={() => {
+                            sounds.playPop();
+                            setT13JournalFilter(flt.id);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            t13JournalFilter === flt.id
+                              ? 'bg-rose-600 text-white shadow-md shadow-rose-500/25 scale-105'
+                              : 'bg-slate-900/80 text-slate-300 border border-slate-700/70 hover:bg-slate-800 hover:text-white'
+                          }`}
+                        >
+                          <span>{flt.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Log Output Terminal */}
+                  <div className="p-4 rounded-2xl bg-[#080c14] border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800 pb-2">
+                      <span className="text-rose-300 font-bold">$ journalctl {t13JournalFilter === 'all' ? '' : t13JournalFilter === 'nginx' ? '-u nginx' : t13JournalFilter === 'follow' ? '-f' : t13JournalFilter === 'xe' ? '-xe' : t13JournalFilter === 'boot' ? '-b' : '-p err'}</span>
+                      <span className="text-slate-400 font-bold">{activeLogList.length} Entries Found</span>
+                    </div>
+
+                    <div className="font-mono text-xs space-y-1.5 overflow-x-auto max-h-72">
+                      {activeLogList.map((log, idx) => (
+                        <div key={idx} className="flex items-start gap-2 leading-relaxed">
+                          <span className="text-cyan-400 shrink-0">{log.time}</span>
+                          <span className="text-slate-500 shrink-0">{log.host}</span>
+                          <span className="text-amber-300 shrink-0 font-bold">{log.proc}[{log.pid}]:</span>
+                          <span className={`px-1.5 py-0.2 rounded text-[10px] font-black shrink-0 ${
+                            log.pri === 'CRIT' || log.pri === 'ERR'
+                              ? 'bg-rose-950 text-rose-300 border border-rose-600/60'
+                              : log.pri === 'NOTICE'
+                              ? 'bg-amber-950 text-amber-300 border border-amber-600/60'
+                              : 'bg-slate-900 text-slate-400 border border-slate-700'
+                          }`}>
+                            {log.pri}
+                          </span>
+                          <span className={`${log.pri === 'ERR' || log.pri === 'CRIT' ? 'text-rose-300 font-bold' : log.msg.startsWith('--') ? 'text-amber-200' : 'text-slate-200'}`}>
+                            {log.msg}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Vacuum Disk Cleanup Section */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-black uppercase text-amber-400">🧹 Disk Maintenance: Vacuuming Logs</div>
+                      <div className="text-xs text-slate-300 mt-0.5">
+                        Over time, /var/log/journal/ can consume gigabytes. Run <code>journalctl --vacuum-size=500M</code> to safely archive old logs.
+                      </div>
+                    </div>
+                    {!t13VacuumCleaned ? (
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT13VacuumCleaned(true);
+                          try { confetti({ particleCount: 60, spread: 75, origin: { y: 0.7 } }); } catch {}
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs transition-all shadow-sm shrink-0"
+                      >
+                        🧹 sudo journalctl --vacuum-size=500M
+                      </button>
+                    ) : (
+                      <div className="flex items-center gap-2 text-emerald-300 font-bold text-xs">
+                        <span>✅ Vacuum complete! Freed 1.2 GB of disk storage.</span>
+                        <button
+                          onClick={() => setT13VacuumCleaned(false)}
+                          className="text-[11px] underline text-slate-400 hover:text-white"
+                        >
+                          Reset
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER (NIGHT MODE + INDEPENDENT READ-ALOUD) */}
             <div
               className={`bg-gradient-to-r from-[#141b2e] via-[#101626] to-[#0c101d] rounded-3xl p-5 border shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 transition-all ${
@@ -10330,6 +11309,21 @@ Even if your hard drive has 100 GB of free bytes, if a broken script creates mil
                         className="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
                       >
                         <span>Go to Topic 12: Process Management</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    );
+                  }
+                  if (mainTab === 'topic12') {
+                    return (
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setMainTab('topic13');
+                          setActiveTopic13SubId('systemd-introduction');
+                        }}
+                        className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>Go to Topic 13: System Services & systemd</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     );

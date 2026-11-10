@@ -818,6 +818,23 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 13,
+    title: 'System Services & systemd',
+    status: 'playable',
+    topicKey: 'topic13',
+    icon: '⚡',
+    subtopics: [
+      '13.1 Systemd Introduction (PID 1, Daemons, Units: .service, .target, .socket, .timer & Cgroups)',
+      '13.2 Linux Boot Process (BIOS/UEFI → MBR/GPT → GRUB2 → Kernel & initramfs → Targets)',
+      '13.3 Controlling Systemd Services (Service Lifecycle, Active, Inactive, Failed & Masking)',
+      '13.4 Systemctl Command Masterclass (start, stop, reload, restart, enable --now & Unit Files)',
+      '13.5 Journalctl & Centralized Logging (Binary Journal, -u, -f, -xe, -b, -p err & Vacuum)'
+    ],
+    laymanSummary: 'Understand how Linux boots and controls every background worker: PID 1 architecture, the 5-stage boot sequence, active vs enabled service states, the systemctl master remote, and black-box diagnostics with journalctl -xe.',
+    houseAnalogy: 'The high-tech Smart Home Automation Hub & Butler (systemd PID 1), waking up the estate step-by-step from electrical breaker to living room chandelier (boot sequence), universal appliance remote (systemctl), and tamper-proof digital house diary (journalctl).',
+    kenyanAnalogy: 'The Chief Plaza & Estate Caretaker (PID 1), dispatching a long-distance 14-seater matatu at 5:00 AM (boot process), the KPLC substation master breaker & water pump padlock (systemctl & masking), and the police station Occurrence Book / matatu dashcam (journalctl).'
+  },
+  {
+    id: 14,
     title: 'Shell & Bash Scripting',
     status: 'upcoming',
     icon: '📜',
@@ -832,21 +849,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'Leaving a clear morning duty roster on the kitchen table (chopping sukuma, boiling tea, locking the gate) with labeled spice tins (variables) so everything runs like clockwork!'
   },
   {
-    id: 14,
-    title: 'System Administration & Boot Process',
-    status: 'upcoming',
-    icon: '🎛️',
-    subtopics: [
-      'Monitoring House Health (top, df -h, free, ps)',
-      'The Linux Boot Process (How the House Wakes Up)',
-      'Managing Remote Appliances & Logs'
-    ],
-    laymanSummary: 'Watching the dashboard to make sure the computer isn’t tired or full, and understanding how it wakes up every morning.',
-    houseAnalogy: 'Security camera health screen (top), checking how full the storage shed is (df -h), and the morning wake-up sequence from Foundation to Appliances.',
-    kenyanAnalogy: 'Being the Plot Caretaker—checking the roof water tank level (df -h), watching the KPLC meter load (top), and turning on the compound lights at dawn.'
-  },
-  {
-    id: 13,
+    id: 15,
     title: 'Advanced Linux & Cloud/DevOps',
     status: 'upcoming',
     icon: '🐳',
@@ -860,7 +863,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'A fitted shipping-container duka that can be lifted by lorry to any town and opened immediately (Docker), and a traditional hotel with many waiters (Apache) vs a fast supermarket express checkout (Nginx).'
   },
   {
-    id: 14,
+    id: 16,
     title: 'Linux in Cloud & DevOps',
     status: 'upcoming',
     icon: '☁️',
