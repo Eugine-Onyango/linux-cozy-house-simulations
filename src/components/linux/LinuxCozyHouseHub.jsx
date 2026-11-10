@@ -1994,26 +1994,17 @@ export default function LinuxCozyHouseHub() {
             </div>
 
             {/* STEP 2: SIMPLE LAYMAN EXPLANATION + READ ALOUD SPEAKER */}
-            <div
-              className={`rounded-3xl p-5 sm:p-7 border-4 ${
-                currentSubtopic.pastelBg || 'bg-amber-50/80'
-              } ${currentSubtopic.borderColor || 'border-amber-300'} shadow-sm space-y-4`}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-slate-200/80 pb-4">
+            <div className="bg-[#0e1626]/95 rounded-3xl p-5 sm:p-7 border border-slate-800 shadow-2xl space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-4xl bg-white p-3 rounded-2xl shadow-sm border-2 border-slate-200">
+                  <span className="w-12 h-12 rounded-2xl bg-[#131d33] border border-slate-700/60 flex items-center justify-center text-3xl shadow-inner shrink-0">
                     {currentSubtopic.icon}
                   </span>
                   <div>
-                    <span
-                      className={`px-3 py-0.5 rounded-full text-xs font-black ${
-                        currentSubtopic.badgeBg ||
-                        'bg-amber-100 text-amber-950 border-amber-300'
-                      }`}
-                    >
+                    <span className="px-3 py-0.5 rounded-full text-xs font-black bg-teal-950/80 text-teal-300 border border-teal-700/60">
                       Subtopic {currentSubtopic.number} • Plain Layman’s English
                     </span>
-                    <h2 className="text-xl sm:text-3xl font-black text-slate-900 mt-1">
+                    <h2 className="text-xl sm:text-3xl font-black text-white mt-1">
                       {currentSubtopic.title}
                     </h2>
                   </div>
@@ -2050,10 +2041,10 @@ export default function LinuxCozyHouseHub() {
 
                   <button
                     onClick={handleReadAloud}
-                    className={`px-3.5 py-2 rounded-2xl font-black text-xs sm:text-sm border-2 transition-all flex items-center gap-2 shrink-0 shadow-sm ${
+                    className={`px-3.5 py-2 rounded-2xl font-black text-xs sm:text-sm border transition-all flex items-center gap-2 shrink-0 shadow-sm ${
                       isSpeaking && speakingBoxId === 'full-page'
                         ? 'bg-rose-500 text-white border-rose-600 animate-voice-pulse'
-                        : 'bg-white hover:bg-amber-50 text-slate-800 border-slate-300'
+                        : 'bg-[#131d33] hover:bg-[#1a2744] text-slate-200 border-slate-700 hover:text-white'
                     }`}
                     title="Read all core sections on this subtopic from start to finish"
                   >
@@ -2064,8 +2055,8 @@ export default function LinuxCozyHouseHub() {
                       </>
                     ) : (
                       <>
-                        <Volume2 className="w-4 h-4 text-emerald-600" />
-                        <span>🔊 Read This Page</span>
+                        <Volume2 className="w-4 h-4 text-emerald-400" />
+                        <span>🔊 Read This Page to Me</span>
                       </>
                     )}
                   </button>
@@ -2074,15 +2065,15 @@ export default function LinuxCozyHouseHub() {
 
               {/* 10-SECOND IDEA BOX (WITH INDEPENDENT READ-ALOUD) */}
               <div
-                className={`bg-white rounded-2xl p-4 sm:p-5 border-2 shadow-sm space-y-3 transition-all ${
+                className={`bg-[#0c1322]/90 rounded-2xl p-4 sm:p-5 border transition-all space-y-3 ${
                   speakingBoxId === 'idea-box'
-                    ? 'speak-box-active border-amber-400'
-                    : 'border-slate-200'
+                    ? 'speak-box-active border-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.25)]'
+                    : 'border-slate-800/80'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <div className="text-xs font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4" />
+                  <div className="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
                     <span>The Simple 10-Second Idea:</span>
                   </div>
                   <button
@@ -2099,7 +2090,7 @@ export default function LinuxCozyHouseHub() {
                     className={`px-3 py-1 rounded-xl font-black text-xs border transition-all flex items-center gap-1.5 shrink-0 ${
                       speakingBoxId === 'idea-box'
                         ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
-                        : 'bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border-emerald-500/40'
+                        : 'bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-600/40'
                     }`}
                     title="Read this idea box aloud and stop"
                   >
@@ -2117,10 +2108,10 @@ export default function LinuxCozyHouseHub() {
                   </button>
                 </div>
 
-                <p className="text-base sm:text-xl font-black text-slate-900 leading-snug">
+                <p className="text-base sm:text-xl font-black text-white leading-snug">
                   “{currentSubtopic.laymanHeadline || currentSubtopic.badge}”
                 </p>
-                <p className="text-sm sm:text-base font-semibold text-slate-700 leading-relaxed pt-1">
+                <p className="text-sm sm:text-base font-medium text-slate-300 leading-relaxed pt-1">
                   {currentSubtopic.laymanExplanation || currentSubtopic.plainEnglish}
                 </p>
 
@@ -2130,14 +2121,14 @@ export default function LinuxCozyHouseHub() {
                       {currentSubtopic.laymanPoints.map((lp, idx) => (
                         <div
                           key={idx}
-                          className={`p-3 rounded-2xl border-2 space-y-1 transition-all ${
+                          className={`p-3 rounded-2xl border space-y-1 transition-all ${
                             speakingBoxId === `lp-${idx}`
-                              ? 'speak-box-active bg-amber-100/90 border-amber-400'
-                              : 'bg-amber-50/70 border-amber-200/80'
+                              ? 'speak-box-active bg-[#1a233a] border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.25)]'
+                              : 'bg-[#101728] border-slate-800 hover:border-slate-700'
                           }`}
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <div className="font-mono font-black text-xs sm:text-sm text-amber-950">
+                            <div className="font-mono font-black text-xs sm:text-sm text-amber-300">
                               • {lp.term}
                             </div>
                             <button
@@ -2147,7 +2138,7 @@ export default function LinuxCozyHouseHub() {
                               className={`px-2 py-0.5 rounded-lg text-[11px] font-black border transition-all flex items-center gap-1 shrink-0 ${
                                 speakingBoxId === `lp-${idx}`
                                   ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
-                                  : 'bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-300'
+                                  : 'bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border-amber-600/40'
                               }`}
                               title={`Read ${lp.term} aloud and stop`}
                             >
@@ -2159,7 +2150,7 @@ export default function LinuxCozyHouseHub() {
                               <span>{speakingBoxId === `lp-${idx}` ? 'Stop' : 'Read'}</span>
                             </button>
                           </div>
-                          <div className="text-xs font-semibold text-slate-700 leading-relaxed">
+                          <div className="text-xs font-semibold text-slate-300 leading-relaxed">
                             {lp.meaning}
                           </div>
                         </div>
@@ -2175,26 +2166,26 @@ export default function LinuxCozyHouseHub() {
                 } gap-5 pt-2`}
               >
                 {(analogyFilter === 'both' || analogyFilter === 'original') && (
-                  <div className="bg-amber-50/90 rounded-3xl p-5 sm:p-6 border-4 border-amber-300 shadow-sm flex flex-col justify-between space-y-4">
+                  <div className="bg-[#0c1322]/90 rounded-3xl p-5 sm:p-6 border-2 border-amber-500/40 shadow-xl flex flex-col justify-between space-y-4">
                     <div className="space-y-3">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-200 text-amber-950 text-xs font-black">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/70 text-amber-300 border border-amber-600/50 text-xs font-black">
                         <span>{currentSubtopic.originalAnalogy?.icon || '🏠'}</span>
                         <span>Original Analogy (Simplified & Cozy)</span>
                       </div>
 
-                      <h3 className="text-lg sm:text-xl font-black text-amber-950">
+                      <h3 className="text-lg sm:text-xl font-black text-amber-400">
                         {currentSubtopic.originalAnalogy?.title}
                       </h3>
 
                       {/* Summary Box with Independent Read-Aloud */}
                       <div
-                        className={`p-3.5 rounded-2xl border-2 transition-all flex items-start justify-between gap-3 ${
+                        className={`p-3.5 rounded-2xl border transition-all flex items-start justify-between gap-3 ${
                           speakingBoxId === 'orig-summary'
-                            ? 'speak-box-active bg-amber-100/90 border-amber-400'
-                            : 'bg-white/90 border-amber-200'
+                            ? 'speak-box-active bg-[#1a233a] border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.25)]'
+                            : 'bg-[#101728] border-amber-500/30'
                         }`}
                       >
-                        <p className="text-sm font-extrabold text-amber-900 leading-relaxed">
+                        <p className="text-sm font-semibold text-amber-200 leading-relaxed">
                           {currentSubtopic.originalAnalogy?.summary ||
                             currentSubtopic.originalAnalogy?.intro}
                         </p>
@@ -2213,7 +2204,7 @@ export default function LinuxCozyHouseHub() {
                           className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
                             speakingBoxId === 'orig-summary'
                               ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
-                              : 'bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-300'
+                              : 'bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border-amber-600/40'
                           }`}
                           title="Read analogy summary aloud and stop"
                         >
@@ -2237,19 +2228,19 @@ export default function LinuxCozyHouseHub() {
                         ).map((pt, idx) => (
                           <div
                             key={idx}
-                            className={`bg-white rounded-2xl p-3.5 border-2 flex items-start justify-between gap-3 shadow-sm transition-all ${
+                            className={`bg-[#101728] rounded-2xl p-3.5 border flex items-start justify-between gap-3 shadow-sm transition-all ${
                               speakingBoxId === `orig-pt-${idx}`
-                                ? 'speak-box-active border-amber-400'
-                                : 'border-amber-200/90'
+                                ? 'speak-box-active border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.25)]'
+                                : 'border-slate-800 hover:border-amber-500/40'
                             }`}
                           >
                             <div className="flex items-start gap-3">
                               <span className="text-2xl shrink-0 mt-0.5">{pt.emoji}</span>
                               <div>
-                                <div className="font-black text-slate-900 text-sm sm:text-base">
+                                <div className="font-black text-white text-sm sm:text-base">
                                   {pt.name}
                                 </div>
-                                <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5 whitespace-pre-line">
+                                <p className="text-xs sm:text-sm font-semibold text-slate-300 leading-relaxed mt-0.5 whitespace-pre-line">
                                   {pt.desc || pt.simple}
                                 </p>
                               </div>
@@ -2264,7 +2255,7 @@ export default function LinuxCozyHouseHub() {
                               className={`px-2 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 mt-0.5 ${
                                 speakingBoxId === `orig-pt-${idx}`
                                   ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
-                                  : 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-amber-300'
+                                  : 'bg-slate-900/90 hover:bg-slate-800 text-slate-300 border-slate-700/60 hover:text-white'
                               }`}
                               title={`Read ${pt.name} aloud and stop`}
                             >
@@ -2285,26 +2276,26 @@ export default function LinuxCozyHouseHub() {
                 )}
 
                 {(analogyFilter === 'both' || analogyFilter === 'kenyan') && (
-                  <div className="bg-emerald-50/90 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-sm flex flex-col justify-between space-y-4">
+                  <div className="bg-[#0c1322]/90 rounded-3xl p-5 sm:p-6 border-2 border-emerald-500/40 shadow-xl flex flex-col justify-between space-y-4">
                     <div className="space-y-3">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-200 text-emerald-950 text-xs font-black">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-600/50 text-xs font-black">
                         <span>{currentSubtopic.kenyanAnalogy?.icon || '🇰🇪'}</span>
                         <span>Kenyan Everyday Analogy (Mtaa & Home Life)</span>
                       </div>
 
-                      <h3 className="text-lg sm:text-xl font-black text-emerald-950">
+                      <h3 className="text-lg sm:text-xl font-black text-emerald-400">
                         {currentSubtopic.kenyanAnalogy?.title}
                       </h3>
 
                       {/* Summary Box with Independent Read-Aloud */}
                       <div
-                        className={`p-3.5 rounded-2xl border-2 transition-all flex items-start justify-between gap-3 ${
+                        className={`p-3.5 rounded-2xl border transition-all flex items-start justify-between gap-3 ${
                           speakingBoxId === 'kenyan-summary'
-                            ? 'speak-box-active-emerald bg-emerald-100/90 border-emerald-400'
-                            : 'bg-white/90 border-emerald-200'
+                            ? 'speak-box-active-emerald bg-[#1a233a] border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.25)]'
+                            : 'bg-[#101728] border-emerald-500/30'
                         }`}
                       >
-                        <p className="text-sm font-extrabold text-emerald-900 leading-relaxed">
+                        <p className="text-sm font-semibold text-emerald-200 leading-relaxed">
                           {currentSubtopic.kenyanAnalogy?.summary ||
                             currentSubtopic.kenyanAnalogy?.intro}
                         </p>
@@ -2323,7 +2314,7 @@ export default function LinuxCozyHouseHub() {
                           className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 ${
                             speakingBoxId === 'kenyan-summary'
                               ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
-                              : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border-emerald-300'
+                              : 'bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-600/40'
                           }`}
                           title="Read Kenyan analogy intro aloud and stop"
                         >
@@ -2347,19 +2338,19 @@ export default function LinuxCozyHouseHub() {
                         ).map((pt, idx) => (
                           <div
                             key={idx}
-                            className={`bg-white rounded-2xl p-3.5 border-2 flex items-start justify-between gap-3 shadow-sm transition-all ${
+                            className={`bg-[#101728] rounded-2xl p-3.5 border flex items-start justify-between gap-3 shadow-sm transition-all ${
                               speakingBoxId === `kenyan-pt-${idx}`
-                                ? 'speak-box-active-emerald border-emerald-400'
-                                : 'border-emerald-200/90'
+                                ? 'speak-box-active-emerald border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.25)]'
+                                : 'border-slate-800 hover:border-emerald-500/40'
                             }`}
                           >
                             <div className="flex items-start gap-3">
                               <span className="text-2xl shrink-0 mt-0.5">{pt.emoji}</span>
                               <div>
-                                <div className="font-black text-slate-900 text-sm sm:text-base">
+                                <div className="font-black text-white text-sm sm:text-base">
                                   {pt.name}
                                 </div>
-                                <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed mt-0.5 whitespace-pre-line">
+                                <p className="text-xs sm:text-sm font-semibold text-slate-300 leading-relaxed mt-0.5 whitespace-pre-line">
                                   {pt.desc || pt.simple}
                                 </p>
                               </div>
@@ -2374,7 +2365,7 @@ export default function LinuxCozyHouseHub() {
                               className={`px-2 py-1 rounded-xl text-xs font-black border transition-all flex items-center gap-1 shrink-0 mt-0.5 ${
                                 speakingBoxId === `kenyan-pt-${idx}`
                                   ? 'bg-rose-500 text-white border-rose-400 animate-voice-pulse'
-                                  : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border-emerald-300'
+                                  : 'bg-slate-900/90 hover:bg-slate-800 text-slate-300 border-slate-700/60 hover:text-white'
                               }`}
                               title={`Read ${pt.name} aloud and stop`}
                             >
