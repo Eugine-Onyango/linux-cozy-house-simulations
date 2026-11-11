@@ -40,13 +40,14 @@ import { linuxTopic11Subtopics } from './linuxTopic11Data';
 import { linuxTopic12Subtopics } from './linuxTopic12Data';
 import { linuxTopic13Subtopics } from './linuxTopic13Data';
 import { linuxTopic14Subtopics } from './linuxTopic14Data';
+import { linuxTopic15Subtopics } from './linuxTopic15Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
   // Top-level view: 'topic1' ... 'topic14' | 'roadmap'
   // Default to 'topic14' so the user immediately sees Topic 14: System Monitoring!
-  const [mainTab, setMainTab] = useState('topic14');
+  const [mainTab, setMainTab] = useState('topic15');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   // Active subtopic IDs for Topic 1..14
@@ -63,6 +64,7 @@ export default function LinuxCozyHouseHub() {
   const [activeTopic12SubId, setActiveTopic12SubId] = useState('viewing-processes');
   const [activeTopic13SubId, setActiveTopic13SubId] = useState('systemd-introduction');
   const [activeTopic14SubId, setActiveTopic14SubId] = useState('checking-disk-space');
+  const [activeTopic15SubId, setActiveTopic15SubId] = useState('linux-shell');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -411,6 +413,28 @@ export default function LinuxCozyHouseHub() {
   // 14.6 Listing Open Files and Processes
   const [t14LsofFilter, setT14LsofFilter] = useState('all'); // 'all' | 'port80' | 'port22' | 'user_sam' | 'mount_busy'
   const [t14MountUnblocked, setT14MountUnblocked] = useState(false);
+  // Topic 15 Toybox States
+  // 15.1 Linux Shell
+  const [t15ShellMode, setT15ShellMode] = useState('interactive'); // 'interactive' | 'scripting'
+  const [t15ScriptRunning, setT15ScriptRunning] = useState(false);
+  const [t15ScriptStep, setT15ScriptStep] = useState(0);
+  const [t15ReplHistory, setT15ReplHistory] = useState([
+    { cmd: 'echo "Hello $USER, welcome to Linux!"', out: 'Hello sam, welcome to Linux!' },
+    { cmd: 'pwd', out: '/home/sam/projects' },
+    { cmd: 'type cd', out: 'cd is a shell builtin' }
+  ]);
+  // 15.2 The Kernel
+  const [t15KernelTab, setT15KernelTab] = useState('subsystems'); // 'subsystems' | 'syscall_trace' | 'rings'
+  const [t15SyscallApp, setT15SyscallApp] = useState('cat'); // 'cat' | 'mkdir' | 'kill'
+  // 15.3 Different Shells
+  const [t15ShellFlavor, setT15ShellFlavor] = useState('bash'); // 'sh' | 'bash' | 'zsh' | 'fish'
+  // 15.4 Difference between Shell and Kernel
+  const [t15CrashTest, setT15CrashTest] = useState(null); // 'shell_crash' | 'kernel_panic' | null
+  // 15.5 The Terminal
+  const [t15TerminalTab, setT15TerminalTab] = useState('pipeline'); // 'pipeline' | 'consoles' | 'stty'
+  const [t15VirtualConsole, setT15VirtualConsole] = useState('tty7_gui'); // 'tty1' | 'tty2' | 'tty7_gui'
+  const [t15SttyEcho, setT15SttyEcho] = useState(true);
+
 
   // Determine current active subtopics list and current subtopic object for Topic 1..14
   const currentSubtopicsList =
@@ -438,7 +462,9 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic12Subtopics
       : mainTab === 'topic13'
       ? linuxTopic13Subtopics
-      : linuxTopic14Subtopics;
+      : mainTab === 'topic14'
+      ? linuxTopic14Subtopics
+      : linuxTopic15Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -464,7 +490,9 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic12SubId
       : mainTab === 'topic13'
       ? activeTopic13SubId
-      : activeTopic14SubId;
+      : mainTab === 'topic14'
+      ? activeTopic14SubId
+      : activeTopic15SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
@@ -478,7 +506,8 @@ export default function LinuxCozyHouseHub() {
     else if (mainTab === 'topic11') setActiveTopic11SubId(id);
     else if (mainTab === 'topic12') setActiveTopic12SubId(id);
     else if (mainTab === 'topic13') setActiveTopic13SubId(id);
-    else setActiveTopic14SubId(id);
+    else if (mainTab === 'topic14') setActiveTopic14SubId(id);
+    else setActiveTopic15SubId(id);
   };
 
   const currentSubtopic =
@@ -523,6 +552,7 @@ export default function LinuxCozyHouseHub() {
     activeTopic12SubId,
     activeTopic13SubId,
     activeTopic14SubId,
+    activeTopic15SubId,
     selectedCmdNum,
     mainTab
   ]);
@@ -993,7 +1023,22 @@ export default function LinuxCozyHouseHub() {
               }`}
             >
               <span>📊</span>
-              <span>Topic 14: System Monitoring (6)</span>
+              <span>Topic 14 (6)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
+                setMainTab('topic15');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
+                mainTab === 'topic15'
+                  ? 'bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-700 text-white border-emerald-400/60 shadow-[0_0_15px_rgba(16,185,129,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
+              }`}
+            >
+              <span>📜</span>
+              <span>Topic 15: Shell Scripting (5)</span>
             </button>
 
             <button
@@ -1069,6 +1114,8 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 13 • System Services & systemd (5 Subtopics)'
                       : mainTab === 'topic14'
                       ? 'Topic 14 • System Monitoring (6 Subtopics)'
+                      : mainTab === 'topic15'
+                      ? 'Topic 15 • Shell Scripting (5 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -1106,6 +1153,8 @@ export default function LinuxCozyHouseHub() {
                   ? 'Topic 13: System Services & systemd ⚡🏛️🚀🔄🎛️📜'
                   : mainTab === 'topic14'
                   ? 'Topic 14: System Monitoring 📊💽🧠💻⏱️📈📂'
+                  : mainTab === 'topic15'
+                  ? 'Topic 15: Shell Scripting 📜🐚🧠⚖️🖥️'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -1138,7 +1187,9 @@ export default function LinuxCozyHouseHub() {
                   ? 'Understand how Linux boots and controls every background worker: PID 1 architecture, the 5-stage boot sequence, active vs enabled service states, the systemctl master remote, and black-box diagnostics with journalctl -xe!'
                   : mainTab === 'topic14'
                   ? 'Master end-to-end Linux System Monitoring! Check partition and inode limits (df -h / df -i), audit folder bloat (du -sh / ncdu), decode available memory vs buff/cache (free -h), inspect CPU topology (lscpu), track multi-core load trends (uptime / w), isolate %iowait disk bottlenecks (vmstat / iostat), and resolve locked unmounts with lsof and fuser!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 14 are fully interactive right now!'}
+                  : mainTab === 'topic15'
+                  ? 'Understand how humans, scripts, and hardware communicate: master the command interpreter (Shell), the low-level operating system engine (Kernel), compare shell flavors (sh, bash, zsh, fish), explore the strict Ring 0 vs Ring 3 security divide, and trace physical TTYs to modern terminal emulators!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 15 are fully interactive right now!'}
               </p>
             </div>
 
@@ -1344,14 +1395,29 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic14');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic14'
                     ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-cyan-400 shadow-md shadow-cyan-500/25 scale-[1.02]'
                     : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
-                <span>📊 14. System Monitoring (Disk, RAM, CPU, I/O, lsof)</span>
+                <span>📊 14. Monitoring</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">6</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic15');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic15'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-400 shadow-md shadow-emerald-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
+                }`}
+              >
+                <span>📜 15. Shell Scripting (Shell, Kernel, Shells, Terminal)</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">5</span>
               </button>
             </div>
           </div>
@@ -2009,7 +2075,8 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic11' ||
           mainTab === 'topic12' ||
           mainTab === 'topic13' ||
-          mainTab === 'topic14') && (
+          mainTab === 'topic14' ||
+          mainTab === 'topic15') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-[#111728]/95 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3">
@@ -2042,7 +2109,9 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 12: Process Management (6 Subtopics)'
                       : mainTab === 'topic13'
                       ? 'Topic 13: System Services & systemd (5 Subtopics)'
-                      : 'Topic 14: System Monitoring (6 Subtopics)'}
+                      : mainTab === 'topic14'
+                      ? 'Topic 14: System Monitoring (6 Subtopics)'
+                      : 'Topic 15: Shell Scripting (5 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -12299,6 +12368,767 @@ WantedBy=multi-user.target`
                       </div>
                       <div className="text-xs text-slate-300 bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-sans">
                         💡 <strong>Insight:</strong> Shows both the background daemon listening for new connections on port 22, AND an active established SSH terminal session from client IP 192.168.1.104!
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOPIC 15 PLAYABLE TOYBOXES (15.1 to 15.5)
+                ================================================================= */}
+            {activeSubtopicId === 'linux-shell' && (() => {
+              const scriptLines = [
+                { num: 1, code: '#!/bin/bash', comment: 'Shebang: Tells Linux to use the bash interpreter' },
+                { num: 2, code: 'set -e', comment: 'Exit immediately if any command returns an error' },
+                { num: 3, code: 'BACKUP_DIR="/var/backups/web"', comment: 'Assign directory path to variable' },
+                { num: 4, code: 'echo "📦 Creating backup in $BACKUP_DIR..."', comment: 'Print informational status to console' },
+                { num: 5, code: 'mkdir -p "$BACKUP_DIR"', comment: 'Ensure backup directory exists' },
+                { num: 6, code: 'tar -czf "$BACKUP_DIR/site_backup.tar.gz" /var/www/html', comment: 'Compress web files into gzipped tarball' },
+                { num: 7, code: 'echo "✅ Backup completed successfully at $(date +%T)"', comment: 'Final success confirmation timestamp' }
+              ];
+
+              const quickReplCmds = [
+                { cmd: 'echo "Hello $USER!"', out: 'Hello sam!' },
+                { cmd: 'pwd', out: '/home/sam/projects' },
+                { cmd: 'type cd', out: 'cd is a shell builtin' },
+                { cmd: 'which ls', out: '/usr/bin/ls (External binary)' },
+                { cmd: 'echo $SHELL', out: '/bin/bash' }
+              ];
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-emerald-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 15.1
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Shell Engine: Live Interactive REPL vs Batch Script Automation (.sh)
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Experience the two faces of the Linux Shell: typing live commands in the interactive prompt ($) versus automating workflows with a multi-line script!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT15ShellMode('interactive'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t15ShellMode === 'interactive' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        💻 Interactive REPL ($)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT15ShellMode('scripting'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t15ShellMode === 'scripting' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📜 Script Automation (.sh)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mode 1: Interactive REPL */}
+                  {t15ShellMode === 'interactive' && (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-xs text-slate-300">
+                        <span>Click any command below to test the shell parser and execution:</span>
+                        <span className="text-amber-400 font-mono text-[11px]">$? = 0 (Success)</span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {quickReplCmds.map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              sounds.playPop();
+                              setT15ReplHistory((prev) => [...prev.slice(-4), item]);
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-slate-700 font-mono text-xs transition-all shadow-sm"
+                          >
+                            $ {item.cmd}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Interactive Terminal Window */}
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border-2 border-slate-800 font-mono text-xs space-y-2">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-500 text-[11px]">
+                          <span>sam@cozy-house:~ (bash REPL)</span>
+                          <span className="text-emerald-400">● Live Ready</span>
+                        </div>
+
+                        <div className="space-y-2 max-h-56 overflow-y-auto">
+                          {t15ReplHistory.map((h, i) => (
+                            <div key={i} className="space-y-0.5">
+                              <div className="text-amber-300">
+                                <span className="text-emerald-400">sam@cozy-house:~$</span> {h.cmd}
+                              </div>
+                              <div className="text-slate-200 pl-4">{h.out}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="pt-2 border-t border-slate-800 flex items-center gap-2 text-slate-400">
+                          <span className="text-emerald-400 font-bold">sam@cozy-house:~$</span>
+                          <span className="w-2 h-4 bg-emerald-400 animate-pulse inline-block"></span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mode 2: Script Automation */}
+                  {t15ShellMode === 'scripting' && (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-300 font-mono">File: /home/sam/scripts/backup_daily.sh (chmod +x enabled)</span>
+                        <button
+                          onClick={() => {
+                            if (t15ScriptRunning) return;
+                            sounds.playSuccess();
+                            setT15ScriptRunning(true);
+                            setT15ScriptStep(1);
+                            let step = 1;
+                            const interval = setInterval(() => {
+                              step += 1;
+                              if (step > scriptLines.length) {
+                                clearInterval(interval);
+                                setT15ScriptRunning(false);
+                                try { confetti({ particleCount: 50, spread: 60 }); } catch {}
+                              } else {
+                                sounds.playPop();
+                                setT15ScriptStep(step);
+                              }
+                            }, 800);
+                          }}
+                          disabled={t15ScriptRunning}
+                          className={`px-4 py-2 rounded-2xl font-black text-xs transition-all shadow-md flex items-center gap-2 ${
+                            t15ScriptRunning
+                              ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                              : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                          }`}
+                        >
+                          <Play className="w-3.5 h-3.5 fill-current" />
+                          <span>{t15ScriptRunning ? `Executing Line ${t15ScriptStep}/${scriptLines.length}...` : '▶️ Run Script Line-by-Line'}</span>
+                        </button>
+                      </div>
+
+                      {/* Script Code Viewer */}
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-1.5 overflow-x-auto">
+                        {scriptLines.map((line) => {
+                          const isCurrent = t15ScriptStep === line.num;
+                          const isDone = t15ScriptStep > line.num;
+                          return (
+                            <div
+                              key={line.num}
+                              className={`flex items-center gap-3 p-1.5 rounded-lg transition-all ${
+                                isCurrent
+                                  ? 'bg-emerald-950/80 border border-emerald-500 text-white'
+                                  : isDone
+                                  ? 'bg-slate-900/40 text-slate-400'
+                                  : 'text-slate-300'
+                              }`}
+                            >
+                              <span className="w-6 text-slate-600 text-right select-none">{line.num}</span>
+                              <span className={`font-bold flex-1 ${isCurrent ? 'text-emerald-300' : line.code.startsWith('#') ? 'text-slate-500 italic' : 'text-cyan-300'}`}>
+                                {line.code}
+                              </span>
+                              <span className="text-[11px] text-slate-500 hidden sm:inline">{line.comment}</span>
+                              {isCurrent && <span className="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[10px]">RUNNING</span>}
+                              {isDone && <span className="text-emerald-400 text-xs">✓</span>}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {t15ScriptStep >= scriptLines.length && (
+                        <div className="bg-emerald-950/40 p-3.5 rounded-2xl border border-emerald-600/70 text-xs text-emerald-300 font-bold flex items-center justify-between">
+                          <span>🎉 Script Execution Finished! 7 commands ran sequentially in 5.6s with zero manual typing.</span>
+                          <button
+                            onClick={() => setT15ScriptStep(0)}
+                            className="text-[11px] underline text-slate-400 hover:text-white"
+                          >
+                            Reset
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'linux-kernel' && (() => {
+              const syscallScenarios = {
+                cat: {
+                  cmd: 'cat /etc/hostname',
+                  desc: 'Read machine hostname from storage drive into terminal stdout',
+                  calls: [
+                    { name: 'sys_openat(AT_FDCWD, "/etc/hostname", O_RDONLY)', ring: 'Ring 0', desc: 'Kernel opens file descriptor #3 read-only' },
+                    { name: 'sys_newfstatat(3, "", {st_size=12}, AT_EMPTY_PATH)', ring: 'Ring 0', desc: 'Kernel checks file byte size on disk' },
+                    { name: 'sys_read(3, "cozy-linux\n", 131072)', ring: 'Ring 0', desc: 'Kernel reads 12 bytes from NVMe disk sector into RAM buffer' },
+                    { name: 'sys_write(1, "cozy-linux\n", 12)', ring: 'Ring 0', desc: 'Kernel writes bytes to stdout (Terminal Display)' },
+                    { name: 'sys_close(3)', ring: 'Ring 0', desc: 'Kernel releases file descriptor #3 and unlocks cache' }
+                  ]
+                },
+                mkdir: {
+                  cmd: 'mkdir -p /home/sam/projects',
+                  desc: 'Create new directory node on ext4 filesystem',
+                  calls: [
+                    { name: 'sys_openat(AT_FDCWD, "/home/sam", O_PATH)', ring: 'Ring 0', desc: 'Kernel traverses directory tree to find parent inode' },
+                    { name: 'sys_mkdirat(AT_FDCWD, "/home/sam/projects", 0777)', ring: 'Ring 0', desc: 'Kernel allocates new inode #41029 on disk block and applies umask 022' },
+                    { name: 'sys_close(dfd)', ring: 'Ring 0', desc: 'Kernel flushes directory entry metadata to disk journal' }
+                  ]
+                },
+                kill: {
+                  cmd: 'kill -9 4192',
+                  desc: 'Send uncatchable SIGKILL signal to process ID 4192',
+                  calls: [
+                    { name: 'sys_kill(4192, SIGKILL)', ring: 'Ring 0', desc: 'Kernel checks process table and UID permissions' },
+                    { name: 'kernel_sched_remove(4192)', ring: 'Ring 0', desc: 'Kernel scheduler removes PID from run-queue' },
+                    { name: 'sys_reclaim_mem(4192)', ring: 'Ring 0', desc: 'Kernel MMU reclaims physical RAM pages back to free pool' }
+                  ]
+                }
+              };
+
+              const curScenario = syscallScenarios[t15SyscallApp] || syscallScenarios.cat;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-cyan-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/80 border border-cyan-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 15.2
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Inside the Kernel: Subsystems & System Call (Syscall) Interceptor
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Watch user-space apps transition into kernel space (Ring 3 to Ring 0) via system calls to safely operate hardware!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT15KernelTab('subsystems'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t15KernelTab === 'subsystems' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🧠 4 Master Pillars
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT15KernelTab('syscall_trace'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t15KernelTab === 'syscall_trace' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🚪 Syscall Tracer (strace)
+                      </button>
+                    </div>
+                  </div>
+
+                  {t15KernelTab === 'subsystems' && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div className="bg-[#0b0f19] p-4 rounded-2xl border border-cyan-800/60 space-y-2">
+                          <div className="text-2xl">⏱️</div>
+                          <div className="text-xs font-black uppercase text-cyan-400">1. Process Scheduler (CFS)</div>
+                          <p className="text-[11px] text-slate-300 leading-relaxed">
+                            Slices CPU time into milliseconds (quantum) so hundreds of processes run simultaneously without starving each other.
+                          </p>
+                        </div>
+
+                        <div className="bg-[#0b0f19] p-4 rounded-2xl border border-emerald-800/60 space-y-2">
+                          <div className="text-2xl">🧠</div>
+                          <div className="text-xs font-black uppercase text-emerald-400">2. Memory Manager (MMU)</div>
+                          <p className="text-[11px] text-slate-300 leading-relaxed">
+                            Maps 64-bit virtual memory to physical DDR4/DDR5 chips with hardware page tables, isolating process sandboxes.
+                          </p>
+                        </div>
+
+                        <div className="bg-[#0b0f19] p-4 rounded-2xl border border-purple-800/60 space-y-2">
+                          <div className="text-2xl">🔌</div>
+                          <div className="text-xs font-black uppercase text-purple-400">3. Device Drivers</div>
+                          <p className="text-[11px] text-slate-300 leading-relaxed">
+                            Translates universal OS read/write commands into electrical protocols for Intel NVMe, Realtek Wi-Fi, and NVIDIA GPUs.
+                          </p>
+                        </div>
+
+                        <div className="bg-[#0b0f19] p-4 rounded-2xl border border-amber-800/60 space-y-2">
+                          <div className="text-2xl">🗄️</div>
+                          <div className="text-xs font-black uppercase text-amber-400">4. Virtual File System (VFS)</div>
+                          <p className="text-[11px] text-slate-300 leading-relaxed">
+                            Unifies ext4, XFS, NFS, and USB drives into one single tree root (/) so apps use the exact same read() command everywhere!
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="bg-[#141b2e] p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+                        <div>
+                          <span className="font-black text-amber-400 uppercase">Privilege Rings: </span>
+                          <span>User Space (Ring 3: Web Browsers, Shells, Apps) ──[ Syscall Gateway ]──&gt; Kernel Space (Ring 0: Hardware Control)</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {t15KernelTab === 'syscall_trace' && (
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2 bg-[#0b0f19] p-2.5 rounded-2xl border border-slate-800">
+                        <span className="text-xs font-bold text-slate-300">Choose Command to Trace:</span>
+                        <div className="flex gap-1.5">
+                          {['cat', 'mkdir', 'kill'].map((app) => (
+                            <button
+                              key={app}
+                              onClick={() => { sounds.playPop(); setT15SyscallApp(app); }}
+                              className={`px-3 py-1 rounded-xl font-mono text-xs font-bold transition-all ${
+                                t15SyscallApp === app ? 'bg-cyan-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 hover:text-white'
+                              }`}
+                            >
+                              $ {syscallScenarios[app].cmd}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Trace Output */}
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-2">
+                        <div className="text-amber-300 font-bold">$ strace {curScenario.cmd}</div>
+                        <div className="text-slate-400 text-[11px]">// Purpose: {curScenario.desc}</div>
+
+                        <div className="space-y-1.5 pt-2">
+                          {curScenario.calls.map((c, i) => (
+                            <div key={i} className="flex items-start gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800">
+                              <span className="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/60 text-[10px] font-black shrink-0">
+                                {c.ring}
+                              </span>
+                              <span className="text-emerald-300 font-bold shrink-0">{c.name}</span>
+                              <span className="text-slate-400 text-[11px] font-sans">→ {c.desc}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="text-xs text-slate-300 bg-cyan-950/30 p-3 rounded-2xl border border-cyan-800/50">
+                        💡 <strong>Key Takeaway:</strong> Notice that user programs NEVER touch the disk sectors directly. They run <code>sys_openat</code> and <code>sys_read</code>, which transitions CPU authority into Ring 0 to let the kernel handle the drive!
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'different-shells' && (() => {
+              const shellsMeta = {
+                bash: {
+                  name: 'bash (Bourne Again Shell)',
+                  path: '/bin/bash',
+                  badge: 'Universal Linux Default',
+                  badgeColor: 'bg-emerald-950 text-emerald-300 border-emerald-600',
+                  prompt: 'sam@cozy-house:~/projects$ ',
+                  posix: 'Yes (Standard compliant)',
+                  history: 'Yes (Ctrl+R, !! , !-1)',
+                  tab: 'Standard tab completion',
+                  desc: 'The rock-solid standard on Ubuntu, Debian, Fedora, and CentOS. Backwards-compatible with sh, rich scripting features, and universally present.'
+                },
+                zsh: {
+                  name: 'zsh (Z Shell + Oh My Zsh)',
+                  path: '/bin/zsh',
+                  badge: 'Mac Default & Designer Favorite',
+                  badgeColor: 'bg-purple-950 text-purple-300 border-purple-600',
+                  prompt: 'sam@cozy ➜ ~/projects (main ✗) via ⬢ v20 ',
+                  posix: 'High compatibility',
+                  history: 'Smart history & auto-suggestions',
+                  tab: 'Fuzzy completion (arrow-nav menu)',
+                  desc: 'Default on modern macOS. Famous for Oh My Zsh themes, arrow-navigable directory menus, git branch decorators, and plugin ecosystems.'
+                },
+                fish: {
+                  name: 'fish (Friendly Interactive Shell)',
+                  path: '/usr/bin/fish',
+                  badge: 'Zero-Config Modern AI Feel',
+                  badgeColor: 'bg-cyan-950 text-cyan-300 border-cyan-600',
+                  prompt: 'sam@cozy-house ~/projects (main)> ',
+                  posix: 'No (Different syntax)',
+                  history: 'Real-time autosuggestions as you type',
+                  tab: 'Instant full-color syntax highlight',
+                  desc: 'Delivers full-color syntax highlighting (green for valid commands, red for typos), autosuggestions from history in gray text, and web browser configuration.'
+                },
+                sh: {
+                  name: 'sh (Original Bourne Shell)',
+                  path: '/bin/sh',
+                  badge: '1979 Lightweight POSIX Standard',
+                  badgeColor: 'bg-amber-950 text-amber-300 border-amber-600',
+                  prompt: '$ ',
+                  posix: 'The Gold POSIX Standard',
+                  history: 'Minimal / None',
+                  tab: 'None (Pure manual typing)',
+                  desc: 'The original UNIX shell written in 1979. Extremely small, lightning-fast, and standardized in POSIX. Essential for portable system boot scripts.'
+                }
+              };
+
+              const curShell = shellsMeta[t15ShellFlavor] || shellsMeta.bash;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-purple-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-purple-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-purple-300 bg-purple-950/80 border border-purple-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 15.3
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Multi-Shell Lab: sh, bash, zsh & fish Side-by-Side
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Compare prompt aesthetics, autocomplete capabilities, and inspect how Linux manages shells in /etc/shells!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      {Object.keys(shellsMeta).map((shKey) => (
+                        <button
+                          key={shKey}
+                          onClick={() => { sounds.playPop(); setT15ShellFlavor(shKey); }}
+                          className={`px-3 py-1 rounded-xl text-xs font-black uppercase transition-all ${
+                            t15ShellFlavor === shKey ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {shKey}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Shell Display Card */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                      <div>
+                        <div className="text-sm font-black text-white">{curShell.name}</div>
+                        <div className="text-xs font-mono text-cyan-300">{curShell.path}</div>
+                      </div>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black border ${curShell.badgeColor}`}>
+                        {curShell.badge}
+                      </span>
+                    </div>
+
+                    {/* Realistic Prompt Preview */}
+                    <div className="bg-black/80 p-4 rounded-xl border border-purple-500/40 font-mono text-xs space-y-2">
+                      <div className="text-slate-500 text-[11px]">Prompt Aesthetic Preview:</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-purple-300 font-bold">{curShell.prompt}</span>
+                        <span className="text-emerald-400">git status</span>
+                        <span className="w-2 h-4 bg-purple-400 animate-pulse"></span>
+                      </div>
+                    </div>
+
+                    {/* Feature Matrix Table */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                        <div className="text-slate-400 text-[10px] uppercase font-black">POSIX Compatibility</div>
+                        <div className="text-white font-bold mt-1">{curShell.posix}</div>
+                      </div>
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                        <div className="text-slate-400 text-[10px] uppercase font-black">Tab Completion</div>
+                        <div className="text-cyan-300 font-bold mt-1">{curShell.tab}</div>
+                      </div>
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                        <div className="text-slate-400 text-[10px] uppercase font-black">History Search</div>
+                        <div className="text-amber-300 font-bold mt-1">{curShell.history}</div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-300 leading-relaxed bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                      💡 {curShell.desc}
+                    </p>
+
+                    {/* chsh Interactive Simulator */}
+                    <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                      <div>
+                        <span className="font-bold text-white">Want to make {t15ShellFlavor.toUpperCase()} your permanent shell?</span>
+                        <div className="text-[11px] font-mono text-cyan-300">$ chsh -s {curShell.path}</div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          try { confetti({ particleCount: 40, spread: 50 }); } catch {}
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs transition-all shadow-sm shrink-0"
+                      >
+                        ✓ Simulate chsh -s {curShell.path}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'difference-shell-and-kernel' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-amber-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 15.4
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        The Great Divide: Shell (Ring 3) vs Kernel (Ring 0) Crash Boundary
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Test what happens when a user shell crashes versus when the operating system kernel panics!
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Architecture Diagram */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border-2 border-emerald-500/70 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black uppercase text-emerald-400">The Shell (User Space)</span>
+                        <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700 text-[10px] font-black">Ring 3</span>
+                      </div>
+                      <div className="text-xs text-slate-300 space-y-1">
+                        <div>• <strong>Role:</strong> Command translator & script interpreter</div>
+                        <div>• <strong>Audience:</strong> Talks directly to humans & terminal text</div>
+                        <div>• <strong>Quantity:</strong> Many shells can run at once (bash, zsh)</div>
+                        <div>• <strong>Crash Impact:</strong> Only 1 terminal window closes!</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border-2 border-cyan-500/70 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black uppercase text-cyan-400">The Kernel (Kernel Space)</span>
+                        <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700 text-[10px] font-black">Ring 0</span>
+                      </div>
+                      <div className="text-xs text-slate-300 space-y-1">
+                        <div>• <strong>Role:</strong> Low-level hardware controller & arbitrator</div>
+                        <div>• <strong>Audience:</strong> Talks directly to CPU registers, RAM, NVMe</div>
+                        <div>• <strong>Quantity:</strong> Strictly ONE kernel runs on the machine</div>
+                        <div>• <strong>Crash Impact:</strong> Kernel Panic (Entire OS halts!)</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Crash Experiments */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div className="text-xs font-black uppercase text-amber-400">Crash Boundary Laboratory:</div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT15CrashTest('shell_crash');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-black text-xs transition-all shadow-sm"
+                      >
+                        💥 Experiment A: Crash the Shell (kill -9 $$)
+                      </button>
+                      <button
+                        onClick={() => {
+                          sounds.playPop();
+                          setT15CrashTest('kernel_panic');
+                        }}
+                        className="px-3.5 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs transition-all shadow-sm"
+                      >
+                        🚨 Experiment B: Simulate Kernel Panic
+                      </button>
+                    </div>
+
+                    {t15CrashTest === 'shell_crash' && (
+                      <div className="bg-emerald-950/50 p-4 rounded-xl border border-emerald-500/80 font-mono text-xs space-y-2">
+                        <div className="text-emerald-300 font-bold">[Process exited with code 137 (SIGKILL)]</div>
+                        <div className="text-slate-200 font-sans leading-relaxed">
+                          ✅ <strong>The Shell was isolated!</strong> Your terminal closed, but the Linux Kernel, Nginx web server, and all other 40 logged-in users continued running with zero interruption. PID 1 simply re-spawns a fresh login shell!
+                        </div>
+                        <button onClick={() => setT15CrashTest(null)} className="text-xs underline text-slate-400 hover:text-white font-sans">
+                          Reset Experiment
+                        </button>
+                      </div>
+                    )}
+
+                    {t15CrashTest === 'kernel_panic' && (
+                      <div className="bg-rose-950/70 p-4 rounded-xl border border-rose-500 font-mono text-xs space-y-2">
+                        <div className="text-rose-300 font-bold animate-pulse">[Kernel panic - not syncing: Fatal exception in interrupt]</div>
+                        <div className="text-slate-300 text-[11px]">
+                          CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W  O  6.8.0-45-generic<br/>
+                          RIP: 0010:panic+0x140/0x310 ... Flashing Caps Lock keyboard LEDs!
+                        </div>
+                        <div className="text-rose-200 font-sans leading-relaxed">
+                          🚨 <strong>Total System Halt!</strong> Because the Kernel lives in Ring 0, a kernel failure brings down the entire physical machine. Network stops, disks cease writing, and a physical power cycle button is required.
+                        </div>
+                        <button onClick={() => setT15CrashTest(null)} className="text-xs underline text-slate-400 hover:text-white font-sans">
+                          Hard Reboot (Reset)
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'linux-terminal' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-teal-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-teal-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-teal-300 bg-teal-950/80 border border-teal-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 15.5
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        The Terminal Glass: Physical TTY, Virtual Consoles & Terminal Emulators
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Trace the complete keystroke pipeline, switch between Linux Virtual Consoles (Ctrl+Alt+F1 to F6), and test terminal modes!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT15TerminalTab('pipeline'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t15TerminalTab === 'pipeline' ? 'bg-teal-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🔄 Complete Pipeline
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT15TerminalTab('consoles'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t15TerminalTab === 'consoles' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🖥️ Virtual Consoles (TTY1-6)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT15TerminalTab('stty'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t15TerminalTab === 'stty' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🎛️ stty Modes
+                      </button>
+                    </div>
+                  </div>
+
+                  {t15TerminalTab === 'pipeline' && (
+                    <div className="space-y-4">
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3 font-mono text-xs">
+                        <div className="text-amber-400 font-sans font-black uppercase">From Finger Keystroke to Silicon Execution:</div>
+
+                        <div className="flex flex-col md:flex-row items-stretch gap-2 text-center">
+                          <div className="flex-1 bg-slate-900 p-3 rounded-xl border border-slate-800">
+                            <div className="text-xs font-bold text-white">1. Keyboard</div>
+                            <div className="text-[10px] text-slate-400 mt-1">Physical keystroke event</div>
+                          </div>
+                          <div className="flex items-center justify-center text-slate-500">→</div>
+                          <div className="flex-1 bg-slate-900 p-3 rounded-xl border border-teal-700/60">
+                            <div className="text-xs font-bold text-teal-300">2. Terminal Window</div>
+                            <div className="text-[10px] text-slate-400 mt-1">GNOME / Alacritty / Kitty</div>
+                          </div>
+                          <div className="flex items-center justify-center text-slate-500">→</div>
+                          <div className="flex-1 bg-slate-900 p-3 rounded-xl border border-cyan-700/60">
+                            <div className="text-xs font-bold text-cyan-300">3. PTY (/dev/pts/1)</div>
+                            <div className="text-[10px] text-slate-400 mt-1">Pseudo-terminal slave</div>
+                          </div>
+                          <div className="flex items-center justify-center text-slate-500">→</div>
+                          <div className="flex-1 bg-slate-900 p-3 rounded-xl border border-emerald-700/60">
+                            <div className="text-xs font-bold text-emerald-300">4. Shell (/bin/bash)</div>
+                            <div className="text-[10px] text-slate-400 mt-1">Parses & interprets text</div>
+                          </div>
+                          <div className="flex items-center justify-center text-slate-500">→</div>
+                          <div className="flex-1 bg-slate-900 p-3 rounded-xl border border-amber-700/60">
+                            <div className="text-xs font-bold text-amber-300">5. Kernel & HW</div>
+                            <div className="text-[10px] text-slate-400 mt-1">Ring 0 CPU & RAM execution</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-[#141b2e] p-3.5 rounded-2xl border border-slate-800 font-mono text-xs flex items-center justify-between">
+                        <div>
+                          <span className="text-amber-300">$ tty</span><br/>
+                          <span className="text-emerald-400">/dev/pts/2</span> <span className="text-slate-400 font-sans text-[11px]">(Pseudo-Terminal Slave #2 created by GUI window)</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {t15TerminalTab === 'consoles' && (
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2 bg-[#0b0f19] p-2.5 rounded-2xl border border-slate-800">
+                        <span className="text-xs font-bold text-slate-300">Switch Linux Virtual Console:</span>
+                        <div className="flex gap-1.5">
+                          <button
+                            onClick={() => { sounds.playPop(); setT15VirtualConsole('tty1'); }}
+                            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                              t15VirtualConsole === 'tty1' ? 'bg-cyan-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            Ctrl+Alt+F1 (/dev/tty1)
+                          </button>
+                          <button
+                            onClick={() => { sounds.playPop(); setT15VirtualConsole('tty2'); }}
+                            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                              t15VirtualConsole === 'tty2' ? 'bg-cyan-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            Ctrl+Alt+F2 (/dev/tty2)
+                          </button>
+                          <button
+                            onClick={() => { sounds.playPop(); setT15VirtualConsole('tty7_gui'); }}
+                            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                              t15VirtualConsole === 'tty7_gui' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            Ctrl+Alt+F7 (Desktop GUI)
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Screen Simulation */}
+                      {t15VirtualConsole !== 'tty7_gui' ? (
+                        <div className="bg-black p-5 rounded-2xl border-4 border-slate-700 font-mono text-xs text-slate-200 space-y-2">
+                          <div className="text-slate-400">Ubuntu 24.04 LTS cozy-server {t15VirtualConsole}</div>
+                          <div className="pt-2 text-white">cozy-server login: sam</div>
+                          <div className="text-white">Password: </div>
+                          <div className="text-emerald-400 pt-1">Last login: Wed Nov 11 14:30:12 on {t15VirtualConsole}</div>
+                          <div className="text-amber-300">sam@cozy-server:~$ tty</div>
+                          <div className="text-cyan-300">/dev/{t15VirtualConsole} (Native Hardware Virtual Console)</div>
+                        </div>
+                      ) : (
+                        <div className="bg-[#141b2e] p-5 rounded-2xl border border-emerald-500/50 space-y-2">
+                          <div className="text-xs font-black uppercase text-emerald-400">Graphical Desktop Mode (Wayland / X11)</div>
+                          <p className="text-xs text-slate-300 leading-relaxed">
+                            Running on Virtual Console 7. Inside this desktop, when you open multiple terminal windows or SSH sessions, each one receives a dynamic Pseudo-Terminal Slave (<code>/dev/pts/0</code>, <code>/dev/pts/1</code>).
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {t15TerminalTab === 'stty' && (
+                    <div className="space-y-4">
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3 font-mono text-xs">
+                        <div className="text-amber-400 font-sans font-black uppercase">Terminal Driver Modes (stty):</div>
+                        <p className="text-slate-300 font-sans leading-relaxed">
+                          The terminal driver has settings. When you type passwords (e.g. in <code>sudo</code>), the shell runs <code>stty -echo</code> so your keystrokes do not appear on screen!
+                        </p>
+
+                        <div className="flex items-center gap-3 pt-2">
+                          <button
+                            onClick={() => { sounds.playPop(); setT15SttyEcho((p) => !p); }}
+                            className={`px-3.5 py-2 rounded-xl font-sans font-black text-xs transition-all ${
+                              t15SttyEcho ? 'bg-amber-600 text-white' : 'bg-slate-700 text-slate-300'
+                            }`}
+                          >
+                            Toggle: {t15SttyEcho ? 'stty echo (Visible Typing)' : 'stty -echo (Hidden Password Mode)'}
+                          </button>
+                        </div>
+
+                        <div className="bg-black/60 p-3 rounded-xl border border-slate-800 text-slate-300 space-y-1">
+                          <div>[sudo] password for sam: <span className="text-amber-400">{t15SttyEcho ? 'MySecretPass123' : '(keystrokes silent)'}</span></div>
+                        </div>
                       </div>
                     </div>
                   )}

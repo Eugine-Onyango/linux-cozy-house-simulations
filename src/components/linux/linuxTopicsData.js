@@ -853,18 +853,20 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 15,
-    title: 'Shell & Bash Scripting',
-    status: 'upcoming',
-    icon: '📜',
+    title: 'Shell Scripting',
+    status: 'playable',
+    topicKey: 'topic15',
+    icon: '📜⚡',
     subtopics: [
-      'Writing Recipes for Chef Bash (#!/bin/bash, chmod +x, comments)',
-      'Variables (Labeled Jars), Input/Output (read, echo, tee) & Broadcast (wall)',
-      'Exit Codes (Traffic Lights $?) & Error Safety (set -e, trap)',
-      'Operators, Decisions (if/else, case), Loops (for, while) & Functions'
+      '15.1 Linux Shell (Command Line Interpreter, Interactive vs Scripting, Environment & Startup)',
+      '15.2 Kernel (Operating System Core, Rings, Process Scheduling, Memory & System Calls)',
+      '15.3 Different Shells (sh, bash, zsh, ksh, csh/tcsh, fish & /etc/shells)',
+      '15.4 Difference between Shell and Kernel (User Space vs Kernel Space, Crash Boundaries & Syscalls)',
+      '15.5 The Terminal (Hardware TTYs, Virtual Consoles /dev/tty1-6, PTYs /dev/pts/* & Terminal Emulators)'
     ],
-    laymanSummary: 'Writing simple step-by-step recipe cards so your computer butler does boring daily chores automatically while you relax.',
-    houseAnalogy: 'Chef Bash’s recipe book, pantry jars with labels (variables), green/red traffic lights ($? exit codes), and fridge routine cards (functions).',
-    kenyanAnalogy: 'Leaving a clear morning duty roster on the kitchen table (chopping sukuma, boiling tea, locking the gate) with labeled spice tins (variables) so everything runs like clockwork!'
+    laymanSummary: 'Demystify how humans, scripts, and hardware communicate: master the command interpreter (Shell), the low-level operating system engine (Kernel), compare shell flavors (sh, bash, zsh, fish), explore the strict Ring 0 vs Ring 3 security divide, and trace physical TTYs to modern terminal emulators.',
+    houseAnalogy: 'Chef Bash waiting at the kitchen counter (Shell) versus the locked basement electrical foundation (Kernel), picking your favorite butler uniform (bash/zsh/fish), the official work order intercom (syscalls), and talking through a smartphone glass app instead of an old rotary telephone (Terminal Emulator).',
+    kenyanAnalogy: 'The customer service booking clerk (Shell) versus the Olkaria high-voltage geothermal turbine generators (Kernel), switching from a rugged pickup to a pimped-out Nganya matatu (bash to zsh), official KPLC dispatch work orders (syscalls), and calling from a mobile smartphone rather than a vintage red street coin booth (Terminal).'
   },
   {
     id: 16,
