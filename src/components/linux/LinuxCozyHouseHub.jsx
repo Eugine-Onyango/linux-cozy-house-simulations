@@ -41,13 +41,14 @@ import { linuxTopic12Subtopics } from './linuxTopic12Data';
 import { linuxTopic13Subtopics } from './linuxTopic13Data';
 import { linuxTopic14Subtopics } from './linuxTopic14Data';
 import { linuxTopic15Subtopics } from './linuxTopic15Data';
+import { linuxTopic16Subtopics } from './linuxTopic16Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
   // Top-level view: 'topic1' ... 'topic14' | 'roadmap'
   // Default to 'topic14' so the user immediately sees Topic 14: System Monitoring!
-  const [mainTab, setMainTab] = useState('topic15');
+  const [mainTab, setMainTab] = useState('topic16');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   // Active subtopic IDs for Topic 1..14
@@ -65,6 +66,7 @@ export default function LinuxCozyHouseHub() {
   const [activeTopic13SubId, setActiveTopic13SubId] = useState('systemd-introduction');
   const [activeTopic14SubId, setActiveTopic14SubId] = useState('checking-disk-space');
   const [activeTopic15SubId, setActiveTopic15SubId] = useState('linux-shell');
+  const [activeTopic16SubId, setActiveTopic16SubId] = useState('creating-a-shell-script');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -434,6 +436,25 @@ export default function LinuxCozyHouseHub() {
   const [t15TerminalTab, setT15TerminalTab] = useState('pipeline'); // 'pipeline' | 'consoles' | 'stty'
   const [t15VirtualConsole, setT15VirtualConsole] = useState('tty7_gui'); // 'tty1' | 'tty2' | 'tty7_gui'
   const [t15SttyEcho, setT15SttyEcho] = useState(true);
+  // Topic 16 Toybox States (Creating and Running Shell Scripts)
+  // 16.1 Creating a Shell Script
+  const [t16ScriptPermGranted, setT16ScriptPermGranted] = useState(false);
+  const [t16ScriptExecMethod, setT16ScriptExecMethod] = useState(null); // 'dot_slash' | 'bash'
+  // 16.2 Defining the Interpreter (Shebang)
+  const [t16ShebangChoice, setT16ShebangChoice] = useState('bash'); // 'bash' | 'env_bash' | 'sh' | 'python'
+  // 16.3 Comments
+  const [t16CommentFilter, setT16CommentFilter] = useState('all'); // 'all' | 'code_only' | 'notes_only'
+  const [t16DebugLineToggled, setT16DebugLineToggled] = useState(false);
+  // 16.4 Variables & Messages
+  const [t16SpaceError, setT16SpaceError] = useState(false);
+  const [t16VarVal, setT16VarVal] = useState('Basmati Rice');
+  const [t16EchoFormat, setT16EchoFormat] = useState('plain'); // 'plain' | 'color' | 'printf' | 'no_newline'
+  // 16.5 Storing Command Output
+  const [t16SubstCommand, setT16SubstCommand] = useState('date'); // 'date' | 'count' | 'ip' | 'nested'
+  // 16.6 Exit Codes
+  const [t16ExitCmdChoice, setT16ExitCmdChoice] = useState('success_ls'); // 'success_ls' | 'error_cat' | 'missing_cmd' | 'perm_denied'
+  const [t16ChainDemo, setT16ChainDemo] = useState('and'); // 'and' | 'or'
+
 
 
   // Determine current active subtopics list and current subtopic object for Topic 1..14
@@ -464,7 +485,9 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic13Subtopics
       : mainTab === 'topic14'
       ? linuxTopic14Subtopics
-      : linuxTopic15Subtopics;
+      : mainTab === 'topic15'
+      ? linuxTopic15Subtopics
+      : linuxTopic16Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -492,7 +515,9 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic13SubId
       : mainTab === 'topic14'
       ? activeTopic14SubId
-      : activeTopic15SubId;
+      : mainTab === 'topic15'
+      ? activeTopic15SubId
+      : activeTopic16SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
@@ -507,7 +532,8 @@ export default function LinuxCozyHouseHub() {
     else if (mainTab === 'topic12') setActiveTopic12SubId(id);
     else if (mainTab === 'topic13') setActiveTopic13SubId(id);
     else if (mainTab === 'topic14') setActiveTopic14SubId(id);
-    else setActiveTopic15SubId(id);
+    else if (mainTab === 'topic15') setActiveTopic15SubId(id);
+    else setActiveTopic16SubId(id);
   };
 
   const currentSubtopic =
@@ -553,6 +579,7 @@ export default function LinuxCozyHouseHub() {
     activeTopic13SubId,
     activeTopic14SubId,
     activeTopic15SubId,
+    activeTopic16SubId,
     selectedCmdNum,
     mainTab
   ]);
@@ -1038,7 +1065,22 @@ export default function LinuxCozyHouseHub() {
               }`}
             >
               <span>📜</span>
-              <span>Topic 15: Shell Scripting (5)</span>
+              <span>Topic 15 (5)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
+                setMainTab('topic16');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
+                mainTab === 'topic16'
+                  ? 'bg-gradient-to-r from-amber-500 via-orange-600 to-red-600 text-white border-amber-400/60 shadow-[0_0_15px_rgba(245,158,11,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
+              }`}
+            >
+              <span>✍️</span>
+              <span>Topic 16: Scripts (6)</span>
             </button>
 
             <button
@@ -1116,6 +1158,8 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 14 • System Monitoring (6 Subtopics)'
                       : mainTab === 'topic15'
                       ? 'Topic 15 • Shell Scripting (5 Subtopics)'
+                      : mainTab === 'topic16'
+                      ? 'Topic 16 • Creating & Running Scripts (6 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -1155,6 +1199,8 @@ export default function LinuxCozyHouseHub() {
                   ? 'Topic 14: System Monitoring 📊💽🧠💻⏱️📈📂'
                   : mainTab === 'topic15'
                   ? 'Topic 15: Shell Scripting 📜🐚🧠⚖️🖥️'
+                  : mainTab === 'topic16'
+                  ? 'Topic 16: Creating & Running Shell Scripts 📜✍️⚡💬📦🚦'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -1189,7 +1235,9 @@ export default function LinuxCozyHouseHub() {
                   ? 'Master end-to-end Linux System Monitoring! Check partition and inode limits (df -h / df -i), audit folder bloat (du -sh / ncdu), decode available memory vs buff/cache (free -h), inspect CPU topology (lscpu), track multi-core load trends (uptime / w), isolate %iowait disk bottlenecks (vmstat / iostat), and resolve locked unmounts with lsof and fuser!'
                   : mainTab === 'topic15'
                   ? 'Understand how humans, scripts, and hardware communicate: master the command interpreter (Shell), the low-level operating system engine (Kernel), compare shell flavors (sh, bash, zsh, fish), explore the strict Ring 0 vs Ring 3 security divide, and trace physical TTYs to modern terminal emulators!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 15 are fully interactive right now!'}
+                  : mainTab === 'topic16'
+                  ? 'Write, authorize, and run production-grade bash scripts! Master chmod +x execution rights, define the shebang (#!), document code with comments, store messages in variables (no spaces around =), capture live command outputs with $(), and inspect exit codes ($?) for error safety!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 16 are fully interactive right now!'}
               </p>
             </div>
 
@@ -1410,14 +1458,29 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic15');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic15'
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-400 shadow-md shadow-emerald-500/25 scale-[1.02]'
                     : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
-                <span>📜 15. Shell Scripting (Shell, Kernel, Shells, Terminal)</span>
+                <span>📜 15. Shell Intro</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">5</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic16');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic16'
+                    ? 'bg-gradient-to-r from-amber-500 via-orange-600 to-red-600 text-white border-amber-400 shadow-md shadow-amber-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
+                }`}
+              >
+                <span>✍️ 16. Creating Scripts (chmod +x, #!, vars, $(), $?)</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">6</span>
               </button>
             </div>
           </div>
@@ -2076,7 +2139,8 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic12' ||
           mainTab === 'topic13' ||
           mainTab === 'topic14' ||
-          mainTab === 'topic15') && (
+          mainTab === 'topic15' ||
+          mainTab === 'topic16') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-[#111728]/95 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3">
@@ -2111,7 +2175,9 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 13: System Services & systemd (5 Subtopics)'
                       : mainTab === 'topic14'
                       ? 'Topic 14: System Monitoring (6 Subtopics)'
-                      : 'Topic 15: Shell Scripting (5 Subtopics)'}
+                      : mainTab === 'topic15'
+                      ? 'Topic 15: Shell Scripting (5 Subtopics)'
+                      : 'Topic 16: Creating & Running Shell Scripts (6 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -13132,6 +13198,716 @@ WantedBy=multi-user.target`
                       </div>
                     </div>
                   )}
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOPIC 16 PLAYABLE TOYBOXES (16.1 to 16.6)
+                ================================================================= */}
+            {activeSubtopicId === 'creating-a-shell-script' && (() => {
+              const perms = t16ScriptPermGranted ? '-rwxr-xr-x' : '-rw-r--r--';
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-emerald-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 16.1
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Execution Rights Lab: chmod +x & The Secret Behind "./"
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Experience why newly created scripts cannot execute by default, stamp them with chmod +x, and learn why Linux mandates the "./" prefix!
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold text-slate-400">File: myscript.sh</span>
+                      <span className={`px-2.5 py-1 rounded-xl font-mono text-xs font-black border ${t16ScriptPermGranted ? 'bg-emerald-950 text-emerald-300 border-emerald-600' : 'bg-slate-900 text-slate-400 border-slate-700'}`}>
+                        {perms}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Interactive Controls & Test Buttons */}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT16ScriptPermGranted(true);
+                          try { confetti({ particleCount: 50, spread: 60 }); } catch {}
+                        }}
+                        className={`p-3.5 rounded-2xl border text-left transition-all ${
+                          t16ScriptPermGranted
+                            ? 'bg-emerald-950/60 border-emerald-500 text-emerald-200'
+                            : 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-400 shadow-md'
+                        }`}
+                      >
+                        <div className="text-xs font-black uppercase">Step 1: Grant Exec Rights</div>
+                        <div className="text-sm font-mono font-bold mt-1">$ chmod +x myscript.sh</div>
+                        <div className="text-[11px] text-slate-300 mt-1">
+                          {t16ScriptPermGranted ? '✓ Executable bit enabled!' : 'Click to add "x" permission'}
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          if (t16ScriptPermGranted) {
+                            sounds.playSuccess();
+                          } else {
+                            sounds.playPop();
+                          }
+                          setT16ScriptExecMethod('dot_slash');
+                        }}
+                        className="p-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white border border-slate-700 text-left transition-all shadow-sm"
+                      >
+                        <div className="text-xs font-black uppercase text-cyan-400">Step 2A: Direct Run</div>
+                        <div className="text-sm font-mono font-bold mt-1">$ ./myscript.sh</div>
+                        <div className="text-[11px] text-slate-400 mt-1">Runs via Shebang & child process</div>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT16ScriptExecMethod('bash');
+                        }}
+                        className="p-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white border border-slate-700 text-left transition-all shadow-sm"
+                      >
+                        <div className="text-xs font-black uppercase text-amber-400">Step 2B: Explicit Shell</div>
+                        <div className="text-sm font-mono font-bold mt-1">$ bash myscript.sh</div>
+                        <div className="text-[11px] text-slate-400 mt-1">Reads file into bash (no +x needed)</div>
+                      </button>
+                    </div>
+
+                    {/* Console Output Result */}
+                    {t16ScriptExecMethod && (
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-2">
+                        <div className="text-slate-500 text-[11px] flex items-center justify-between">
+                          <span>Terminal Output:</span>
+                          <button
+                            onClick={() => { setT16ScriptExecMethod(null); setT16ScriptPermGranted(false); }}
+                            className="text-[11px] underline text-slate-400 hover:text-white font-sans"
+                          >
+                            Reset Challenge
+                          </button>
+                        </div>
+
+                        {t16ScriptExecMethod === 'dot_slash' && !t16ScriptPermGranted && (
+                          <div className="space-y-1">
+                            <div className="text-amber-300">sam@cozy-house:~$ ./myscript.sh</div>
+                            <div className="text-rose-400 font-bold bg-rose-950/60 p-2.5 rounded-xl border border-rose-600/70">
+                              bash: ./myscript.sh: Permission denied (Exit Code: 126)
+                            </div>
+                            <div className="text-slate-300 font-sans text-xs pt-1">
+                              💡 <strong>Why this happened:</strong> The file had permissions <code>-rw-r--r--</code>. Without the executable (<code>x</code>) bit, Linux security strictly prohibits launching it as a program. Run <code>chmod +x myscript.sh</code> first!
+                            </div>
+                          </div>
+                        )}
+
+                        {t16ScriptExecMethod === 'dot_slash' && t16ScriptPermGranted && (
+                          <div className="space-y-1">
+                            <div className="text-amber-300">sam@cozy-house:~$ ./myscript.sh</div>
+                            <div className="text-emerald-300 font-bold bg-emerald-950/60 p-2.5 rounded-xl border border-emerald-600/70">
+                              🎉 [SUCCESS] Hello from myscript.sh! Script executed cleanly via child process. (Exit Code: 0)
+                            </div>
+                          </div>
+                        )}
+
+                        {t16ScriptExecMethod === 'bash' && (
+                          <div className="space-y-1">
+                            <div className="text-amber-300">sam@cozy-house:~$ bash myscript.sh</div>
+                            <div className="text-cyan-300 font-bold bg-cyan-950/60 p-2.5 rounded-xl border border-cyan-600/70">
+                              ✓ [SUCCESS] Running via bash interpreter argument. Notice this worked even without chmod +x!
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Why ./ is required card */}
+                    <div className="bg-[#141b2e] p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-1.5">
+                      <div className="text-amber-400 font-black uppercase">🛡️ The Linux Security Secret: Why is "./" Required?</div>
+                      <p className="leading-relaxed">
+                        In Windows, running a program searches the current directory automatically. Linux intentionally <strong>excludes</strong> the current folder (<code>.</code>) from your <code>$PATH</code>! If <code>.</code> was in <code>$PATH</code>, an attacker could create a fake script named <code>ls</code> in a public <code>/tmp</code> folder, and the moment you typed <code>ls</code>, their trap script would run with your permissions. The <code>./</code> explicitly tells Linux: <em>"I know what I am doing—execute the script right here in this folder!"</em>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'defining-script-interpreter' && (() => {
+              const shebangs = {
+                bash: {
+                  line: '#!/bin/bash',
+                  badge: 'Standard Linux Default',
+                  color: 'bg-emerald-950 text-emerald-300 border-emerald-600',
+                  desc: 'Hardcoded path to standard GNU bash on Linux systems. Extremely fast lookup, but assumes bash lives in /bin/.'
+                },
+                env_bash: {
+                  line: '#!/usr/bin/env bash',
+                  badge: '🌟 Best Practice for Portability',
+                  color: 'bg-cyan-950 text-cyan-300 border-cyan-600',
+                  desc: 'Uses the /usr/bin/env helper to search your current $PATH for bash. Recommended for cross-platform scripts on macOS, Linux, and FreeBSD!'
+                },
+                sh: {
+                  line: '#!/bin/sh',
+                  badge: 'Minimal POSIX Shell',
+                  color: 'bg-amber-950 text-amber-300 border-amber-600',
+                  desc: 'Standard POSIX shell (often symlinked to dash on Ubuntu). Ultra fast, but does NOT support bash arrays or [[ ]] test syntax.'
+                },
+                python: {
+                  line: '#!/usr/bin/env python3',
+                  badge: 'Python Scripting',
+                  color: 'bg-purple-950 text-purple-300 border-purple-600',
+                  desc: 'Shows that the exact same shebang mechanism works for any scripting language: Python, Perl, Ruby, or Node.js!'
+                }
+              };
+
+              const cur = shebangs[t16ShebangChoice] || shebangs.bash;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-cyan-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/80 border border-cyan-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 16.2
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Kernel Binary Header: The Magic Bytes (0x23 0x21) & Shebang Dispatcher
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        See how the Linux kernel program loader inspects the very first two bytes of your script to dispatch the right interpreter!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      {Object.keys(shebangs).map((k) => (
+                        <button
+                          key={k}
+                          onClick={() => { sounds.playPop(); setT16ShebangChoice(k); }}
+                          className={`px-3 py-1 rounded-xl text-xs font-black capitalize transition-all ${
+                            t16ShebangChoice === k ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {k.replace('_', ' ')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Hex & Kernel Inspector Display */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                      <div className="font-mono text-sm font-bold text-cyan-300">{cur.line}</div>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black border ${cur.color}`}>
+                        {cur.badge}
+                      </span>
+                    </div>
+
+                    {/* Magic Byte Hex Dump Preview */}
+                    <div className="bg-black/80 p-3.5 rounded-xl border border-slate-800 font-mono text-xs space-y-2">
+                      <div className="text-slate-400 text-[11px] flex items-center justify-between">
+                        <span>Hex Dump (First 16 Bytes of File):</span>
+                        <span className="text-amber-400">0x23 0x21 = #!</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 text-slate-300">
+                        <span className="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700 font-black">23</span>
+                        <span className="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700 font-black">21</span>
+                        <span>2f 62 69 6e 2f 62 61 73 68 0a</span>
+                        <span className="text-slate-500 pl-4">|#!{cur.line.replace('#!', '')}|</span>
+                      </div>
+                    </div>
+
+                    {/* Kernel Loader Execution Trace */}
+                    <div className="space-y-2 font-mono text-xs">
+                      <div className="text-amber-400 font-sans font-bold">Kernel execve() Execution Trace:</div>
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 space-y-1.5 text-slate-300">
+                        <div>1. User runs <code>./script.sh</code> in terminal.</div>
+                        <div>2. Linux Kernel reads byte 0 and 1: finds magic bytes <code>0x23 0x21</code>.</div>
+                        <div className="text-cyan-300 font-bold">3. Kernel parses interpreter: <code>{cur.line.replace('#!', '')}</code>.</div>
+                        <div className="text-emerald-300 font-bold">4. Kernel calls: <code>execve("{cur.line.replace('#!', '').trim()}", ["{cur.line.replace('#!', '').trim()}", "./script.sh"], envp)</code>.</div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-300 leading-relaxed bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                      💡 {cur.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'comments-in-shell-script' && (() => {
+              const codeLines = [
+                { num: 1, type: 'header', text: '#!/bin/bash', comment: false },
+                { num: 2, type: 'header_comment', text: '# Script: cache_cleaner.sh - Purges temporary log folders', comment: true },
+                { num: 3, type: 'header_comment', text: '# Author: Sam (SysAdmin) | Date: 2026-11-11', comment: true },
+                { num: 4, type: 'blank', text: '', comment: false },
+                { num: 5, type: 'code', text: 'TARGET_DIR="/tmp/cache"', comment: false },
+                { num: 6, type: 'inline_comment', text: 'mkdir -p "$TARGET_DIR" # Ensure directory exists before cleaning', comment: false, inline: '# Ensure directory exists before cleaning' },
+                { num: 7, type: 'debug_target', text: t16DebugLineToggled ? '# rm -rf "$TARGET_DIR"/* # [COMMENTED OUT: Safe Test Mode]' : 'rm -rf "$TARGET_DIR"/* # [ACTIVE: Deletes all files!]', comment: t16DebugLineToggled, isToggled: true },
+                { num: 8, type: 'code', text: 'echo "Maintenance finished at $(date +%T)"', comment: false }
+              ];
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-purple-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-purple-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-purple-300 bg-purple-950/80 border border-purple-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 16.3
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Comment Anatomy: Notes, Headers & Debug Code Toggling
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Filter between human notes and machine code, and practice commenting out risky commands during debugging!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT16CommentFilter('all'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t16CommentFilter === 'all' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📄 All Lines
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT16CommentFilter('code_only'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t16CommentFilter === 'code_only' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🤖 Machine View (Code)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT16CommentFilter('notes_only'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t16CommentFilter === 'notes_only' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📝 Human View (Notes)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Interactive Code Viewer */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-1.5 overflow-x-auto">
+                    {codeLines
+                      .filter((l) => {
+                        if (t16CommentFilter === 'code_only') return !l.comment && l.text;
+                        if (t16CommentFilter === 'notes_only') return l.comment || l.inline;
+                        return true;
+                      })
+                      .map((l) => (
+                        <div
+                          key={l.num}
+                          className={`flex items-center gap-3 p-1 rounded-lg ${
+                            l.isToggled
+                              ? t16DebugLineToggled
+                                ? 'bg-emerald-950/40 border border-emerald-700/60'
+                                : 'bg-rose-950/40 border border-rose-700/60'
+                              : ''
+                          }`}
+                        >
+                          <span className="w-6 text-slate-600 text-right select-none">{l.num}</span>
+                          <span className={`flex-1 ${l.comment ? 'text-slate-500 italic' : l.text.startsWith('#!') ? 'text-purple-400 font-bold' : 'text-slate-200'}`}>
+                            {l.text}
+                          </span>
+                          {l.isToggled && (
+                            <button
+                              onClick={() => {
+                                sounds.playPop();
+                                setT16DebugLineToggled((p) => !p);
+                              }}
+                              className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black transition-all ${
+                                t16DebugLineToggled
+                                  ? 'bg-emerald-600 text-white shadow-sm'
+                                  : 'bg-rose-600 text-white shadow-sm'
+                              }`}
+                            >
+                              {t16DebugLineToggled ? 'Uncomment (#)' : 'Comment Out (#)'}
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+
+                  {/* Multi-line Heredoc Comment Callout */}
+                  <div className="bg-[#141b2e] p-3.5 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
+                    <div className="text-amber-400 font-black uppercase">💡 Bash Multi-Line Comment Trick:</div>
+                    <p className="leading-relaxed">
+                      Bash does not have <code>/* ... */</code> block comments. Instead, pro developers use the null command with a heredoc:
+                    </p>
+                    <pre className="bg-black/60 p-2.5 rounded-xl font-mono text-[11px] text-cyan-300 border border-slate-800">
+{`: << 'EOF'
+  This entire paragraph is ignored by bash!
+  You can write 20 lines of notes or deactivate large code blocks.
+EOF`}
+                    </pre>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'storing-displaying-messages' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-amber-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 16.4
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Variable Studio: The Strict "No Spaces" Rule & Color Output
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Test why putting spaces around "=" crashes your script, and compare echo, escape sequences, and printf!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT16EchoFormat('plain'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t16EchoFormat === 'plain' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        echo Plain
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT16EchoFormat('color'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t16EchoFormat === 'color' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        echo -e Color
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT16EchoFormat('printf'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t16EchoFormat === 'printf' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        printf Formatter
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Variable Assignment Sandbox */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                      <span className="text-xs font-bold text-slate-300">Assignment Syntax Test:</span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            sounds.playPop();
+                            setT16SpaceError(true);
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-600 font-mono text-xs font-bold transition-all"
+                        >
+                          FOOD = "{t16VarVal}" (With Spaces ❌)
+                        </button>
+                        <button
+                          onClick={() => {
+                            sounds.playSuccess();
+                            setT16SpaceError(false);
+                            try { confetti({ particleCount: 40, spread: 50 }); } catch {}
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs font-bold transition-all shadow-md"
+                        >
+                          FOOD="{t16VarVal}" (No Spaces ✅)
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Result Callout */}
+                    {t16SpaceError ? (
+                      <div className="bg-rose-950/50 p-3 rounded-xl border border-rose-600/70 font-mono text-xs text-rose-300 space-y-1">
+                        <div>bash: FOOD: command not found (Exit Code: 127)</div>
+                        <div className="font-sans text-[11px] text-rose-200">
+                          🚨 <strong>Why this failed:</strong> Bash uses spaces to separate commands from arguments. It interpreted <code>FOOD</code> as a program to run and <code>=</code> as its first parameter!
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-emerald-950/50 p-3 rounded-xl border border-emerald-600/70 font-mono text-xs text-emerald-300 space-y-1">
+                        <div>Variable stored in RAM: FOOD="{t16VarVal}"</div>
+                        <div className="font-sans text-[11px] text-emerald-200">
+                          ✅ $FOOD evaluates to: <strong>"{t16VarVal}"</strong> | Concatenation: <code>${'{FOOD}'}_backup</code> → "{t16VarVal}_backup"
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Message Display Simulator */}
+                    <div className="bg-black/80 p-4 rounded-xl border border-slate-800 font-mono text-xs space-y-2">
+                      <div className="text-slate-400 text-[11px]">Command & Output Preview:</div>
+
+                      {t16EchoFormat === 'plain' && (
+                        <div className="space-y-1">
+                          <div className="text-amber-300">$ echo "Inventory: $FOOD is stocked"</div>
+                          <div className="text-slate-200">Inventory: {t16VarVal} is stocked</div>
+                        </div>
+                      )}
+
+                      {t16EchoFormat === 'color' && (
+                        <div className="space-y-1">
+                          <div className="text-amber-300">$ echo -e "\e[32m[SUCCESS]\e[0m Inventory: $FOOD ready"</div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-600/60">[SUCCESS]</span>
+                            <span className="text-white">Inventory: {t16VarVal} ready</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {t16EchoFormat === 'printf' && (
+                        <div className="space-y-1">
+                          <div className="text-amber-300">$ printf "%-15s: %s\n" "ITEM" "$FOOD"</div>
+                          <div className="text-cyan-300">ITEM           : {t16VarVal}</div>
+                          <div className="text-slate-500 text-[11px] font-sans">Aligned into exact 15-character column!</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'storing-command-output' && (() => {
+              const substMeta = {
+                date: {
+                  code: 'TODAY=$(date +%Y-%m-%d)',
+                  rawCmd: 'date +%Y-%m-%d',
+                  captured: '2026-11-11',
+                  useCase: 'Creating timestamped backup files: backup_${TODAY}.tar.gz'
+                },
+                count: {
+                  code: 'LOG_COUNT=$(ls -1 /var/log | wc -l)',
+                  rawCmd: 'ls -1 /var/log | wc -l',
+                  captured: '42',
+                  useCase: 'Checking how many log files need rotation'
+                },
+                ip: {
+                  code: 'HOST_IP=$(hostname -I | awk "{print $1}")',
+                  rawCmd: 'hostname -I | awk "{print $1}"',
+                  captured: '192.168.1.150',
+                  useCase: 'Dynamically binding services to the machine LAN IP'
+                },
+                nested: {
+                  code: 'SCRIPT_DIR=$(dirname $(realpath "$0"))',
+                  rawCmd: 'dirname $(realpath "$0")',
+                  captured: '/home/sam/projects/scripts',
+                  useCase: 'Reliably finding script location no matter where it is invoked from'
+                }
+              };
+
+              const cur = substMeta[t16SubstCommand] || substMeta.date;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-teal-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-teal-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-teal-300 bg-teal-950/80 border border-teal-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 16.5
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Command Substitution Lab: $(command) vs Legacy Backticks
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Capture dynamic terminal command output into persistent variables without hardcoding static values!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      {Object.keys(substMeta).map((k) => (
+                        <button
+                          key={k}
+                          onClick={() => { sounds.playPop(); setT16SubstCommand(k); }}
+                          className={`px-3 py-1 rounded-xl text-xs font-black capitalize transition-all ${
+                            t16SubstCommand === k ? 'bg-teal-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {k}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Substitution Anatomy */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="bg-[#141b2e] p-3.5 rounded-xl border border-teal-700/50 font-mono text-xs space-y-1.5">
+                      <div className="text-slate-400 text-[11px]">Command Substitution Assignment:</div>
+                      <div className="text-cyan-300 font-bold text-sm">{cur.code}</div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 space-y-1">
+                        <div className="text-slate-400 text-[10px] uppercase font-black font-sans">Command Executed in Subshell:</div>
+                        <div className="text-amber-300">$ {cur.rawCmd}</div>
+                        <div className="text-[11px] text-slate-400 font-sans mt-1">Kernel runs command, captures stdout, strips newline.</div>
+                      </div>
+
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-emerald-800/60 space-y-1">
+                        <div className="text-slate-400 text-[10px] uppercase font-black font-sans">Value Captured in Variable:</div>
+                        <div className="text-emerald-300 font-bold text-sm">"{cur.captured}"</div>
+                        <div className="text-[11px] text-slate-400 font-sans mt-1">Available for use in your script as <code>${'{...}'}</code>.</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#141b2e] p-3.5 rounded-xl border border-slate-800 text-xs text-slate-200">
+                      <span className="font-bold text-amber-400">Practical Production Use Case: </span>
+                      <span>{cur.useCase}</span>
+                    </div>
+
+                    {/* Backticks vs $() Comparison */}
+                    <div className="border-t border-slate-800 pt-3 text-xs text-slate-300 flex items-center justify-between">
+                      <div>
+                        <span className="font-black text-rose-400">Legacy Backticks: </span>
+                        <code>VAR=\`command\`</code> (Deprecated; nesting requires ugly <code>\\`escapes\\`</code>)
+                      </div>
+                      <div className="text-emerald-300 font-bold">
+                        ✓ Modern: <code>VAR=$(command)</code> (Clean, nestable, standardized)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'exit-codes-of-commands' && (() => {
+              const testCmds = {
+                success_ls: {
+                  cmd: 'ls -d /tmp',
+                  code: 0,
+                  status: 'SUCCESS (0)',
+                  color: 'bg-emerald-950 text-emerald-300 border-emerald-600',
+                  traffic: '🟢 GREEN LIGHT',
+                  desc: 'Directory /tmp exists and was read cleanly. Standard UNIX success indicator.'
+                },
+                error_cat: {
+                  cmd: 'cat /non_existent_file.txt',
+                  code: 1,
+                  status: 'GENERAL ERROR (1)',
+                  color: 'bg-rose-950 text-rose-300 border-rose-600',
+                  traffic: '🔴 RED LIGHT',
+                  desc: 'File does not exist. Standard non-zero exit code indicating failure.'
+                },
+                missing_cmd: {
+                  cmd: 'foobar_backup_tool',
+                  code: 127,
+                  status: 'COMMAND NOT FOUND (127)',
+                  color: 'bg-rose-950 text-rose-300 border-rose-600',
+                  traffic: '🔴 RED LIGHT',
+                  desc: 'Command does not exist in $PATH. Standard exit code 127 for typos.'
+                },
+                perm_denied: {
+                  cmd: './unexecutable_script.sh',
+                  code: 126,
+                  status: 'PERMISSION DENIED (126)',
+                  color: 'bg-amber-950 text-amber-300 border-amber-600',
+                  traffic: '🔴 RED LIGHT',
+                  desc: 'File found, but has no execution (x) permission. Standard code 126.'
+                }
+              };
+
+              const cur = testCmds[t16ExitCmdChoice] || testCmds.success_ls;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-rose-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-rose-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-rose-300 bg-rose-950/80 border border-rose-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 16.6
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Exit Code Traffic Light ($?) & Short-Circuit Logic (&& / ||)
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Inspect the universal $? status code: 0 means Green (Success), 1-255 means Red (Failure)!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      {Object.keys(testCmds).map((k) => (
+                        <button
+                          key={k}
+                          onClick={() => { sounds.playPop(); setT16ExitCmdChoice(k); }}
+                          className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                            t16ExitCmdChoice === k ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {testCmds[k].cmd.split(' ')[0]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Traffic Light Display */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-4 font-mono text-xs">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                      <div>
+                        <span className="text-amber-300 font-bold">$ {cur.cmd}</span>
+                        <div className="text-slate-400 text-[11px]">$ echo $?</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-black font-sans">{cur.traffic}</span>
+                        <span className={`px-3 py-1 rounded-xl font-black text-sm border ${cur.color}`}>
+                          $? = {cur.code}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 text-slate-200 font-sans leading-relaxed">
+                      💡 <strong>Diagnosis:</strong> {cur.desc}
+                    </div>
+
+                    {/* Conditional Chaining Tester (&& vs ||) */}
+                    <div className="bg-[#141b2e] p-3.5 rounded-xl border border-slate-800 space-y-3 font-sans">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-black text-amber-400 uppercase">Conditional Chaining Logic:</span>
+                        <div className="flex gap-1.5">
+                          <button
+                            onClick={() => { sounds.playPop(); setT16ChainDemo('and'); }}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-black ${t16ChainDemo === 'and' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+                          >
+                            cmd1 && cmd2 (AND)
+                          </button>
+                          <button
+                            onClick={() => { sounds.playPop(); setT16ChainDemo('or'); }}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-black ${t16ChainDemo === 'or' ? 'bg-cyan-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+                          >
+                            cmd1 || cmd2 (OR)
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="font-mono text-xs bg-black/60 p-3 rounded-xl border border-slate-800 space-y-1">
+                        {t16ChainDemo === 'and' ? (
+                          <>
+                            <div className="text-amber-300">$ {cur.cmd} && echo "Proceeding to next step..."</div>
+                            {cur.code === 0 ? (
+                              <div className="text-emerald-400 font-bold">Proceeding to next step... (Executed because $? == 0)</div>
+                            ) : (
+                              <div className="text-slate-500 italic">[Second command was skipped because first command failed]</div>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-amber-300">$ {cur.cmd} || echo "ALERT: Step failed!"</div>
+                            {cur.code !== 0 ? (
+                              <div className="text-rose-400 font-bold">ALERT: Step failed! (Fallback triggered because $? != 0)</div>
+                            ) : (
+                              <div className="text-slate-500 italic">[Fallback was skipped because first command succeeded]</div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               );
             })()}

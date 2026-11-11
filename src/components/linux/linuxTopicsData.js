@@ -870,6 +870,24 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 16,
+    title: 'Creating and Running Shell Scripts',
+    status: 'playable',
+    topicKey: 'topic16',
+    icon: '📜✍️',
+    subtopics: [
+      '16.1 Creating a Shell Script (nano/vim, .sh convention, chmod +x, ./ execution & $PATH security)',
+      '16.2 Defining the Shell Script Interpreter (The Shebang #!, magic bytes 0x23 0x21, /bin/bash vs /usr/bin/env bash)',
+      '16.3 Comments in the Shell Script (# Single-line, inline, header blocks, debug toggling & heredocs)',
+      '16.4 Storing and Displaying Messages in a Shell Script (Variables, no-spaces rule, echo, escape codes & printf)',
+      '16.5 Storing the Output of Commands (Command substitution $(cmd) vs backticks, nesting & capturing dynamic values)',
+      '16.6 Exit Codes of Shell Commands (The $? status, 0=success, 1-255=error, 126/127/137 codes, && and || logic)'
+    ],
+    laymanSummary: 'Write and run your first automated Linux scripts: master file creation and the crucial chmod +x permission, define the shebang (#!) interpreter header, document with clear comments, store data in variables (no spaces around =), capture dynamic command output with $(), and verify success using exit codes ($?).',
+    houseAnalogy: 'Writing signed chore cards for Chef Bash (creating scripts), the corner interpreter flag (shebang), yellow sticky notes (comments), labeled pantry storage jars (variables), measuring clock and scales ($() command capture), and holding up green vs red traffic paddles ($? exit codes).',
+    kenyanAnalogy: 'Drafting an official Matatu Sacco route schedule (creating scripts), the yellow windshield destination board (shebang), Kasuku ledger red pencil margin notes (comments), M-Pesa cash till compartments (variables), Posho Mill spring balance scale measurements ($() output), and Safaricom green confirmation SMS vs red transaction failure alerts ($? exit codes).'
+  },
+  {
+    id: 17,
     title: 'Advanced Linux & Cloud/DevOps',
     status: 'upcoming',
     icon: '🐳',
@@ -883,7 +901,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'A fitted shipping-container duka that can be lifted by lorry to any town and opened immediately (Docker), and a traditional hotel with many waiters (Apache) vs a fast supermarket express checkout (Nginx).'
   },
   {
-    id: 17,
+    id: 18,
     title: 'Linux in Cloud & DevOps',
     status: 'upcoming',
     icon: '☁️',
