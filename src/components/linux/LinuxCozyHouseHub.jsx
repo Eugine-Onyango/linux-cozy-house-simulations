@@ -42,13 +42,14 @@ import { linuxTopic13Subtopics } from './linuxTopic13Data';
 import { linuxTopic14Subtopics } from './linuxTopic14Data';
 import { linuxTopic15Subtopics } from './linuxTopic15Data';
 import { linuxTopic16Subtopics } from './linuxTopic16Data';
+import { linuxTopic17Subtopics } from './linuxTopic17Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
   // Top-level view: 'topic1' ... 'topic14' | 'roadmap'
   // Default to 'topic14' so the user immediately sees Topic 14: System Monitoring!
-  const [mainTab, setMainTab] = useState('topic16');
+  const [mainTab, setMainTab] = useState('topic17');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   // Active subtopic IDs for Topic 1..14
@@ -67,6 +68,7 @@ export default function LinuxCozyHouseHub() {
   const [activeTopic14SubId, setActiveTopic14SubId] = useState('checking-disk-space');
   const [activeTopic15SubId, setActiveTopic15SubId] = useState('linux-shell');
   const [activeTopic16SubId, setActiveTopic16SubId] = useState('creating-a-shell-script');
+  const [activeTopic17SubId, setActiveTopic17SubId] = useState('shell-variables-and-rules');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -454,6 +456,27 @@ export default function LinuxCozyHouseHub() {
   // 16.6 Exit Codes
   const [t16ExitCmdChoice, setT16ExitCmdChoice] = useState('success_ls'); // 'success_ls' | 'error_cat' | 'missing_cmd' | 'perm_denied'
   const [t16ChainDemo, setT16ChainDemo] = useState('and'); // 'and' | 'or'
+  // Topic 17 Toybox States (Variables, Functions & Operators in Bash)
+  // 17.1 Shell Variables & Rules
+  const [t17RuleTest, setT17RuleTest] = useState('valid'); // 'valid' | 'space_err' | 'num_err' | 'hyphen_err'
+  const [t17ExportTested, setT17ExportTested] = useState(false);
+  // 17.2 Bash Variable Types
+  const [t17TypeTab, setT17TypeTab] = useState('int'); // 'int' | 'readonly' | 'array' | 'assoc'
+  const [t17ArrayIdx, setT17ArrayIdx] = useState(0);
+  // 17.3 Working & Running Bash Scripts
+  const [t17ExecMethod, setT17ExecMethod] = useState('subshell'); // 'subshell' | 'source' | 'debug_x'
+  // 17.4 Functions in Bash
+  const [t17FuncRan, setT17FuncRan] = useState(false);
+  const [t17FuncArg1, setT17FuncArg1] = useState('Nairobi');
+  const [t17FuncArg2, setT17FuncArg2] = useState('254');
+  // 17.5 Difference between sh and bash
+  const [t17ShVsBashFeature, setT17ShVsBashFeature] = useState('brackets'); // 'brackets' | 'arrays' | 'strings' | 'math'
+  // 17.6 Basic Operators
+  const [t17OpCategory, setT17OpCategory] = useState('arith'); // 'arith' | 'num_comp' | 'str_comp' | 'file_test'
+  const [t17OpNumA, setT17OpNumA] = useState(15);
+  const [t17OpNumB, setT17OpNumB] = useState(4);
+  const [t17FileTarget, setT17FileTarget] = useState('etc_hosts'); // 'etc_hosts' | 'var_log' | 'missing'
+
 
 
 
@@ -487,7 +510,9 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic14Subtopics
       : mainTab === 'topic15'
       ? linuxTopic15Subtopics
-      : linuxTopic16Subtopics;
+      : mainTab === 'topic16'
+      ? linuxTopic16Subtopics
+      : linuxTopic17Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -517,7 +542,9 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic14SubId
       : mainTab === 'topic15'
       ? activeTopic15SubId
-      : activeTopic16SubId;
+      : mainTab === 'topic16'
+      ? activeTopic16SubId
+      : activeTopic17SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
@@ -533,7 +560,8 @@ export default function LinuxCozyHouseHub() {
     else if (mainTab === 'topic13') setActiveTopic13SubId(id);
     else if (mainTab === 'topic14') setActiveTopic14SubId(id);
     else if (mainTab === 'topic15') setActiveTopic15SubId(id);
-    else setActiveTopic16SubId(id);
+    else if (mainTab === 'topic16') setActiveTopic16SubId(id);
+    else setActiveTopic17SubId(id);
   };
 
   const currentSubtopic =
@@ -580,6 +608,7 @@ export default function LinuxCozyHouseHub() {
     activeTopic14SubId,
     activeTopic15SubId,
     activeTopic16SubId,
+    activeTopic17SubId,
     selectedCmdNum,
     mainTab
   ]);
@@ -1080,7 +1109,22 @@ export default function LinuxCozyHouseHub() {
               }`}
             >
               <span>✍️</span>
-              <span>Topic 16: Scripts (6)</span>
+              <span>Topic 16 (6)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
+                setMainTab('topic17');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
+                mainTab === 'topic17'
+                  ? 'bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white border-indigo-400/60 shadow-[0_0_15px_rgba(99,102,241,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
+              }`}
+            >
+              <span>🧩</span>
+              <span>Topic 17: Bash Power (6)</span>
             </button>
 
             <button
@@ -1160,6 +1204,8 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 15 • Shell Scripting (5 Subtopics)'
                       : mainTab === 'topic16'
                       ? 'Topic 16 • Creating & Running Scripts (6 Subtopics)'
+                      : mainTab === 'topic17'
+                      ? 'Topic 17 • Variables, Functions & Operators in Bash (6 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -1201,6 +1247,8 @@ export default function LinuxCozyHouseHub() {
                   ? 'Topic 15: Shell Scripting 📜🐚🧠⚖️🖥️'
                   : mainTab === 'topic16'
                   ? 'Topic 16: Creating & Running Shell Scripts 📜✍️⚡💬📦🚦'
+                  : mainTab === 'topic17'
+                  ? 'Topic 17: Variables, Functions & Operators in Bash 📦🧩🚀🔍⚖️➕'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -1237,7 +1285,9 @@ export default function LinuxCozyHouseHub() {
                   ? 'Understand how humans, scripts, and hardware communicate: master the command interpreter (Shell), the low-level operating system engine (Kernel), compare shell flavors (sh, bash, zsh, fish), explore the strict Ring 0 vs Ring 3 security divide, and trace physical TTYs to modern terminal emulators!'
                   : mainTab === 'topic16'
                   ? 'Write, authorize, and run production-grade bash scripts! Master chmod +x execution rights, define the shebang (#!), document code with comments, store messages in variables (no spaces around =), capture live command outputs with $(), and inspect exit codes ($?) for error safety!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 16 are fully interactive right now!'}
+                  : mainTab === 'topic17'
+                  ? 'Master the core programming powers of Bash: enforce variable definition rules and export environments, utilize specialized types (integers, arrays, readonly), master subshell execution vs sourcing, build reusable functions with local scope, understand the superpowers of bash over vintage sh, and compute math and file tests with operators!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 17 are fully interactive right now!'}
               </p>
             </div>
 
@@ -1473,13 +1523,28 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic16');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic16'
                     ? 'bg-gradient-to-r from-amber-500 via-orange-600 to-red-600 text-white border-amber-400 shadow-md shadow-amber-500/25 scale-[1.02]'
                     : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
-                <span>✍️ 16. Creating Scripts (chmod +x, #!, vars, $(), $?)</span>
+                <span>✍️ 16. Scripts</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">6</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic17');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic17'
+                    ? 'bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white border-indigo-400 shadow-md shadow-indigo-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
+                }`}
+              >
+                <span>🧩 17. Bash Power (Vars, Types, Funcs, sh vs bash, Ops)</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">6</span>
               </button>
             </div>
@@ -2140,7 +2205,8 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic13' ||
           mainTab === 'topic14' ||
           mainTab === 'topic15' ||
-          mainTab === 'topic16') && (
+          mainTab === 'topic16' ||
+          mainTab === 'topic17') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-[#111728]/95 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3">
@@ -2177,7 +2243,9 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 14: System Monitoring (6 Subtopics)'
                       : mainTab === 'topic15'
                       ? 'Topic 15: Shell Scripting (5 Subtopics)'
-                      : 'Topic 16: Creating & Running Shell Scripts (6 Subtopics)'}
+                      : mainTab === 'topic16'
+                      ? 'Topic 16: Creating & Running Shell Scripts (6 Subtopics)'
+                      : 'Topic 17: Variables, Functions & Operators in Bash (6 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -13907,6 +13975,743 @@ EOF`}
                         )}
                       </div>
                     </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* =================================================================
+                TOPIC 17 PLAYABLE TOYBOXES (17.1 to 17.6)
+                ================================================================= */}
+            {activeSubtopicId === 'shell-variables-and-rules' && (() => {
+              const ruleScenarios = {
+                valid: {
+                  code: 'SERVER_PORT=8080',
+                  isValid: true,
+                  status: 'VALID (Success)',
+                  color: 'bg-emerald-950 text-emerald-300 border-emerald-600',
+                  desc: 'Letters, underscores, and numbers. No spaces around "=" sign. Perfectly stored in memory!'
+                },
+                space_err: {
+                  code: 'SERVER_PORT = 8080',
+                  isValid: false,
+                  status: 'SYNTAX ERROR (Spaces Around =)',
+                  color: 'bg-rose-950 text-rose-300 border-rose-600',
+                  desc: 'Spaces around "=" are forbidden in bash! Bash parsed SERVER_PORT as a command name and "=" as an argument.'
+                },
+                num_err: {
+                  code: '1st_server="web01"',
+                  isValid: false,
+                  status: 'ILLEGAL IDENTIFIER (Starts With Number)',
+                  color: 'bg-rose-950 text-rose-300 border-rose-600',
+                  desc: 'Variables cannot start with a digit! Bash reserves numbers for positional parameters ($1, $2).'
+                },
+                hyphen_err: {
+                  code: 'my-server="web01"',
+                  isValid: false,
+                  status: 'ILLEGAL CHARACTER (Hyphen Found)',
+                  color: 'bg-rose-950 text-rose-300 border-rose-600',
+                  desc: 'Hyphens (-) are subtraction operators in bash! Use an underscore instead: my_server="web01".'
+                }
+              };
+
+              const cur = ruleScenarios[t17RuleTest] || ruleScenarios.valid;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-emerald-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 17.1
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Variable Syntax Referee: The 4 Sacred Rules & Environment Export Lab
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Test illegal variable declarations against the Linux parser, and test how export shares variables with child processes!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      {Object.keys(ruleScenarios).map((k) => (
+                        <button
+                          key={k}
+                          onClick={() => { sounds.playPop(); setT17RuleTest(k); }}
+                          className={`px-3 py-1 rounded-xl text-xs font-black capitalize transition-all ${
+                            t17RuleTest === k ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {k.replace('_', ' ')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Referee Output Card */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                      <div>
+                        <div className="text-slate-400 text-[11px]">Command Tested:</div>
+                        <div className="text-amber-300 text-sm font-bold">$ {cur.code}</div>
+                      </div>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black border font-sans ${cur.color}`}>
+                        {cur.status}
+                      </span>
+                    </div>
+
+                    <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 text-slate-200 font-sans leading-relaxed">
+                      💡 <strong>Parser Ruling:</strong> {cur.desc}
+                    </div>
+
+                    {/* Case Sensitivity Demonstration */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800 font-sans">
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-mono text-xs space-y-1">
+                        <div className="text-cyan-300 font-bold">PORT=8080 (Uppercase)</div>
+                        <div className="text-slate-400 text-[11px]">Memory Address: 0x7ffd91a → "8080"</div>
+                      </div>
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-mono text-xs space-y-1">
+                        <div className="text-purple-300 font-bold">port=3000 (Lowercase)</div>
+                        <div className="text-slate-400 text-[11px]">Memory Address: 0x7ffd92c → "3000"</div>
+                      </div>
+                    </div>
+
+                    {/* Environment Export Interactive Tester */}
+                    <div className="bg-[#141b2e] p-3.5 rounded-xl border border-slate-800 space-y-2 font-sans">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-black text-amber-400 uppercase">Child Process Export Test:</span>
+                        <button
+                          onClick={() => {
+                            sounds.playSuccess();
+                            setT17ExportTested((p) => !p);
+                            try { confetti({ particleCount: 35, spread: 45 }); } catch {}
+                          }}
+                          className={`px-3 py-1 rounded-xl font-black text-xs transition-all ${
+                            t17ExportTested
+                              ? 'bg-purple-600 text-white shadow-sm'
+                              : 'bg-slate-700 text-slate-200 hover:bg-slate-600'
+                          }`}
+                        >
+                          {t17ExportTested ? '✓ export API_KEY="xyz123" (Active)' : 'Click to run: export API_KEY="xyz123"'}
+                        </button>
+                      </div>
+
+                      <div className="bg-black/60 p-2.5 rounded-xl font-mono text-xs text-slate-300">
+                        <div>$ ./child_worker.py</div>
+                        {t17ExportTested ? (
+                          <div className="text-emerald-300 font-bold">Child Process Result: API_KEY is "xyz123" (Inherited from environment!)</div>
+                        ) : (
+                          <div className="text-rose-400 font-bold">Child Process Result: API_KEY is [EMPTY] (Local variables are not shared!)</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'bash-variable-types-and-scope' && (() => {
+              const fruitList = ['Mango 🥭', 'Pineapple 🍍', 'Banana 🍌', 'Avocado 🥑'];
+              const capitals = { Kenya: 'Nairobi', Uganda: 'Kampala', Tanzania: 'Dodoma', Rwanda: 'Kigali' };
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-cyan-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/80 border border-cyan-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 17.2
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Bash Data Types Studio: declare -i, readonly, Indexed & Associative Arrays
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Explore how the declare builtin transforms plain text variables into integers, immutable constants, and multi-element arrays!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT17TypeTab('int'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17TypeTab === 'int' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🔢 declare -i
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT17TypeTab('readonly'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17TypeTab === 'readonly' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🔒 readonly
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT17TypeTab('array'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17TypeTab === 'array' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📦 Indexed Array
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT17TypeTab('assoc'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17TypeTab === 'assoc' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🗂️ declare -A Map
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Type Content Display */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-4">
+                    {t17TypeTab === 'int' && (
+                      <div className="space-y-3 font-sans">
+                        <div className="font-mono text-xs bg-black/60 p-3 rounded-xl border border-slate-800 space-y-1">
+                          <div className="text-amber-300">declare -i SCORE=10</div>
+                          <div className="text-amber-300">SCORE+=5*2 # Evaluates math automatically!</div>
+                          <div className="text-emerald-300 font-bold">echo $SCORE # Output: 20</div>
+                        </div>
+                        <div className="text-xs text-slate-300 leading-relaxed bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                          💡 <strong>How it works:</strong> In standard bash, <code>VAR=5+2</code> assigns the literal text "5+2". Adding <code>declare -i</code> enforces integer behavior so math expressions calculate automatically without needing <code>$(( ... ))</code>!
+                        </div>
+                      </div>
+                    )}
+
+                    {t17TypeTab === 'readonly' && (
+                      <div className="space-y-3 font-sans">
+                        <div className="font-mono text-xs bg-black/60 p-3 rounded-xl border border-slate-800 space-y-1">
+                          <div className="text-amber-300">readonly DB_HOST="db01.cozy.internal"</div>
+                          <div className="text-rose-400">DB_HOST="malicious_host" # Attempting to overwrite...</div>
+                          <div className="text-rose-300 font-bold">bash: DB_HOST: readonly variable (Exit Code: 1)</div>
+                        </div>
+                        <div className="text-xs text-slate-300 leading-relaxed bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                          💡 <strong>Security Protection:</strong> Use <code>readonly</code> or <code>declare -r</code> for configuration constants, ports, and credentials to prevent bugs or rogue subroutines from altering them!
+                        </div>
+                      </div>
+                    )}
+
+                    {t17TypeTab === 'array' && (
+                      <div className="space-y-3 font-sans">
+                        <div className="font-mono text-xs bg-black/60 p-3 rounded-xl border border-slate-800 text-cyan-300">
+                          FRUITS=("Mango" "Pineapple" "Banana" "Avocado")
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-xs text-slate-400">Click Index to Access:</span>
+                          {fruitList.map((f, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => { sounds.playPop(); setT17ArrayIdx(idx); }}
+                              className={`px-3 py-1 rounded-xl font-mono text-xs font-bold transition-all ${
+                                t17ArrayIdx === idx ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+                              }`}
+                            >
+                              ${'{FRUITS['}{idx}{']}'}
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-mono text-xs space-y-1">
+                          <div className="text-amber-300">$ echo "${'{FRUITS['}{t17ArrayIdx}{']}'}"</div>
+                          <div className="text-emerald-300 font-bold">{fruitList[t17ArrayIdx]}</div>
+                          <div className="text-slate-400 text-[11px] pt-1">
+                            Total Elements: <code>${'{#FRUITS[@]}'}</code> = 4 | All Elements: <code>${'{FRUITS[@]}'}</code>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {t17TypeTab === 'assoc' && (
+                      <div className="space-y-3 font-sans">
+                        <div className="font-mono text-xs bg-black/60 p-3 rounded-xl border border-slate-800 space-y-1 text-purple-300">
+                          <div>declare -A CAPITAL</div>
+                          <div>CAPITAL[Kenya]="Nairobi"; CAPITAL[Uganda]="Kampala"; CAPITAL[Tanzania]="Dodoma"</div>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {Object.entries(capitals).map(([country, city]) => (
+                            <div key={country} className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800 font-mono text-xs">
+                              <div className="text-amber-400 font-bold">${'{CAPITAL['}{country}{']}'}</div>
+                              <div className="text-white mt-1">{city}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'working-and-running-bash-scripts' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-purple-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-purple-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-purple-300 bg-purple-950/80 border border-purple-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 17.3
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Script Execution Lifecycle: Subshell (./) vs Sourcing (source) & X-Ray Trace (bash -x)
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        See how subshells keep parent environments clean while sourcing permanently modifies active session variables!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT17ExecMethod('subshell'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17ExecMethod === 'subshell' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        ./script.sh (Subshell)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT17ExecMethod('source'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17ExecMethod === 'source' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        source script.sh (Current Shell)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT17ExecMethod('debug_x'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17ExecMethod === 'debug_x' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        bash -x (X-Ray Tracing)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Lifecycle Trace Viewer */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-3">
+                    <div className="text-slate-400 text-[11px] font-sans">
+                      Target Script: <code>set_env.sh</code> containing <code>STAGE="Kilimani"; cd /tmp/work</code>
+                    </div>
+
+                    {t17ExecMethod === 'subshell' && (
+                      <div className="space-y-2 font-sans">
+                        <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-mono text-xs space-y-1">
+                          <div className="text-amber-300">sam@cozy:~$ ./set_env.sh</div>
+                          <div className="text-slate-400">// Cloned child PID 4190 running in isolated subshell...</div>
+                          <div className="text-slate-400">// Child process exited. Returning control to parent shell PID 2040.</div>
+                          <div className="text-emerald-300 font-bold pt-1">sam@cozy:~$ pwd # Still in /home/sam!</div>
+                          <div className="text-emerald-300 font-bold">sam@cozy:~$ echo $STAGE # Output: [EMPTY]</div>
+                        </div>
+                        <div className="text-xs text-slate-300 bg-purple-950/30 p-3 rounded-xl border border-purple-800/50">
+                          🛡️ <strong>Safety Feature:</strong> Subshells protect your active terminal. A rogue <code>cd /</code> or variable overwrite inside a script cannot damage your parent working session!
+                        </div>
+                      </div>
+                    )}
+
+                    {t17ExecMethod === 'source' && (
+                      <div className="space-y-2 font-sans">
+                        <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-mono text-xs space-y-1">
+                          <div className="text-amber-300">sam@cozy:~$ source ./set_env.sh</div>
+                          <div className="text-slate-400">// Executing directly inside active PID 2040...</div>
+                          <div className="text-cyan-300 font-bold pt-1">sam@cozy:/tmp/work$ pwd # Directory permanently changed!</div>
+                          <div className="text-cyan-300 font-bold">sam@cozy:/tmp/work$ echo $STAGE # Output: "Kilimani"</div>
+                        </div>
+                        <div className="text-xs text-slate-300 bg-cyan-950/30 p-3 rounded-xl border border-cyan-800/50">
+                          🌟 <strong>Why Sourcing Matters:</strong> This is why you run <code>source ~/.bashrc</code> when you add new aliases—you want the changes loaded into your <em>active</em> terminal session!
+                        </div>
+                      </div>
+                    )}
+
+                    {t17ExecMethod === 'debug_x' && (
+                      <div className="space-y-2 font-sans">
+                        <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-mono text-xs space-y-1">
+                          <div className="text-amber-300">sam@cozy:~$ bash -x ./set_env.sh</div>
+                          <div className="text-amber-400 font-bold">+ STAGE=Kilimani</div>
+                          <div className="text-amber-400 font-bold">+ cd /tmp/work</div>
+                          <div className="text-emerald-300 font-bold">+ echo 'Environment ready'</div>
+                        </div>
+                        <div className="text-xs text-slate-300 bg-amber-950/30 p-3 rounded-xl border border-amber-800/50">
+                          🔍 <strong>X-Ray Tracing:</strong> The <code>+</code> signs reveal every command right after variable expansion before execution. Essential for finding syntax traps!
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'functions-in-bash' && (() => {
+              const fareResult = parseInt(t17FuncArg2 || '1') * 50;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-amber-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 17.4
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Function Workbench: Positional Arguments ($1, $2), local Scope & Return
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Pass live arguments into reusable Bash functions, protect scope with the local keyword, and capture stdout results!
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Function Code Definition */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-3">
+                    <div className="text-slate-400 text-[11px] font-sans">Function Declaration in Script:</div>
+                    <pre className="text-cyan-300 leading-relaxed bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+{`calculate_fare() {
+  local destination="$1"      # Positional argument #1
+  local passengers="$2"       # Positional argument #2
+  local rate=50               # Private local rate per seat
+  local total=$((passengers * rate))
+
+  echo "$total KES to $destination"   # Output data returned via stdout
+  return 0                            # Exit status returned via $?
+}`}
+                    </pre>
+
+                    {/* Interactive Invocation Controls */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-sans">
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 space-y-2">
+                        <label className="text-xs font-bold text-slate-300">Destination ($1):</label>
+                        <div className="flex gap-1.5">
+                          {['Nairobi', 'Mombasa', 'Kisumu'].map((dest) => (
+                            <button
+                              key={dest}
+                              onClick={() => { sounds.playPop(); setT17FuncArg1(dest); }}
+                              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                                t17FuncArg1 === dest ? 'bg-amber-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+                              }`}
+                            >
+                              {dest}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 space-y-2">
+                        <label className="text-xs font-bold text-slate-300">Passengers ($2):</label>
+                        <div className="flex gap-1.5">
+                          {['1', '3', '5'].map((pass) => (
+                            <button
+                              key={pass}
+                              onClick={() => { sounds.playPop(); setT17FuncArg2(pass); }}
+                              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                                t17FuncArg2 === pass ? 'bg-amber-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+                              }`}
+                            >
+                              {pass} seat{pass !== '1' ? 's' : ''}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Execution Action & Output */}
+                    <div className="pt-2">
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setT17FuncRan(true);
+                          try { confetti({ particleCount: 40, spread: 50 }); } catch {}
+                        }}
+                        className="px-4 py-2 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-sans font-black text-xs transition-all shadow-md"
+                      >
+                        ▶️ Call: calculate_fare "{t17FuncArg1}" {t17FuncArg2}
+                      </button>
+                    </div>
+
+                    {t17FuncRan && (
+                      <div className="bg-emerald-950/50 p-3.5 rounded-xl border border-emerald-600/70 space-y-1 font-sans">
+                        <div className="font-mono text-xs text-amber-300">
+                          $ RECEIPT=$(calculate_fare "{t17FuncArg1}" {t17FuncArg2})
+                        </div>
+                        <div className="text-emerald-300 font-bold text-sm">
+                          Captured $RECEIPT: "{fareResult} KES to {t17FuncArg1}"
+                        </div>
+                        <div className="text-slate-400 text-xs font-mono">
+                          Exit Code ($?): 0 | Notice: Global variable $rate is undefined because it was declared local!
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'difference-shell-sh-and-bash' && (() => {
+              const features = {
+                brackets: {
+                  title: 'Conditional Testing: [[ ]] vs [ ]',
+                  bashCode: '[[ $VAR == "test" && $NAME =~ ^[A-Z] ]]',
+                  shCode: '[ "$VAR" = "test" ]',
+                  desc: 'In sh, [ ] is actually the /bin/test command. An empty unquoted variable throws "unary operator expected". In bash, [[ ]] is a safe shell keyword with regex (=~) and zero word-splitting bugs!'
+                },
+                arrays: {
+                  title: 'Array Data Containers',
+                  bashCode: 'FRUITS=("Apple" "Banana"); echo ${FRUITS[1]}',
+                  shCode: '# POSIX sh has ZERO array support!',
+                  desc: 'Bash provides indexed and associative arrays natively. In POSIX sh, storing lists requires space-separated strings and clumsy cut/awk parsing.'
+                },
+                strings: {
+                  title: 'In-Memory String Slicing & Case',
+                  bashCode: '${TEXT:0:4} (Slice) | ${TEXT^^} (Uppercase)',
+                  shCode: 'echo "$TEXT" | cut -c1-4 | tr a-z A-Z',
+                  desc: 'Bash manipulates strings in RAM at blazing speed. POSIX sh requires launching 2 heavy external child processes (cut and tr).'
+                },
+                math: {
+                  title: 'Arithmetic Expansion',
+                  bashCode: 'SUM=$((A + B))',
+                  shCode: 'SUM=`expr $A + $B`',
+                  desc: 'Bash computes math natively using $(( )). Ancient sh required invoking the external /usr/bin/expr binary.'
+                }
+              };
+
+              const cur = features[t17ShVsBashFeature] || features.brackets;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-teal-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-teal-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-teal-300 bg-teal-950/80 border border-teal-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 17.5
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Shell (sh) vs Bash Faceoff: [[ ]] vs [ ], Arrays, String Slicing & Portability
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Compare the feature gap between the minimal 1979 POSIX sh standard and modern GNU Bash superpowers!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      {Object.keys(features).map((k) => (
+                        <button
+                          key={k}
+                          onClick={() => { sounds.playPop(); setT17ShVsBashFeature(k); }}
+                          className={`px-3 py-1 rounded-xl text-xs font-black capitalize transition-all ${
+                            t17ShVsBashFeature === k ? 'bg-teal-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {k}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Faceoff Comparison Card */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="text-sm font-black text-white font-sans">{cur.title}</div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+                      <div className="bg-[#141b2e] p-3.5 rounded-xl border border-teal-600/70 space-y-2">
+                        <div className="flex items-center justify-between text-teal-300 font-bold font-sans">
+                          <span>GNU Bash Superpower</span>
+                          <span className="px-2 py-0.5 rounded bg-teal-950 text-[10px] border border-teal-700">Native</span>
+                        </div>
+                        <div className="text-white bg-black/60 p-2 rounded-lg">{cur.bashCode}</div>
+                      </div>
+
+                      <div className="bg-[#141b2e] p-3.5 rounded-xl border border-amber-600/70 space-y-2">
+                        <div className="flex items-center justify-between text-amber-300 font-bold font-sans">
+                          <span>POSIX sh (1979 Standard)</span>
+                          <span className="px-2 py-0.5 rounded bg-amber-950 text-[10px] border border-amber-700">Minimal</span>
+                        </div>
+                        <div className="text-slate-300 bg-black/60 p-2 rounded-lg">{cur.shCode}</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#141b2e] p-3 rounded-xl border border-slate-800 text-xs text-slate-200 font-sans leading-relaxed">
+                      💡 <strong>Technical Difference:</strong> {cur.desc}
+                    </div>
+
+                    <div className="border-t border-slate-800 pt-2 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400 font-sans">
+                      <div>When to use <code>#!/bin/sh</code>: Alpine Docker images & minimal embedded firmware.</div>
+                      <div className="text-cyan-300 font-bold">When to use <code>#!/usr/bin/env bash</code>: Standard Linux automation.</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'basic-operators-in-bash' && (() => {
+              const numA = t17OpNumA;
+              const numB = t17OpNumB;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-rose-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-rose-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-rose-300 bg-rose-950/80 border border-rose-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 17.6
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Bash Operator Sandbox: Arithmetic $(( )), Numeric -eq/-gt, Strings & File Tests
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Compute arithmetic expressions, compare quantities with flags, and test file types and permissions!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT17OpCategory('arith'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17OpCategory === 'arith' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        ➕ Arithmetic $(( ))
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT17OpCategory('num_comp'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17OpCategory === 'num_comp' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🔢 -eq / -gt / -lt
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT17OpCategory('file_test'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t17OpCategory === 'file_test' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📁 -f / -d / -x File Tests
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Operator Laboratory */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-4 font-mono text-xs">
+                    {t17OpCategory === 'arith' && (
+                      <div className="space-y-4 font-sans">
+                        <div className="flex items-center gap-4 bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                          <div>
+                            <label className="text-xs font-bold text-slate-400">A =</label>
+                            <input
+                              type="number"
+                              value={t17OpNumA}
+                              onChange={(e) => setT17OpNumA(parseInt(e.target.value) || 0)}
+                              className="ml-2 w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white font-mono"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-bold text-slate-400">B =</label>
+                            <input
+                              type="number"
+                              value={t17OpNumB}
+                              onChange={(e) => setT17OpNumB(parseInt(e.target.value) || 1)}
+                              className="ml-2 w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white font-mono"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 font-mono text-xs">
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400">Add: </span>
+                            <span className="text-cyan-300 font-bold">$((A + B)) = {numA + numB}</span>
+                          </div>
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400">Subtract: </span>
+                            <span className="text-cyan-300 font-bold">$((A - B)) = {numA - numB}</span>
+                          </div>
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400">Multiply: </span>
+                            <span className="text-cyan-300 font-bold">$((A * B)) = {numA * numB}</span>
+                          </div>
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400">Divide: </span>
+                            <span className="text-cyan-300 font-bold">$((A / B)) = {Math.floor(numA / (numB || 1))}</span>
+                          </div>
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400">Modulo: </span>
+                            <span className="text-cyan-300 font-bold">$((A % B)) = {numA % (numB || 1)}</span>
+                          </div>
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400">Power: </span>
+                            <span className="text-cyan-300 font-bold">$((A ** 2)) = {numA ** 2}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {t17OpCategory === 'num_comp' && (
+                      <div className="space-y-3 font-sans">
+                        <div className="text-slate-400 text-xs">Comparing A ({numA}) and B ({numB}):</div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono text-xs">
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <span>[ $A -eq $B ] (Equal)</span>
+                            <span className={`font-bold ${numA === numB ? 'text-emerald-400' : 'text-slate-500'}`}>{numA === numB ? 'TRUE (0)' : 'FALSE (1)'}</span>
+                          </div>
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <span>[ $A -ne $B ] (Not Equal)</span>
+                            <span className={`font-bold ${numA !== numB ? 'text-emerald-400' : 'text-slate-500'}`}>{numA !== numB ? 'TRUE (0)' : 'FALSE (1)'}</span>
+                          </div>
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <span>[ $A -gt $B ] (Greater Than)</span>
+                            <span className={`font-bold ${numA > numB ? 'text-emerald-400' : 'text-slate-500'}`}>{numA > numB ? 'TRUE (0)' : 'FALSE (1)'}</span>
+                          </div>
+                          <div className="bg-[#141b2e] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <span>[ $A -lt $B ] (Less Than)</span>
+                            <span className={`font-bold ${numA < numB ? 'text-emerald-400' : 'text-slate-500'}`}>{numA < numB ? 'TRUE (0)' : 'FALSE (1)'}</span>
+                          </div>
+                        </div>
+                        <div className="text-[11px] text-amber-300 bg-[#141b2e] p-2.5 rounded-xl border border-slate-800">
+                          ⚠️ Never use <code>&lt;</code> or <code>&gt;</code> inside single brackets <code>[ ]</code> because bash interprets them as file redirection arrows! Always use <code>-gt</code>, <code>-lt</code>, or double brackets <code>[[ ]]</code>.
+                        </div>
+                      </div>
+                    )}
+
+                    {t17OpCategory === 'file_test' && (
+                      <div className="space-y-3 font-sans">
+                        <div className="flex flex-wrap gap-2">
+                          <span className="text-xs text-slate-400 pt-1">Select Target Path:</span>
+                          <button
+                            onClick={() => { sounds.playPop(); setT17FileTarget('etc_hosts'); }}
+                            className={`px-3 py-1 rounded-lg text-xs font-mono font-bold ${t17FileTarget === 'etc_hosts' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-slate-400'}`}
+                          >
+                            /etc/hosts
+                          </button>
+                          <button
+                            onClick={() => { sounds.playPop(); setT17FileTarget('var_log'); }}
+                            className={`px-3 py-1 rounded-lg text-xs font-mono font-bold ${t17FileTarget === 'var_log' ? 'bg-cyan-600 text-white' : 'bg-slate-900 text-slate-400'}`}
+                          >
+                            /var/log
+                          </button>
+                          <button
+                            onClick={() => { sounds.playPop(); setT17FileTarget('missing'); }}
+                            className={`px-3 py-1 rounded-lg text-xs font-mono font-bold ${t17FileTarget === 'missing' ? 'bg-rose-600 text-white' : 'bg-slate-900 text-slate-400'}`}
+                          >
+                            /non_existent
+                          </button>
+                        </div>
+
+                        <div className="bg-[#141b2e] p-3.5 rounded-xl border border-slate-800 space-y-1.5 font-mono text-xs">
+                          <div className="flex items-center justify-between">
+                            <span>[ -e "$PATH" ] (Exists):</span>
+                            <span className={t17FileTarget !== 'missing' ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>{t17FileTarget !== 'missing' ? 'TRUE' : 'FALSE'}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span>[ -f "$PATH" ] (Is Regular File):</span>
+                            <span className={t17FileTarget === 'etc_hosts' ? 'text-emerald-400 font-bold' : 'text-slate-500'}>{t17FileTarget === 'etc_hosts' ? 'TRUE' : 'FALSE'}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span>[ -d "$PATH" ] (Is Directory):</span>
+                            <span className={t17FileTarget === 'var_log' ? 'text-emerald-400 font-bold' : 'text-slate-500'}>{t17FileTarget === 'var_log' ? 'TRUE' : 'FALSE'}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span>[ -r "$PATH" ] (Is Readable by You):</span>
+                            <span className={t17FileTarget !== 'missing' ? 'text-emerald-400 font-bold' : 'text-slate-500'}>{t17FileTarget !== 'missing' ? 'TRUE' : 'FALSE'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

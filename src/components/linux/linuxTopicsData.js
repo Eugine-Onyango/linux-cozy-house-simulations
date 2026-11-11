@@ -888,6 +888,24 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 17,
+    title: 'Variables, Functions & Operators in Bash',
+    status: 'playable',
+    topicKey: 'topic17',
+    icon: '📦🧩',
+    subtopics: [
+      '17.1 Shell Variables & Rules for Variable Definition (Valid names, case sensitivity, no-spaces rule, export & env)',
+      '17.2 Bash Variable Types & Scope (Strings, integers declare -i, readonly, indexed & associative arrays)',
+      '17.3 Working & Running Bash Scripts (Subshell vs source/., execution lifecycle, debugging with bash -x & -n)',
+      '17.4 Functions in Bash (Definition syntax, positional args $1/$2, local scope, return vs echo capture)',
+      '17.5 Difference between Shell (sh) and Bash (POSIX sh vs GNU bash, [[ ]] vs [ ], arrays, string slicing)',
+      '17.6 Basic Operators in Bash (Arithmetic $(( )), numeric -eq/-gt, string ==/-z, file tests -f/-d/-x)'
+    ],
+    laymanSummary: 'Master the core programming powers of Bash: enforce variable definition rules and export environments, utilize specialized types (integers, arrays, readonly), master subshell execution vs sourcing, build reusable functions with local scope, understand the superpowers of bash over vintage sh, and compute math and file tests with operators.',
+    houseAnalogy: 'Chef Bash’s pantry label maker (variable rules), specialized kitchen storage containers (types & arrays), hiring day helpers vs remodeling walls (subshell vs source), laminated recipe routine cards (functions), vintage manual bicycle vs electric cargo bike (sh vs bash), and measuring spoons & door deadbolt testers (operators).',
+    kenyanAnalogy: 'M-Pesa till drawer note dividers (variable rules), hardware fundi organizer bins (types & arrays), hiring an outside mechanic vs permanent Sacco rules (subshell vs sourcing), specialized cybercafé laminating machine routines (functions), black village boda boda bicycle vs 150cc Boxer motorcycle (sh vs bash), and highway weighbridge sensors & petrol pump totals (operators).'
+  },
+  {
+    id: 18,
     title: 'Advanced Linux & Cloud/DevOps',
     status: 'upcoming',
     icon: '🐳',
@@ -901,7 +919,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'A fitted shipping-container duka that can be lifted by lorry to any town and opened immediately (Docker), and a traditional hotel with many waiters (Apache) vs a fast supermarket express checkout (Nginx).'
   },
   {
-    id: 18,
+    id: 19,
     title: 'Linux in Cloud & DevOps',
     status: 'upcoming',
     icon: '☁️',
