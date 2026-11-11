@@ -39,16 +39,17 @@ import { linuxTopic10Subtopics } from './linuxTopic10Data';
 import { linuxTopic11Subtopics } from './linuxTopic11Data';
 import { linuxTopic12Subtopics } from './linuxTopic12Data';
 import { linuxTopic13Subtopics } from './linuxTopic13Data';
+import { linuxTopic14Subtopics } from './linuxTopic14Data';
 import { sounds } from '../../utils/audio';
 import { stopSpeech } from '../../utils/speech';
 
 export default function LinuxCozyHouseHub() {
-  // Top-level view: 'topic1' ... 'topic13' | 'roadmap'
-  // Default to 'topic13' so the user immediately sees Topic 13: System Services & systemd!
-  const [mainTab, setMainTab] = useState('topic13');
+  // Top-level view: 'topic1' ... 'topic14' | 'roadmap'
+  // Default to 'topic14' so the user immediately sees Topic 14: System Monitoring!
+  const [mainTab, setMainTab] = useState('topic14');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Active subtopic IDs for Topic 1, Topic 2, Topic 4, Topic 5, Topic 6, Topic 7, Topic 8, Topic 9, Topic 10, Topic 11, Topic 12, and Topic 13
+  // Active subtopic IDs for Topic 1..14
   const [activeTopic1SubId, setActiveTopic1SubId] = useState('distributions');
   const [activeTopic2SubId, setActiveTopic2SubId] = useState('file-system');
   const [activeTopic4SubId, setActiveTopic4SubId] = useState('file-management');
@@ -61,6 +62,7 @@ export default function LinuxCozyHouseHub() {
   const [activeTopic11SubId, setActiveTopic11SubId] = useState('centos-network-interfaces');
   const [activeTopic12SubId, setActiveTopic12SubId] = useState('viewing-processes');
   const [activeTopic13SubId, setActiveTopic13SubId] = useState('systemd-introduction');
+  const [activeTopic14SubId, setActiveTopic14SubId] = useState('checking-disk-space');
 
   // Topic 3 (25 Basic Commands) states
   const [selectedCmdGroup, setSelectedCmdGroup] = useState('all');
@@ -386,7 +388,31 @@ export default function LinuxCozyHouseHub() {
   const [t13JournalFilter, setT13JournalFilter] = useState('all'); // 'all' | 'nginx' | 'follow' | 'xe' | 'boot' | 'err'
   const [t13VacuumCleaned, setT13VacuumCleaned] = useState(false);
 
-  // Determine current active subtopics list and current subtopic object for Topic 1..13
+  // ==========================================================================
+  // TOPIC 14 TOYBOX STATES (SYSTEM MONITORING - 6 SUBTOPICS)
+  // ==========================================================================
+  // 14.1 Checking Disk Space
+  const [t14DiskMode, setT14DiskMode] = useState('df'); // 'df' | 'inodes' | 'du' | 'ncdu'
+  const [t14CleanedLogs, setT14CleanedLogs] = useState(false);
+  // 14.2 Monitoring Memory Usage
+  const [t14MemTab, setT14MemTab] = useState('overview'); // 'overview' | 'cache_sweep' | 'oom_sim' | 'swappiness'
+  const [t14CacheSwept, setT14CacheSwept] = useState(false);
+  const [t14OomKilled, setT14OomKilled] = useState(false);
+  const [t14Swappiness, setT14Swappiness] = useState(60);
+  // 14.3 Viewing CPU Information
+  const [t14CpuTab, setT14CpuTab] = useState('summary'); // 'summary' | 'topology' | 'cache' | 'flags'
+  const [t14Sockets, setT14Sockets] = useState(1);
+  const [t14CoresPerSocket, setT14CoresPerSocket] = useState(4);
+  const [t14HyperThreading, setT14HyperThreading] = useState(true);
+  // 14.4 Checking System Uptime and Load
+  const [t14LoadScenario, setT14LoadScenario] = useState('normal'); // 'normal' | 'spiking' | 'clearing' | 'overloaded'
+  // 14.5 Monitoring CPU & I/O Performance
+  const [t14PerfTab, setT14PerfTab] = useState('iowait'); // 'iowait' | 'vmstat' | 'iostat' | 'sar'
+  // 14.6 Listing Open Files and Processes
+  const [t14LsofFilter, setT14LsofFilter] = useState('all'); // 'all' | 'port80' | 'port22' | 'user_sam' | 'mount_busy'
+  const [t14MountUnblocked, setT14MountUnblocked] = useState(false);
+
+  // Determine current active subtopics list and current subtopic object for Topic 1..14
   const currentSubtopicsList =
     mainTab === 'topic1'
       ? linuxTopic1Subtopics
@@ -410,7 +436,9 @@ export default function LinuxCozyHouseHub() {
       ? linuxTopic11Subtopics
       : mainTab === 'topic12'
       ? linuxTopic12Subtopics
-      : linuxTopic13Subtopics;
+      : mainTab === 'topic13'
+      ? linuxTopic13Subtopics
+      : linuxTopic14Subtopics;
   const activeSubtopicId =
     mainTab === 'topic1'
       ? activeTopic1SubId
@@ -434,7 +462,9 @@ export default function LinuxCozyHouseHub() {
       ? activeTopic11SubId
       : mainTab === 'topic12'
       ? activeTopic12SubId
-      : activeTopic13SubId;
+      : mainTab === 'topic13'
+      ? activeTopic13SubId
+      : activeTopic14SubId;
   const setActiveSubtopicId = (id) => {
     if (mainTab === 'topic1') setActiveTopic1SubId(id);
     else if (mainTab === 'topic2') setActiveTopic2SubId(id);
@@ -447,7 +477,8 @@ export default function LinuxCozyHouseHub() {
     else if (mainTab === 'topic10') setActiveTopic10SubId(id);
     else if (mainTab === 'topic11') setActiveTopic11SubId(id);
     else if (mainTab === 'topic12') setActiveTopic12SubId(id);
-    else setActiveTopic13SubId(id);
+    else if (mainTab === 'topic13') setActiveTopic13SubId(id);
+    else setActiveTopic14SubId(id);
   };
 
   const currentSubtopic =
@@ -491,6 +522,7 @@ export default function LinuxCozyHouseHub() {
     activeTopic11SubId,
     activeTopic12SubId,
     activeTopic13SubId,
+    activeTopic14SubId,
     selectedCmdNum,
     mainTab
   ]);
@@ -946,7 +978,22 @@ export default function LinuxCozyHouseHub() {
               }`}
             >
               <span>⚡</span>
-              <span>Topic 13: Systemd & Services (5)</span>
+              <span>Topic 13 (5)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playPop();
+                setMainTab('topic14');
+              }}
+              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl font-extrabold text-xs border transition-all flex items-center gap-1 ${
+                mainTab === 'topic14'
+                  ? 'bg-gradient-to-r from-teal-500 via-cyan-600 to-blue-700 text-white border-teal-400/60 shadow-[0_0_15px_rgba(20,184,166,0.35)] scale-105'
+                  : 'bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 border-slate-700/60 hover:border-slate-500 hover:text-white'
+              }`}
+            >
+              <span>📊</span>
+              <span>Topic 14: System Monitoring (6)</span>
             </button>
 
             <button
@@ -1020,6 +1067,8 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 12 • Process Management (6 Subtopics)'
                       : mainTab === 'topic13'
                       ? 'Topic 13 • System Services & systemd (5 Subtopics)'
+                      : mainTab === 'topic14'
+                      ? 'Topic 14 • System Monitoring (6 Subtopics)'
                       : 'Complete Linux Curriculum Map'}
                   </span>
                 </span>
@@ -1055,6 +1104,8 @@ export default function LinuxCozyHouseHub() {
                   ? 'Topic 12: Process Management ⚙️👥📊🛑⚖️🤹💽'
                   : mainTab === 'topic13'
                   ? 'Topic 13: System Services & systemd ⚡🏛️🚀🔄🎛️📜'
+                  : mainTab === 'topic14'
+                  ? 'Topic 14: System Monitoring 📊💽🧠💻⏱️📈📂'
                   : 'All Linux Topics & Subtopics Roadmap 🗺️'}
               </h1>
 
@@ -1085,7 +1136,9 @@ export default function LinuxCozyHouseHub() {
                   ? 'Master Linux Process Management from creation to termination! Explore ps aux & pstree hierarchies, compare live top and htop monitors, master kill & signal codes (SIGTERM 15 vs SIGKILL 9), fine-tune CPU priority with nice & renice (-20 to +19), juggle background and foreground jobs (&, Ctrl+Z, jobs, bg, fg, nohup), and audit disk storage with df -h and du -sh!'
                   : mainTab === 'topic13'
                   ? 'Understand how Linux boots and controls every background worker: PID 1 architecture, the 5-stage boot sequence, active vs enabled service states, the systemctl master remote, and black-box diagnostics with journalctl -xe!'
-                  : 'Browse all topics from your Linux curriculum. Topics 1 through 13 are fully interactive right now!'}
+                  : mainTab === 'topic14'
+                  ? 'Master end-to-end Linux System Monitoring! Check partition and inode limits (df -h / df -i), audit folder bloat (du -sh / ncdu), decode available memory vs buff/cache (free -h), inspect CPU topology (lscpu), track multi-core load trends (uptime / w), isolate %iowait disk bottlenecks (vmstat / iostat), and resolve locked unmounts with lsof and fuser!'
+                  : 'Browse all topics from your Linux curriculum. Topics 1 through 14 are fully interactive right now!'}
               </p>
             </div>
 
@@ -1276,14 +1329,29 @@ export default function LinuxCozyHouseHub() {
                   sounds.playPop();
                   setMainTab('topic13');
                 }}
-                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                className={`px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
                   mainTab === 'topic13'
                     ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-400 shadow-md shadow-amber-500/25 scale-[1.02]'
                     : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
                 }`}
               >
-                <span>⚡ 13. System Services & systemd (Boot, systemctl, logs)</span>
+                <span>⚡ 13. System Services</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">5</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  sounds.playPop();
+                  setMainTab('topic14');
+                }}
+                className={`col-span-2 px-3 py-1.5 rounded-2xl font-black text-xs border transition-all flex items-center justify-between gap-2 ${
+                  mainTab === 'topic14'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-cyan-400 shadow-md shadow-cyan-500/25 scale-[1.02]'
+                    : 'bg-[#141c30]/90 text-slate-300 border-slate-700/70 hover:bg-[#1d2742] hover:text-white'
+                }`}
+              >
+                <span>📊 14. System Monitoring (Disk, RAM, CPU, I/O, lsof)</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">6</span>
               </button>
             </div>
           </div>
@@ -1940,7 +2008,8 @@ export default function LinuxCozyHouseHub() {
           mainTab === 'topic10' ||
           mainTab === 'topic11' ||
           mainTab === 'topic12' ||
-          mainTab === 'topic13') && (
+          mainTab === 'topic13' ||
+          mainTab === 'topic14') && (
           <div className="space-y-6">
             {/* STEP 1: SUBTOPIC SELECTOR CARDS */}
             <div className="bg-[#111728]/95 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3">
@@ -1971,7 +2040,9 @@ export default function LinuxCozyHouseHub() {
                       ? 'Topic 11: Monitoring & Troubleshooting (3 Subtopics)'
                       : mainTab === 'topic12'
                       ? 'Topic 12: Process Management (6 Subtopics)'
-                      : 'Topic 13: System Services & systemd (5 Subtopics)'}
+                      : mainTab === 'topic13'
+                      ? 'Topic 13: System Services & systemd (5 Subtopics)'
+                      : 'Topic 14: System Monitoring (6 Subtopics)'}
                     :
                   </span>
                 </span>
@@ -11094,6 +11165,1147 @@ WantedBy=multi-user.target`
               );
             })()}
 
+            {/* =================================================================
+                TOPIC 14 PLAYABLE TOYBOXES (14.1 to 14.6)
+                ================================================================= */}
+            {activeSubtopicId === 'checking-disk-space' && (() => {
+              const partitions = [
+                { fs: '/dev/sda1', mount: '/', size: '20G', used: '14G', avail: '6.0G', pct: 70, status: 'normal' },
+                { fs: '/dev/sda2', mount: '/home', size: '100G', used: '32G', avail: '68G', pct: 32, status: 'normal' },
+                { fs: 'tmpfs', mount: '/run', size: '1.6G', used: '12M', avail: '1.6G', pct: 1, status: 'normal' },
+                {
+                  fs: '/dev/sdb1',
+                  mount: '/var/log',
+                  size: '40G',
+                  used: t14CleanedLogs ? '4.2G' : '39.8G',
+                  avail: t14CleanedLogs ? '35.8G' : '200M',
+                  pct: t14CleanedLogs ? 11 : 99,
+                  status: t14CleanedLogs ? 'normal' : 'danger'
+                }
+              ];
+
+              const inodesData = [
+                { fs: '/dev/sda1', mount: '/', inodes: '1.3M', iused: '210K', ifree: '1.1M', ipct: 16 },
+                { fs: '/dev/sda2', mount: '/home', inodes: '6.5M', iused: '420K', ifree: '6.1M', ipct: 6 },
+                {
+                  fs: '/dev/sdb1',
+                  mount: '/var/log',
+                  inodes: '2.6M',
+                  iused: t14CleanedLogs ? '45K' : '2.6M',
+                  ifree: t14CleanedLogs ? '2.55M' : '0',
+                  ipct: t14CleanedLogs ? 2 : 100,
+                  critical: !t14CleanedLogs
+                }
+              ];
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-cyan-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/80 border border-cyan-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 14.1
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Dual-Auditor: Storage Blocks (df -h) vs Inode Exhaustion (df -i)
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Investigate how a Linux drive can fail with "No space left on device" even when gigabytes remain, drill down with du -sh *, and inspect with ncdu!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT14DiskMode('df'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14DiskMode === 'df' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📊 df -h (Blocks)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14DiskMode('inodes'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14DiskMode === 'inodes' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🏷️ df -i (Inodes)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14DiskMode('du'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14DiskMode === 'du' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📁 du -sh * (Folders)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14DiskMode('ncdu'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14DiskMode === 'ncdu' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🕹️ ncdu (Interactive)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mode 1: df -h (Disk Space Blocks) */}
+                  {t14DiskMode === 'df' && (
+                    <div className="space-y-4">
+                      <div className="font-mono text-xs text-amber-300 bg-[#0b0f19] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                        <span>$ df -h</span>
+                        <span className="text-slate-400 text-[11px]">Units: 1K=1024, 1M=1024K, 1G=1024M</span>
+                      </div>
+
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left font-mono text-xs border border-slate-800 rounded-2xl overflow-hidden">
+                          <thead className="bg-[#141b2e] text-slate-300">
+                            <tr>
+                              <th className="p-2.5">Filesystem</th>
+                              <th className="p-2.5">Size</th>
+                              <th className="p-2.5">Used</th>
+                              <th className="p-2.5">Avail</th>
+                              <th className="p-2.5">Use% Capacity</th>
+                              <th className="p-2.5">Mounted on</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-800 bg-[#0b0f19]">
+                            {partitions.map((p, i) => (
+                              <tr key={i} className={p.status === 'danger' ? 'bg-rose-950/30' : ''}>
+                                <td className="p-2.5 text-cyan-300 font-bold">{p.fs}</td>
+                                <td className="p-2.5 text-slate-200">{p.size}</td>
+                                <td className={`p-2.5 font-bold ${p.status === 'danger' ? 'text-rose-400' : 'text-slate-200'}`}>{p.used}</td>
+                                <td className={`p-2.5 font-bold ${p.status === 'danger' ? 'text-rose-400' : 'text-emerald-400'}`}>{p.avail}</td>
+                                <td className="p-2.5 min-w-[140px]">
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex-1 bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                      <div
+                                        className={`h-full rounded-full ${p.pct > 90 ? 'bg-rose-500 animate-pulse' : p.pct > 60 ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                                        style={{ width: `${p.pct}%` }}
+                                      />
+                                    </div>
+                                    <span className={`font-bold ${p.pct > 90 ? 'text-rose-400' : 'text-slate-300'}`}>{p.pct}%</span>
+                                  </div>
+                                </td>
+                                <td className="p-2.5 text-amber-300 font-bold">{p.mount}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {!t14CleanedLogs && (
+                        <div className="bg-rose-950/40 border border-rose-600/60 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                          <div>
+                            <div className="text-xs font-black uppercase text-rose-300 flex items-center gap-1.5">
+                              <span>🚨 Warning: Partition /var/log is at 99% Capacity!</span>
+                            </div>
+                            <div className="text-xs text-rose-200 mt-0.5">
+                              Services like nginx and syslog may halt when attempting to write logs. Run <code>du -sh *</code> or purge runaway files!
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => {
+                              sounds.playSuccess();
+                              setT14CleanedLogs(true);
+                              try { confetti({ particleCount: 50, spread: 60 }); } catch {}
+                            }}
+                            className="px-3.5 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs transition-all shadow-md shrink-0"
+                          >
+                            🧹 Clean /var/log/app/*.log
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Mode 2: df -i (Inode Count & Exhaustion) */}
+                  {t14DiskMode === 'inodes' && (
+                    <div className="space-y-4">
+                      <div className="font-mono text-xs text-amber-300 bg-[#0b0f19] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                        <span>$ df -i</span>
+                        <span className="text-amber-400 font-bold">Inodes = File Metadata Index Slots</span>
+                      </div>
+
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left font-mono text-xs border border-slate-800 rounded-2xl overflow-hidden">
+                          <thead className="bg-[#141b2e] text-slate-300">
+                            <tr>
+                              <th className="p-2.5">Filesystem</th>
+                              <th className="p-2.5">Inodes Total</th>
+                              <th className="p-2.5">IUsed</th>
+                              <th className="p-2.5">IFree</th>
+                              <th className="p-2.5">IUse%</th>
+                              <th className="p-2.5">Mounted on</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-800 bg-[#0b0f19]">
+                            {inodesData.map((d, i) => (
+                              <tr key={i} className={d.critical ? 'bg-rose-950/40' : ''}>
+                                <td className="p-2.5 text-cyan-300 font-bold">{d.fs}</td>
+                                <td className="p-2.5 text-slate-200">{d.inodes}</td>
+                                <td className={`p-2.5 font-bold ${d.critical ? 'text-rose-400' : 'text-slate-200'}`}>{d.iused}</td>
+                                <td className={`p-2.5 font-bold ${d.critical ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>{d.ifree}</td>
+                                <td className="p-2.5 min-w-[140px]">
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex-1 bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                      <div
+                                        className={`h-full rounded-full ${d.ipct === 100 ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`}
+                                        style={{ width: `${d.ipct}%` }}
+                                      />
+                                    </div>
+                                    <span className={`font-bold ${d.critical ? 'text-rose-400' : 'text-slate-300'}`}>{d.ipct}%</span>
+                                  </div>
+                                </td>
+                                <td className="p-2.5 text-amber-300 font-bold">{d.mount}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div className={`p-4 rounded-2xl border ${!t14CleanedLogs ? 'bg-rose-950/40 border-rose-600/70' : 'bg-emerald-950/40 border-emerald-600/60'}`}>
+                        <div className="text-xs font-black uppercase text-amber-300 flex items-center justify-between">
+                          <span>💡 The Inode Mystery Explained:</span>
+                          {t14CleanedLogs && (
+                            <button onClick={() => setT14CleanedLogs(false)} className="text-[11px] underline text-slate-400 hover:text-white">
+                              Reset Test Case
+                            </button>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-200 mt-1 leading-relaxed">
+                          {!t14CleanedLogs ? (
+                            <span>
+                              Even if a partition has <strong>20 GB of empty space</strong>, having <strong>0 IFree inodes</strong> means Linux cannot create a single new file! Every single file requires 1 inode index card. 2.6 million 0-byte session files exhausted every slot.
+                            </span>
+                          ) : (
+                            <span className="text-emerald-300 font-bold">
+                              ✅ Inodes Restored! 2.55 Million free inodes now available. File creation test: <code>touch /var/log/test.log</code> succeeded!
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mode 3: du -sh * (Directory Drilldown) */}
+                  {t14DiskMode === 'du' && (
+                    <div className="space-y-4">
+                      <div className="font-mono text-xs text-amber-300 bg-[#0b0f19] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                        <span>$ du -h --max-depth=1 /var | sort -rh</span>
+                        <span className="text-emerald-400 font-bold">Recursive Folder Size Audit</span>
+                      </div>
+
+                      <div className="space-y-2 bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs">
+                        <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
+                          <span className="text-rose-400 font-bold">{t14CleanedLogs ? '4.2G' : '39.8G'}</span>
+                          <span className="text-amber-300 font-bold">/var/log/</span>
+                          <span className="text-slate-400 text-[11px]">{t14CleanedLogs ? 'Normal app logs' : '🚨 35.6G in /var/log/app/sessions/!'}</span>
+                        </div>
+                        <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800/60">
+                          <span className="text-cyan-300 font-bold">2.4G</span>
+                          <span className="text-slate-200">/var/lib/mysql/</span>
+                          <span className="text-slate-400 text-[11px]">Database tables & indexes</span>
+                        </div>
+                        <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/40 border border-slate-800/40">
+                          <span className="text-cyan-300 font-bold">1.1G</span>
+                          <span className="text-slate-200">/var/cache/apt/</span>
+                          <span className="text-slate-400 text-[11px]">Downloaded .deb packages</span>
+                        </div>
+                        <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/20 border border-slate-800/20">
+                          <span className="text-cyan-300 font-bold">340M</span>
+                          <span className="text-slate-200">/var/backups/</span>
+                          <span className="text-slate-400 text-[11px]">Gzip config archives</span>
+                        </div>
+                      </div>
+
+                      <div className="text-xs text-slate-300 bg-cyan-950/30 p-3 rounded-2xl border border-cyan-800/50">
+                        💡 <strong>Pro-Tip:</strong> Always pipe <code>du -sh * | sort -rh | head -n 5</code> to immediately bubble up the top 5 largest directories without scrolling through thousands of lines!
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mode 4: ncdu (NCurses Disk Usage Visual Browser) */}
+                  {t14DiskMode === 'ncdu' && (
+                    <div className="space-y-4">
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border-2 border-purple-500 font-mono text-xs text-slate-200 space-y-3">
+                        <div className="bg-purple-950/80 p-2 rounded text-purple-200 font-bold flex items-center justify-between">
+                          <span>ncdu 1.15.1 ~ Use the arrow keys to navigate, press ? for help</span>
+                          <span>--- /var/log ---</span>
+                        </div>
+
+                        <div className="space-y-1 text-slate-300 pl-2">
+                          <div className={`p-1.5 rounded flex items-center justify-between ${!t14CleanedLogs ? 'bg-purple-900/40 text-purple-200 font-bold' : ''}`}>
+                            <span>{t14CleanedLogs ? '  3.2 GiB [###       ]' : ' 35.6 GiB [##########]'}</span>
+                            <span className="text-amber-300">/app/sessions/</span>
+                            <span className="text-slate-400 text-[11px]">[dir]</span>
+                          </div>
+                          <div className="p-1.5 rounded flex items-center justify-between">
+                            <span>  1.8 GiB [##        ]</span>
+                            <span className="text-slate-200">/journal/</span>
+                            <span className="text-slate-400 text-[11px]">[dir]</span>
+                          </div>
+                          <div className="p-1.5 rounded flex items-center justify-between">
+                            <span> 420.0 MiB [#         ]</span>
+                            <span className="text-slate-200">syslog.1</span>
+                            <span className="text-slate-400 text-[11px]">[file]</span>
+                          </div>
+                          <div className="p-1.5 rounded flex items-center justify-between">
+                            <span> 120.0 MiB [          ]</span>
+                            <span className="text-slate-200">nginx/access.log</span>
+                            <span className="text-slate-400 text-[11px]">[file]</span>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-purple-800/60 pt-2 flex items-center justify-between text-[11px] text-purple-300">
+                          <span>Total disk usage: {t14CleanedLogs ? '5.5 GiB' : '37.9 GiB'}</span>
+                          <span>Keys: [Enter] Enter dir  [d] Delete file  [q] Quit</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'monitoring-memory-usage' && (() => {
+              const totalMem = 16.0;
+              const usedMem = t14OomKilled ? 4.8 : 13.9;
+              const buffCache = t14CacheSwept ? 3.2 : (t14OomKilled ? 8.4 : 1.2);
+              const freeMem = totalMem - usedMem - buffCache;
+              const availMem = freeMem + (buffCache * 0.85);
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-emerald-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 14.2
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Linux Memory Anatomy, Buff/Cache & OOM Killer Lab
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Understand why "low free memory" is completely normal in Linux, adjust swappiness, and trigger the Out-Of-Memory (OOM) Killer!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT14MemTab('overview'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14MemTab === 'overview' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📊 free -h Overview
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14MemTab('cache_sweep'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14MemTab === 'cache_sweep' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🧹 Drop Caches
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14MemTab('swappiness'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14MemTab === 'swappiness' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        ⚙️ Swappiness Tuning
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14MemTab('oom_sim'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14MemTab === 'oom_sim' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🚨 OOM Killer Sim
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mode 1: free -h Overview */}
+                  {t14MemTab === 'overview' && (
+                    <div className="space-y-4">
+                      <div className="font-mono text-xs text-amber-300 bg-[#0b0f19] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                        <span>$ free -h</span>
+                        <span className="text-emerald-400 font-bold">16.0 GiB Physical DDR4 RAM</span>
+                      </div>
+
+                      {/* Stacked Memory Bar */}
+                      <div className="space-y-2">
+                        <div className="h-6 w-full rounded-2xl overflow-hidden flex bg-slate-900 border border-slate-800 shadow-inner">
+                          <div
+                            style={{ width: `${(usedMem / totalMem) * 100}%` }}
+                            className="bg-rose-500 h-full flex items-center justify-center text-[10px] font-black text-white"
+                            title={`Used: ${usedMem.toFixed(1)}G`}
+                          >
+                            Used ({usedMem.toFixed(1)}G)
+                          </div>
+                          <div
+                            style={{ width: `${(buffCache / totalMem) * 100}%` }}
+                            className="bg-cyan-500 h-full flex items-center justify-center text-[10px] font-black text-white"
+                            title={`Buff/Cache: ${buffCache.toFixed(1)}G`}
+                          >
+                            Buff/Cache ({buffCache.toFixed(1)}G)
+                          </div>
+                          <div
+                            style={{ width: `${(freeMem / totalMem) * 100}%` }}
+                            className="bg-emerald-500 h-full flex items-center justify-center text-[10px] font-black text-white"
+                            title={`Free: ${freeMem.toFixed(1)}G`}
+                          >
+                            Free ({freeMem.toFixed(1)}G)
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-between text-xs font-bold text-slate-300 pt-1">
+                          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-rose-500"></span> Used (Apps): {usedMem.toFixed(1)} GiB</span>
+                          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-cyan-500"></span> Buff/Cache (Reclaimable): {buffCache.toFixed(1)} GiB</span>
+                          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-emerald-500"></span> Pure Free: {freeMem.toFixed(1)} GiB</span>
+                          <span className="text-amber-300 font-black">🌟 Total Available: {availMem.toFixed(1)} GiB</span>
+                        </div>
+                      </div>
+
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 text-xs space-y-2">
+                        <div className="text-amber-400 font-black uppercase">💡 Golden Linux Memory Rule:</div>
+                        <p className="text-slate-200 leading-relaxed">
+                          Do not panic if <code>free</code> shows only 400MB! Unused RAM is wasted RAM. The Linux kernel uses idle RAM to buffer disk reads (Buff/Cache) so apps launch instantly. The moment a process asks for memory, Linux instantly evaporates buff/cache within 1 microsecond. The true metric to watch is <strong>available</strong>!
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mode 2: Cache Sweep */}
+                  {t14MemTab === 'cache_sweep' && (
+                    <div className="space-y-4">
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3">
+                        <div className="text-xs font-black uppercase text-cyan-400">Flush PageCache, Dentries and Inodes from RAM</div>
+                        <p className="text-xs text-slate-300 leading-relaxed">
+                          Linux caches file reads in RAM. In benchmark testing or before heavy database loads, sysadmins can flush these caches without harming running applications:
+                        </p>
+                        <div className="font-mono text-xs bg-black/60 p-3 rounded-xl text-cyan-300 border border-slate-800">
+                          sync; echo 3 &gt; /proc/sys/vm/drop_caches
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        {!t14CacheSwept ? (
+                          <button
+                            onClick={() => {
+                              sounds.playSuccess();
+                              setT14CacheSwept(true);
+                              try { confetti({ particleCount: 45, spread: 55 }); } catch {}
+                            }}
+                            className="px-4 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white font-black text-xs transition-all shadow-md"
+                          >
+                            🧹 Run drop_caches Test
+                          </button>
+                        ) : (
+                          <div className="flex items-center gap-3">
+                            <span className="text-xs font-bold text-emerald-300">✅ Caches dropped! Buff/Cache decreased, Free RAM temporarily jumped to 8.2 GiB.</span>
+                            <button
+                              onClick={() => setT14CacheSwept(false)}
+                              className="text-xs underline text-slate-400 hover:text-white"
+                            >
+                              Reset
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mode 3: Swappiness */}
+                  {t14MemTab === 'swappiness' && (
+                    <div className="space-y-4">
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black uppercase text-amber-400">Swappiness Control (/proc/sys/vm/swappiness)</span>
+                          <span className="px-3 py-1 rounded-xl bg-amber-500/20 text-amber-300 font-mono font-black text-sm">
+                            {t14Swappiness}
+                          </span>
+                        </div>
+
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={t14Swappiness}
+                          onChange={(e) => setT14Swappiness(parseInt(e.target.value))}
+                          className="w-full accent-amber-500 cursor-pointer"
+                        />
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                          <div className={`p-3 rounded-xl border ${t14Swappiness <= 10 ? 'bg-amber-950/60 border-amber-500' : 'bg-slate-900 border-slate-800 text-slate-400'}`}>
+                            <div className="font-black text-white">0 - 10: Database Mode</div>
+                            <div className="text-[11px] mt-1">Avoids swapping at all costs. Keeps MySQL/Postgres in high-speed RAM.</div>
+                          </div>
+                          <div className={`p-3 rounded-xl border ${t14Swappiness > 10 && t14Swappiness <= 70 ? 'bg-amber-950/60 border-amber-500' : 'bg-slate-900 border-slate-800 text-slate-400'}`}>
+                            <div className="font-black text-white">60: Ubuntu / RHEL Default</div>
+                            <div className="text-[11px] mt-1">Balanced tradeoff between paging inactive code and keeping disk cache.</div>
+                          </div>
+                          <div className={`p-3 rounded-xl border ${t14Swappiness > 70 ? 'bg-amber-950/60 border-amber-500' : 'bg-slate-900 border-slate-800 text-slate-400'}`}>
+                            <div className="font-black text-white">80 - 100: Aggressive Paging</div>
+                            <div className="text-[11px] mt-1">Eagerly swaps inactive idle memory to disk to maximize file cache.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mode 4: OOM Killer Sim */}
+                  {t14MemTab === 'oom_sim' && (
+                    <div className="space-y-4">
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3 font-mono text-xs">
+                        <div className="text-amber-400 font-sans font-black uppercase">Out-Of-Memory (OOM) Killer In Action</div>
+                        <p className="text-slate-300 font-sans leading-relaxed">
+                          When physical RAM and swap are 100% full, the kernel's emergency OOM Killer inspects every process's <code>/proc/&lt;PID&gt;/oom_score</code> and immediately terminates the highest consumer to prevent the entire operating system from freezing!
+                        </p>
+
+                        {!t14OomKilled ? (
+                          <div className="pt-2">
+                            <button
+                              onClick={() => {
+                                sounds.playSuccess();
+                                setT14OomKilled(true);
+                              }}
+                              className="px-4 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs font-sans transition-all shadow-md"
+                            >
+                              🚨 Spawn Leaky Process (malloc leak)
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="space-y-2 pt-2">
+                            <div className="bg-rose-950/60 p-3 rounded-xl border border-rose-500/80 text-rose-200 leading-relaxed">
+                              [kernel] Out of memory: Kill process 8841 (node_leaky_app) score 950 or sacrifice child<br/>
+                              [kernel] Killed process 8841 (node_leaky_app) total-vm:7200MB, anon-rss:6800MB<br/>
+                              <span className="text-emerald-400 font-bold">✅ System stabilized! 6.8 GB reclaimed instantly.</span>
+                            </div>
+                            <button
+                              onClick={() => setT14OomKilled(false)}
+                              className="text-xs underline text-slate-400 hover:text-white font-sans"
+                            >
+                              Reset OOM Simulator
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'viewing-cpu-information' && (() => {
+              const totalCores = t14Sockets * t14CoresPerSocket;
+              const totalVCPUs = totalCores * (t14HyperThreading ? 2 : 1);
+              const l1d = totalCores * 32; // KB
+              const l2 = totalCores * 512; // KB
+              const l3 = t14Sockets * 16; // MB
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-cyan-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/80 border border-cyan-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 14.3
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        CPU Topology, Hyper-Threading & Cache Architect Lab
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Adjust sockets, physical cores, and hyper-threading to see how Linux computes logical vCPUs, L1/L2/L3 cache pools, and virtualization flags!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT14CpuTab('summary'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14CpuTab === 'summary' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🎛️ Architecture Config
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14CpuTab('lscpu'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14CpuTab === 'lscpu' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        📄 Live lscpu Output
+                      </button>
+                    </div>
+                  </div>
+
+                  {t14CpuTab === 'summary' && (
+                    <div className="space-y-5">
+                      {/* Interactive Controls */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800 space-y-2">
+                          <label className="text-xs font-bold text-slate-300">Motherboard Sockets:</label>
+                          <div className="flex gap-2">
+                            {[1, 2].map((s) => (
+                              <button
+                                key={s}
+                                onClick={() => { sounds.playPop(); setT14Sockets(s); }}
+                                className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all ${
+                                  t14Sockets === s ? 'bg-cyan-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 border border-slate-800'
+                                }`}
+                              >
+                                {s} Socket{s > 1 ? 's' : ''}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800 space-y-2">
+                          <label className="text-xs font-bold text-slate-300">Cores per Socket:</label>
+                          <div className="flex gap-2">
+                            {[2, 4, 8].map((c) => (
+                              <button
+                                key={c}
+                                onClick={() => { sounds.playPop(); setT14CoresPerSocket(c); }}
+                                className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all ${
+                                  t14CoresPerSocket === c ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 border border-slate-800'
+                                }`}
+                              >
+                                {c} Cores
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800 space-y-2">
+                          <label className="text-xs font-bold text-slate-300">Hyper-Threading (SMT):</label>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => { sounds.playPop(); setT14HyperThreading(true); }}
+                              className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all ${
+                                t14HyperThreading ? 'bg-purple-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 border border-slate-800'
+                              }`}
+                            >
+                              ON (2 T/C)
+                            </button>
+                            <button
+                              onClick={() => { sounds.playPop(); setT14HyperThreading(false); }}
+                              className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all ${
+                                !t14HyperThreading ? 'bg-slate-700 text-white shadow-sm' : 'bg-slate-900 text-slate-400 border border-slate-800'
+                              }`}
+                            >
+                              OFF (1 T/C)
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Architecture Visualization Metric Cards */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-cyan-800/60 text-center">
+                          <div className="text-[11px] font-black uppercase text-cyan-400">Total Logical vCPUs</div>
+                          <div className="text-2xl sm:text-3xl font-black text-white mt-1">{totalVCPUs}</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">CPU(s) recognized by OS</div>
+                        </div>
+                        <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-emerald-800/60 text-center">
+                          <div className="text-[11px] font-black uppercase text-emerald-400">Physical Cores</div>
+                          <div className="text-2xl sm:text-3xl font-black text-white mt-1">{totalCores}</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">{t14Sockets} socket x {t14CoresPerSocket} cores</div>
+                        </div>
+                        <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-purple-800/60 text-center">
+                          <div className="text-[11px] font-black uppercase text-purple-400">L1 / L2 Cache</div>
+                          <div className="text-2xl sm:text-3xl font-black text-white mt-1">{(l2 / 1024).toFixed(1)} MB</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">{l1d}KB L1d + {l2}KB L2</div>
+                        </div>
+                        <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-amber-800/60 text-center">
+                          <div className="text-[11px] font-black uppercase text-amber-400">L3 Shared Cache</div>
+                          <div className="text-2xl sm:text-3xl font-black text-white mt-1">{l3} MB</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">Shared per socket pool</div>
+                        </div>
+                      </div>
+
+                      {/* Visual Core Grid */}
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3">
+                        <div className="text-xs font-bold text-slate-300">Topology Visualization:</div>
+                        <div className="flex flex-wrap gap-3">
+                          {Array.from({ length: t14Sockets }).map((_, sIdx) => (
+                            <div key={sIdx} className="flex-1 min-w-[200px] bg-[#141b2e] p-3 rounded-2xl border border-cyan-800/50 space-y-2">
+                              <div className="text-xs font-bold text-cyan-300 flex items-center justify-between">
+                                <span>Physical Socket #{sIdx}</span>
+                                <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-700/50">L3: 16MB</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2">
+                                {Array.from({ length: t14CoresPerSocket }).map((_, cIdx) => (
+                                  <div key={cIdx} className="bg-[#0b0f19] p-2 rounded-xl border border-slate-700 text-center">
+                                    <div className="text-[11px] font-bold text-emerald-300">Core {cIdx}</div>
+                                    <div className="text-[10px] text-slate-400">
+                                      {t14HyperThreading ? '2 Threads (vCPU)' : '1 Thread (vCPU)'}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {t14CpuTab === 'lscpu' && (
+                    <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-1.5 text-slate-200 overflow-x-auto">
+                      <div className="text-amber-300 font-bold">$ lscpu</div>
+                      <div>Architecture:                    x86_64</div>
+                      <div>CPU op-mode(s):                  32-bit, 64-bit</div>
+                      <div>Byte Order:                      Little Endian</div>
+                      <div className="text-cyan-300 font-bold">CPU(s):                          {totalVCPUs}</div>
+                      <div>On-line CPU(s) list:             0-{totalVCPUs - 1}</div>
+                      <div className="text-emerald-300 font-bold">Thread(s) per core:              {t14HyperThreading ? 2 : 1}</div>
+                      <div className="text-emerald-300 font-bold">Core(s) per socket:              {t14CoresPerSocket}</div>
+                      <div className="text-emerald-300 font-bold">Socket(s):                       {t14Sockets}</div>
+                      <div>Vendor ID:                       GenuineIntel</div>
+                      <div>Model name:                      Intel(R) Xeon(R) Gold Processor @ 3.00GHz</div>
+                      <div>L1d cache:                       {l1d} KiB</div>
+                      <div>L2 cache:                        {l2} KiB</div>
+                      <div>L3 cache:                        {l3 * 1024} KiB</div>
+                      <div className="text-purple-300 font-bold">Virtualization:                   VT-x (vmx flag enabled)</div>
+                      <div className="text-slate-400 text-[11px] pt-1">Flags: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht vmx aes avx avx2</div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'system-uptime-and-load' && (() => {
+              const scenarios = {
+                normal: {
+                  badge: '🟢 Healthy & Flowing',
+                  badgeColor: 'bg-emerald-950 text-emerald-300 border-emerald-600',
+                  load1: '0.45', load5: '0.52', load15: '0.40',
+                  desc: 'On a 4-core CPU, load average 0.45 means only ~11% of CPU processing capacity is being utilized. All 4 highway bridge lanes are wide open and flowing effortlessly.',
+                  runningTasks: 2, queuedTasks: 0
+                },
+                saturated: {
+                  badge: '🟡 100% Saturated (Max Efficiency)',
+                  badgeColor: 'bg-amber-950 text-amber-300 border-amber-600',
+                  load1: '4.00', load5: '3.95', load15: '3.80',
+                  desc: 'Exactly 4 processes running on 4 cores. All 4 highway bridge lanes are fully occupied, but zero cars are queued or delayed! Perfect utilization.',
+                  runningTasks: 4, queuedTasks: 0
+                },
+                spiking: {
+                  badge: '🔴 Acute Bottleneck / Overload',
+                  badgeColor: 'bg-rose-950 text-rose-300 border-rose-600',
+                  load1: '9.80', load5: '4.20', load15: '1.10',
+                  desc: 'Traffic jam! Load 1m (9.80) is far higher than 15m (1.10). 4 tasks are active on the cores while ~6 processes are stuck waiting in line in the kernel run-queue.',
+                  runningTasks: 4, queuedTasks: 6
+                },
+                clearing: {
+                  badge: '🟢 Storm Passing / Recovering',
+                  badgeColor: 'bg-cyan-950 text-cyan-300 border-cyan-600',
+                  load1: '1.20', load5: '5.80', load15: '8.90',
+                  desc: 'Notice how 1m (1.20) is much lower than 15m (8.90). A massive spike occurred 15 minutes ago, but the backlog has cleared and the system is back to safety!',
+                  runningTasks: 2, queuedTasks: 0
+                }
+              };
+
+              const cur = scenarios[t14LoadScenario] || scenarios.normal;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-amber-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-amber-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 14.4
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Uptime & Multi-Core Traffic Bridge (Load Average 1m, 5m, 15m)
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Visualize load average like lanes on a highway bridge across a 4-core Linux system!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      {Object.keys(scenarios).map((k) => (
+                        <button
+                          key={k}
+                          onClick={() => { sounds.playPop(); setT14LoadScenario(k); }}
+                          className={`px-2.5 py-1 rounded-xl text-xs font-black capitalize transition-all ${
+                            t14LoadScenario === k ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {k}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Uptime Banner */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
+                      <span className="text-amber-300 font-bold">$ uptime</span>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black border ${cur.badgeColor}`}>
+                        {cur.badge}
+                      </span>
+                    </div>
+
+                    <div className="text-slate-200">
+                      14:28:10 up 42 days,  3:18,  2 users,  load average:{' '}
+                      <span className="text-rose-400 font-black">{cur.load1}</span>,{' '}
+                      <span className="text-amber-400 font-black">{cur.load5}</span>,{' '}
+                      <span className="text-cyan-400 font-black">{cur.load15}</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center pt-1 font-sans">
+                      <div className="bg-[#141b2e] p-2 rounded-xl">
+                        <div className="text-[10px] text-slate-400 uppercase font-black">1-Min Average</div>
+                        <div className="text-lg font-black text-rose-400 mt-0.5">{cur.load1}</div>
+                      </div>
+                      <div className="bg-[#141b2e] p-2 rounded-xl">
+                        <div className="text-[10px] text-slate-400 uppercase font-black">5-Min Average</div>
+                        <div className="text-lg font-black text-amber-400 mt-0.5">{cur.load5}</div>
+                      </div>
+                      <div className="bg-[#141b2e] p-2 rounded-xl">
+                        <div className="text-[10px] text-slate-400 uppercase font-black">15-Min Average</div>
+                        <div className="text-lg font-black text-cyan-400 mt-0.5">{cur.load15}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 4-Lane Highway Bridge Simulator */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div className="text-xs font-bold text-slate-300 flex items-center justify-between">
+                      <span>4-Lane Highway Bridge (4 CPU Cores)</span>
+                      <span className="text-[11px] text-amber-400 font-black">Saturation Threshold: 4.00</span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {[0, 1, 2, 3].map((coreNum) => {
+                        const isActive = coreNum < cur.runningTasks;
+                        return (
+                          <div key={coreNum} className="flex items-center gap-3 bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                            <span className="font-mono text-xs text-cyan-300 font-bold shrink-0 w-16">Lane {coreNum}:</span>
+                            <div className="flex-1 flex items-center justify-between">
+                              {isActive ? (
+                                <span className="px-3 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-600/60 font-black text-xs flex items-center gap-1.5">
+                                  🚗 Process Running (Active Core Execution)
+                                </span>
+                              ) : (
+                                <span className="text-slate-500 text-xs italic">-- Lane Empty (Idle CPU capacity) --</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {cur.queuedTasks > 0 && (
+                      <div className="bg-rose-950/40 p-3 rounded-xl border border-rose-600/70 flex items-center gap-2 text-rose-300 text-xs font-bold">
+                        <span>⏳ Waiting Queue Backlog: {cur.queuedTasks} processes stuck waiting for an available CPU core!</span>
+                      </div>
+                    )}
+
+                    <p className="text-xs text-slate-300 mt-2 leading-relaxed bg-[#141b2e] p-3 rounded-xl border border-slate-800">
+                      💡 {cur.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'cpu-and-io-performance' && (() => {
+              const profiles = {
+                iowait: {
+                  title: 'Disk I/O Bottleneck (%iowait stall)',
+                  badge: '⚠️ Disk Bottleneck',
+                  badgeColor: 'bg-rose-950 text-rose-300 border-rose-600',
+                  us: 4, sy: 2, id: 12, wa: 82, await: '128.4 ms', r_s: '420', w_s: '850',
+                  desc: 'Processes are trapped in "D" state (uninterruptible disk sleep). The CPU is practically idling (%wa = 82%), waiting for a slow spinning hard disk or congested SAN storage to finish writing.'
+                },
+                cpubound: {
+                  title: 'CPU Bound Workload (Kernel Compile / FFmpeg)',
+                  badge: '🔥 CPU Maxed Out',
+                  badgeColor: 'bg-amber-950 text-amber-300 border-amber-600',
+                  us: 91, sy: 8, id: 1, wa: 0, await: '1.2 ms', r_s: '12', w_s: '24',
+                  desc: 'The storage disk is completely fine! All cores are blazing at 99% user and system computation. To fix this, you need a faster CPU or more cores.'
+                },
+                normal: {
+                  title: 'Healthy Web Server Workload',
+                  badge: '🟢 Balanced Load',
+                  badgeColor: 'bg-emerald-950 text-emerald-300 border-emerald-600',
+                  us: 22, sy: 6, id: 70, wa: 2, await: '2.4 ms', r_s: '85', w_s: '60',
+                  desc: 'Healthy server state. CPU has 70% idle headroom, and disk operations respond under 3ms with negligible iowait.'
+                }
+              };
+
+              const cur = profiles[t14PerfTab] || profiles.iowait;
+
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-cyan-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-cyan-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/80 border border-cyan-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 14.5
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Bottleneck Diagnostic Lab: CPU Compute vs %iowait Disk Stalls
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Diagnose whether a sluggish server is choked by pure CPU calculations or trapped by slow disk I/O with vmstat and iostat!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT14PerfTab('iowait'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14PerfTab === 'iowait' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        💽 Disk Bottleneck (%wa)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14PerfTab('cpubound'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14PerfTab === 'cpubound' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        ⚡ CPU Bound (%us)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14PerfTab('normal'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14PerfTab === 'normal' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🟢 Balanced Server
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Visual Gauges */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800 text-center">
+                      <div className="text-[11px] font-black uppercase text-amber-400">%user (App Math)</div>
+                      <div className="text-2xl sm:text-3xl font-black text-amber-300 mt-1">{cur.us}%</div>
+                      <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-2">
+                        <div className="bg-amber-500 h-full rounded-full" style={{ width: `${cur.us}%` }} />
+                      </div>
+                    </div>
+                    <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800 text-center">
+                      <div className="text-[11px] font-black uppercase text-cyan-400">%system (Kernel)</div>
+                      <div className="text-2xl sm:text-3xl font-black text-cyan-300 mt-1">{cur.sy}%</div>
+                      <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-2">
+                        <div className="bg-cyan-500 h-full rounded-full" style={{ width: `${cur.sy}%` }} />
+                      </div>
+                    </div>
+                    <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800 text-center">
+                      <div className="text-[11px] font-black uppercase text-rose-400">%iowait (%wa)</div>
+                      <div className={`text-2xl sm:text-3xl font-black mt-1 ${cur.wa > 50 ? 'text-rose-400 animate-pulse' : 'text-slate-300'}`}>{cur.wa}%</div>
+                      <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-2">
+                        <div className={`h-full rounded-full ${cur.wa > 50 ? 'bg-rose-500' : 'bg-slate-500'}`} style={{ width: `${cur.wa}%` }} />
+                      </div>
+                    </div>
+                    <div className="bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800 text-center">
+                      <div className="text-[11px] font-black uppercase text-emerald-400">%idle (%id)</div>
+                      <div className="text-2xl sm:text-3xl font-black text-emerald-300 mt-1">{cur.id}%</div>
+                      <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-2">
+                        <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${cur.id}%` }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Terminal Output */}
+                  <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 font-mono text-xs space-y-2 overflow-x-auto">
+                    <div className="text-amber-300 font-bold">$ vmstat 1 3</div>
+                    <div className="text-slate-400 text-[11px]">procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----</div>
+                    <div className="text-slate-400 text-[11px]"> r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st</div>
+                    <div className="text-slate-200">
+                      {cur.wa > 50 ? ' 1  4' : ' 4  0'}      0 420104  45120 182040    0    0  {cur.wa > 50 ? '12400 34200' : '  120   340'} 1200 4500 <span className="text-amber-300 font-bold">{String(cur.us).padStart(2)}</span> <span className="text-cyan-300 font-bold">{String(cur.sy).padStart(2)}</span> <span className="text-emerald-300 font-bold">{String(cur.id).padStart(2)}</span> <span className={`font-black ${cur.wa > 50 ? 'text-rose-400 underline' : 'text-slate-300'}`}>{String(cur.wa).padStart(2)}</span>  0
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-800 text-amber-300 font-bold">$ iostat -xz 1 1</div>
+                    <div className="text-slate-400 text-[11px]">Device            r/s     w/s     rkB/s     wkB/s   await  %util</div>
+                    <div className="text-slate-200">
+                      sda1          {cur.r_s.padStart(5)}   {cur.w_s.padStart(5)}   {cur.wa > 50 ? ' 84200    124000' : '   1200      2400'}  <span className={`font-black ${cur.wa > 50 ? 'text-rose-400' : 'text-emerald-300'}`}>{cur.await}</span>  <span className={`font-bold ${cur.wa > 50 ? 'text-rose-400' : 'text-slate-300'}`}>{cur.wa > 50 ? '99.4%' : '14.2%'}</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#141b2e] p-3.5 rounded-2xl border border-slate-800 text-xs text-slate-200 leading-relaxed">
+                    💡 <strong>Diagnosis:</strong> {cur.desc}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {activeSubtopicId === 'listing-open-files-and-processes' && (() => {
+              return (
+                <div className="bg-[#111728]/95 rounded-3xl p-5 sm:p-6 border-4 border-emerald-400 shadow-xl space-y-5">
+                  <div className="border-b-2 border-emerald-900/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1 rounded-full">
+                        🎮 Playable Toybox 14.6
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-white mt-1">
+                        Open Files Detective: lsof, fuser & Unmount Target Busy Rescue
+                      </h4>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-300">
+                        Solve the infamous "umount: target is busy" error by finding hidden open file descriptors, or inspect open listening network ports!
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 bg-[#0b0f19] p-1.5 rounded-2xl border border-slate-800">
+                      <button
+                        onClick={() => { sounds.playPop(); setT14LsofFilter('mount_busy'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14LsofFilter === 'mount_busy' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🚨 umount Busy Rescue
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14LsofFilter('port80'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14LsofFilter === 'port80' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🌐 lsof -i :80 (HTTP)
+                      </button>
+                      <button
+                        onClick={() => { sounds.playPop(); setT14LsofFilter('port22'); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                          t14LsofFilter === 'port22' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        🔑 lsof -i :22 (SSH)
+                      </button>
+                    </div>
+                  </div>
+
+                  {t14LsofFilter === 'mount_busy' && (
+                    <div className="space-y-4">
+                      {/* Scenario Description */}
+                      <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 space-y-3 font-mono text-xs">
+                        <div className="flex items-center justify-between text-slate-300 font-sans">
+                          <span className="font-bold">Scenario: Trying to unmount backup drive <code>/mnt/backup</code></span>
+                          <span className="text-amber-400 font-bold">$ sudo umount /mnt/backup</span>
+                        </div>
+
+                        {!t14MountUnblocked ? (
+                          <div className="bg-rose-950/50 p-3 rounded-xl border border-rose-600/70 text-rose-300 font-bold space-y-1">
+                            <div>umount: /mnt/backup: target is busy.</div>
+                            <div className="text-[11px] text-rose-400 font-normal">
+                              (In some cases useful info about processes that use the device is found by lsof(8) or fuser(1))
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-emerald-950/50 p-3 rounded-xl border border-emerald-600/70 text-emerald-300 font-bold">
+                            ✅ Device safely unmounted! Partition /mnt/backup cleanly detached without data corruption.
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Diagnostic Table */}
+                      {!t14MountUnblocked ? (
+                        <div className="space-y-3">
+                          <div className="font-mono text-xs text-amber-300">$ lsof +D /mnt/backup</div>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left font-mono text-xs border border-slate-800 rounded-2xl overflow-hidden">
+                              <thead className="bg-[#141b2e] text-slate-300">
+                                <tr>
+                                  <th className="p-2.5">COMMAND</th>
+                                  <th className="p-2.5">PID</th>
+                                  <th className="p-2.5">USER</th>
+                                  <th className="p-2.5">FD</th>
+                                  <th className="p-2.5">TYPE</th>
+                                  <th className="p-2.5">DEVICE</th>
+                                  <th className="p-2.5">SIZE</th>
+                                  <th className="p-2.5">NODE</th>
+                                  <th className="p-2.5">NAME</th>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-[#0b0f19] divide-y divide-slate-800">
+                                <tr>
+                                  <td className="p-2.5 text-cyan-300 font-bold">python3</td>
+                                  <td className="p-2.5 text-rose-400 font-bold">4192</td>
+                                  <td className="p-2.5 text-slate-300">backup_bot</td>
+                                  <td className="p-2.5 text-amber-300 font-bold">4w</td>
+                                  <td className="p-2.5 text-slate-300">REG</td>
+                                  <td className="p-2.5 text-slate-300">8,16</td>
+                                  <td className="p-2.5 text-slate-300">8.4G</td>
+                                  <td className="p-2.5 text-slate-300">14092</td>
+                                  <td className="p-2.5 text-rose-300 font-bold">/mnt/backup/nightly_2026.tar.gz</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {/* Rescue Actions */}
+                          <div className="bg-[#0b0f19] p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                            <div className="text-xs text-slate-300">
+                              <span className="font-black text-amber-400 uppercase">Rescue Options:</span> Run <code>sudo fuser -km /mnt/backup</code> to send SIGKILL to all offending PIDs, or graceful <code>kill -15 4192</code>.
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  sounds.playSuccess();
+                                  setT14MountUnblocked(true);
+                                  try { confetti({ particleCount: 50, spread: 60 }); } catch {}
+                                }}
+                                className="px-3.5 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs transition-all shadow-md shrink-0"
+                              >
+                                🎯 sudo fuser -km /mnt/backup
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between bg-[#0b0f19] p-4 rounded-2xl border border-slate-800">
+                          <span className="text-xs text-emerald-300 font-bold">The lock was released and the drive was safely unmounted!</span>
+                          <button
+                            onClick={() => setT14MountUnblocked(false)}
+                            className="text-xs underline text-slate-400 hover:text-white"
+                          >
+                            Reset Challenge
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {t14LsofFilter === 'port80' && (
+                    <div className="space-y-3 font-mono text-xs">
+                      <div className="text-amber-300 font-bold">$ sudo lsof -i :80</div>
+                      <div className="overflow-x-auto bg-[#0b0f19] p-3 rounded-2xl border border-slate-800 space-y-1.5 text-slate-200">
+                        <div className="text-slate-400 text-[11px]">COMMAND    PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</div>
+                        <div className="text-cyan-300">nginx      912     root    6u  IPv4  24102      0t0  TCP *:http (LISTEN)</div>
+                        <div className="text-emerald-300">nginx      913 www-data    6u  IPv4  24102      0t0  TCP *:http (LISTEN)</div>
+                        <div className="text-emerald-300">nginx      914 www-data    6u  IPv4  24102      0t0  TCP *:http (LISTEN)</div>
+                      </div>
+                      <div className="text-xs text-slate-300 bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-sans">
+                        💡 <strong>Insight:</strong> Master process (PID 912) runs as <code>root</code> to bind privileged port 80 (&lt; 1024), then drops privileges into worker processes (PIDs 913, 914) running as unprivileged <code>www-data</code> for security!
+                      </div>
+                    </div>
+                  )}
+
+                  {t14LsofFilter === 'port22' && (
+                    <div className="space-y-3 font-mono text-xs">
+                      <div className="text-amber-300 font-bold">$ sudo lsof -i :22</div>
+                      <div className="overflow-x-auto bg-[#0b0f19] p-3 rounded-2xl border border-slate-800 space-y-1.5 text-slate-200">
+                        <div className="text-slate-400 text-[11px]">COMMAND    PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</div>
+                        <div className="text-cyan-300">sshd       784 root    3u  IPv4  18902      0t0  TCP *:ssh (LISTEN)</div>
+                        <div className="text-cyan-300">sshd       784 root    4u  IPv6  18904      0t0  TCP *:ssh (LISTEN)</div>
+                        <div className="text-amber-300">sshd      4210  sam    5u  IPv4  89410      0t0  TCP 192.168.1.50:ssh-&gt;192.168.1.104:54320 (ESTABLISHED)</div>
+                      </div>
+                      <div className="text-xs text-slate-300 bg-[#141b2e] p-3 rounded-xl border border-slate-800 font-sans">
+                        💡 <strong>Insight:</strong> Shows both the background daemon listening for new connections on port 22, AND an active established SSH terminal session from client IP 192.168.1.104!
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
             {/* BOTTOM QUICK SUMMARY & NEXT SUBTOPIC FOOTER (NIGHT MODE + INDEPENDENT READ-ALOUD) */}
             <div
               className={`bg-gradient-to-r from-[#141b2e] via-[#101626] to-[#0c101d] rounded-3xl p-5 border shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 transition-all ${
@@ -11324,6 +12536,21 @@ WantedBy=multi-user.target`
                         className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
                       >
                         <span>Go to Topic 13: System Services & systemd</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    );
+                  }
+                  if (mainTab === 'topic13') {
+                    return (
+                      <button
+                        onClick={() => {
+                          sounds.playSuccess();
+                          setMainTab('topic14');
+                          setActiveTopic14SubId('checking-disk-space');
+                        }}
+                        className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-black text-xs sm:text-sm shadow-sm flex items-center gap-1.5"
+                      >
+                        <span>Go to Topic 14: System Monitoring</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     );

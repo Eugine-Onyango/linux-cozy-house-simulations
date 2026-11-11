@@ -835,6 +835,24 @@ export const all11LinuxTopicsRoadmap = [
   },
   {
     id: 14,
+    title: 'System Monitoring',
+    status: 'playable',
+    topicKey: 'topic14',
+    icon: '📊',
+    subtopics: [
+      '14.1 Checking Disk Space (df -h, Inodes with df -i, du -sh & ncdu)',
+      '14.2 Monitoring Memory Usage (free -h, Buff/Cache, Swap & OOM Killer)',
+      '14.3 Viewing CPU Information (lscpu, /proc/cpuinfo, Sockets, Cores & Threads)',
+      '14.4 Checking System Uptime and Load (uptime, w & Load Average 1m/5m/15m)',
+      '14.5 Monitoring CPU and I/O Performance (iostat, vmstat, %iowait & sar)',
+      '14.6 Listing Open Files and Processes (lsof, lsof -i, fuser & Drive Unmounting)'
+    ],
+    laymanSummary: 'Keep Linux systems rock-solid and responsive: audit disk space and inode limits (df/du/ncdu), decode available memory vs buff/cache (free -h), inspect CPU topology (lscpu), interpret multi-core load averages (uptime/w), isolate %iowait bottlenecks (vmstat/iostat), and hunt open file locks with lsof and fuser.',
+    houseAnalogy: 'The master house health check: measuring attic weight (df) vs trunk scales (du), clearing magazines off the coffee table (RAM buff/cache), counting master chefs (lscpu), reading the toll bridge traffic meter (load average), waiting on the slow grocery boy (%iowait), and finding the lost keyholder wedging the door (lsof).',
+    kenyanAnalogy: 'The Gikomba warehouse inventory (df/du/inodes), the M-Pesa counter float vs under-desk safe (free/swap/OOM), the Industrial Area metal welding fundis (lscpu), the Thika Superhighway rush hour traffic lanes (uptime load), the cybercafé attendant waiting on the slow printer (%iowait), and the matatu conductor clearing the passenger blocking the stage door (lsof/fuser).'
+  },
+  {
+    id: 15,
     title: 'Shell & Bash Scripting',
     status: 'upcoming',
     icon: '📜',
@@ -849,7 +867,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'Leaving a clear morning duty roster on the kitchen table (chopping sukuma, boiling tea, locking the gate) with labeled spice tins (variables) so everything runs like clockwork!'
   },
   {
-    id: 15,
+    id: 16,
     title: 'Advanced Linux & Cloud/DevOps',
     status: 'upcoming',
     icon: '🐳',
@@ -863,7 +881,7 @@ export const all11LinuxTopicsRoadmap = [
     kenyanAnalogy: 'A fitted shipping-container duka that can be lifted by lorry to any town and opened immediately (Docker), and a traditional hotel with many waiters (Apache) vs a fast supermarket express checkout (Nginx).'
   },
   {
-    id: 16,
+    id: 17,
     title: 'Linux in Cloud & DevOps',
     status: 'upcoming',
     icon: '☁️',
